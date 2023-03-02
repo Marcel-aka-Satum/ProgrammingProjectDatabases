@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from RSSscraper import *
 
 app = Flask(__name__)
 
@@ -10,7 +11,7 @@ def index():
 
 @app.route('/articles', strict_slashes=False)
 @app.route('/articles/<tag>', strict_slashes=False)
-def articles(tag=None):
+def articles(tag="Economie"):
     article_1 = {
         'title': '10 Tips for Better Time Management',
         'content': 'In today’s fast-paced world, effective time management is essential. Here are some practical tips to help you make the most of your time.',
@@ -73,6 +74,10 @@ def articles(tag=None):
         # get all articles
         # articles = get_all_articles()
         articles = [article_1, article_2, article_3, article_4]
+    elif tag == 'Economie':
+        # get all articles
+        # articles = get_all_articles()
+        articles = rssScraper("Hardcoded rssFeed from HLN")
     else:
         return redirect(url_for('articles', tag='all'))
 
