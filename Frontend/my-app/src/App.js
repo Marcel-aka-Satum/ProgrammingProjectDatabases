@@ -1,8 +1,18 @@
-import './App.css';
+import React from 'react'
+import Navbar from './components/Navbar/Navbar'
+import "./css/navbarStyle.css"
+import Loginform from './components/Loginform';
+import {Routes, Route} from 'react-router-dom'
 
 function App() {
   return (
-    <h1>Dit gaat onze project zijn.</h1>
+    <div id="main-container">
+      <Navbar/>
+      <Routes>
+        <Route path="login" element={<Loginform/>}></Route>
+      </Routes>
+
+    </div>
   );
 }
 
