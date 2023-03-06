@@ -1,26 +1,40 @@
-// import { FaBars } from 'react-icons/fa'
-// import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link, NavLink } from 'react-router-dom'
+import Logo from './newspaper.png'
+import './navbarStyle.css'
 
-import React from 'react'
-
-const Navbar = () =>{
+const Navbar = () => {
   return (
-    <>
-    <nav className="nav">
-      <a href="/" className="site-title">Site Name</a>
-      <ul>
+    <nav className="navbar">
+      <div className="container">
+        <div className="logo">
+          <ul>
+            <li>
+              <Link to="/">
+              <img src={Logo} width="30" height="30" alt="Sitelogo"/>
+              </Link>
+            </li>
         <li>
-        <a href='/login'>Login site</a>
+          <NavLink to="/">Newsagregator</NavLink> 
         </li>
-        <li>
-        <a href='/about'>About</a>
-        </li>
-      </ul>
+          </ul>
+      </div>
+      <div className="nav-elements">
+        <ul>
+          <li>
+            <NavLink to="/">Home</NavLink> 
+          </li>
+          <li>
+            <NavLink to="/login">Login</NavLink> 
+          </li>
+          <li>
+            <NavLink to="/artikels">artikels</NavLink> 
+          </li>
+        </ul>
+      </div>
+      </div>
     </nav>
-    </>
-  )
+  );
 };
-
 
 export default Navbar;
