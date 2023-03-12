@@ -23,56 +23,30 @@ body {
   position: relative;
 }
 
-.logo {
-}
-
-.logo ul {
+ul.nav.navbar-nav{
   display: flex;
   justify-content: space-between;
   list-style-type: none;
 }
 
-.logo ul li:not(:last-child) {
-  margin-right: 10px;
-  margin-top: auto;
-  
-}
-
-.logo ul a {
-  font-size: 16px;
-  font-weight: 400;
-  color:black;
-  text-decoration: none;
-}
-
-
-.nav-elements {
-}
-
-.nav-elements ul {
-  display: flex;
-  justify-content: space-between;
-  list-style-type: none;
-}
-
-.nav-elements ul li:not(:last-child) {
+.nav.navbar-nav li:not(:last-child) {
   margin-right: 60px;
 }
 
-.nav-elements ul a {
+.nav.navbar-nav a {
   font-size: 16px;
   font-weight: 400;
   color: black;
   text-decoration: none;
 }
 
-.nav-elements ul a.active {
+.nav.navbar-nav a.active {
   color: black;
   font-weight: 500;
   position: relative;
 }
 
-.nav-elements ul a.active::after {
+.nav.navbar-nav a.active::after {
   content: '';
   position: absolute;
   bottom: -4px;

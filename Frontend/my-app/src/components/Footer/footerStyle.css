@@ -15,44 +15,13 @@ body {
   width: 100%;
 }
 
-.container {
-    display: table;
-    justify-content: middle;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.row{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.column{
-  display: flex;
-  flex-direction: column;
-  flex-basis: 100%;
-  flex: 1;
-}
-
-.column p{
-float: center;
-  font-size: 20px;
+li a {
+  font-size: 16px;
+  font-weight: 400;
   color: black;
-  margin-bottom: 5px;
-  font-weight: bold;
+  text-decoration: none;
 }
 
-.column ul {
-    vertical-align: middle;
-    display:contents;
-    list-style-type: none;
+a:hover{
+  color: inherit;
 }
-
-  .column ul a {
-    font-size: 16px;
-    font-weight: 400;
-    color: black;
-    text-decoration: none;
-  }

@@ -2,24 +2,32 @@
     margin: 0;
     box-sizing: border-box;
 } */
+
+.container {
+  display: table;
+  justify-content: middle;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
 .btn-color{
-    background-color: #0e1c36;
-    color: #fff;
-    
-  }
+  background-color: #0e1c36;
+  color: #fff;
   
-  .profile-image-pic{
-    height: 200px;
-    width: 200px;
-    object-fit: cover;
-  }
-  
-  
-  
-  .cardbody-color{
-    background-color: #ebf2fa;
-  }
-  
-  a{
-    text-decoration: none;
-  }
+}
+
+.profile-image-pic{
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+}
+
+
+
+.cardbody-color{
+  background-color: #ebf2fa;
+}
+
+a{
+  text-decoration: none;
+}

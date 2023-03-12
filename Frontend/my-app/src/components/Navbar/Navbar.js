@@ -5,22 +5,15 @@ import './navbarStyle.css'
 
 const Navbar = () => {
   return (
-    <nav className="navbar">
-      <div className="container">
-        <div className="logo">
-          <ul>
-            <li>
-              <Link to="/">
-              <img src={Logo} width="30" height="30" alt="Sitelogo"/>
-              </Link>
-            </li>
-        <li>
-          <NavLink to="/">Newsagregator</NavLink> 
-        </li>
-          </ul>
+    <nav class="navbar navbar-expand-md navbar-expand-lg">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <Link class="navbar-brand" to="/">
+            <span class="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
+            Newsagregator
+            </Link>
       </div>
-      <div className="nav-elements">
-        <ul>
+        <ul class="nav navbar-nav">
           <li>
             <NavLink to="/">Home</NavLink> 
           </li>
@@ -28,10 +21,9 @@ const Navbar = () => {
             <NavLink to="/login">Login</NavLink> 
           </li>
           <li>
-            <NavLink to="/artikels">artikels</NavLink> 
+            <NavLink to="/artikels">Artikels</NavLink> 
           </li>
         </ul>
-      </div>
       </div>
     </nav>
   );
