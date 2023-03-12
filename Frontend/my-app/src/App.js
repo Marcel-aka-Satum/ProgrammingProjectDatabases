@@ -12,7 +12,7 @@ import "./components/Footer/footerStyle.css"
 
 function App() {
 
-  //test if backend works
+  //test if Backend works
   const [data, setData] = useState([{}])
   useEffect(()=>{
     fetch("/members").then(
