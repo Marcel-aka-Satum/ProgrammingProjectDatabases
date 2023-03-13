@@ -30,7 +30,7 @@ export default function Registerform() {
                                 <button type="submit" class="btn btn-outline-secondary px-5 mb-5 w-100">Register</button>
                             </div>
                             <div id="emailHelp" class="form-text text-center mb-5 text-dark">Already have an account? <a
-                                href="login" class="text-dark fw-bold">Log in</a></div>
+                                href="/login" class="text-dark fw-bold">Log in</a></div>
                         </form>
                     </div>
                 </div>
