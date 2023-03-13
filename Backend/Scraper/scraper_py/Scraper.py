@@ -3,6 +3,7 @@
 
 import feedparser
 import pandas as pd
+import time
 
 RSSFeeds = pd.read_csv('RSSFeeds.csv')
 
@@ -42,11 +43,7 @@ def scraper(RSSFeeds):
     NewsArticles = NewsArticles.drop_duplicates()
 
     NewsArticles.to_csv('NewsArticles.csv', index=False)
-    print('Scraping completed successfully')
     return NewsArticles
 
-import time
 
-while True:
-    scraper(RSSFeeds)
-    time.sleep(600)
+scraper(RSSFeeds)
