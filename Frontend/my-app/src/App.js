@@ -1,6 +1,7 @@
 import Navbar from './components/Navbar/Navbar'
 import Loginform from './components/Loginform';
 import Footer from './components/Footer/Footer'
+import Home from './pages/Home';
 import {Routes, Route} from 'react-router-dom'
 import React, {useState, useEffect} from 'react'
 
@@ -29,6 +30,7 @@ function App() {
     <div id="main-container">
       <Navbar/>
       <Routes>
+        <Route path="" element={<Home/>}></Route>
         <Route path="login" element={<Loginform/>}></Route>
       </Routes>
       <Footer/>
