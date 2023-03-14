@@ -10,10 +10,9 @@
   margin: 0 auto;
 }
 
-.btn-color{
-  background-color: #0e1c36;
-  color: #fff;
-  
+.btn-outline-secondary:hover {
+    background-color: #fef7e5 !important;
+    color: #000000 !important;
 }
 
 .profile-image-pic{
