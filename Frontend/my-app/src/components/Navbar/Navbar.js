@@ -12,25 +12,25 @@ const Navbar = () => {
     };
 
     return (
-        <nav class="navbar navbar-expand-md navbar-expand-lg fixed-top">
-            <div class="container-fluid m-2">
-                <div class="navbar-header">
-                    <Link class="navbar-brand" to="/">
-                        <span class="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
+        <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">
+            <div className="container-fluid m-2">
+                <div className="navbar-header">
+                    <Link className="navbar-brand" to="/">
+                        <span className="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
                         Newsagregator
                     </Link>
                 </div>
-                <ul class="nav navbar-nav allign-items-center mr-4">
+                <ul className="nav navbar-nav allign-items-center mr-4">
                     <li>
                         <NavLink to="/">Home</NavLink>
                     </li>
                     <li>
-                        <NavLink class="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
+                        <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div class="dropdown-menu btn-outline-secondary dropdown-menu-left"
+                        <div className="dropdown-menu dropdown-menu-left custom-bg"
                              aria-labelledby="articlesDropdown">
-                            <ul class="list-inline mx-4">
+                            <ul className="list-inline mx-4">
                                 <li><NavLink to="/articles">All</NavLink></li>
                                 <li><NavLink to={`/articles?p=latest`}>Latest</NavLink></li>
                                 <li><NavLink to={`/articles?p=economics`}>Economics</NavLink></li>
