@@ -2,7 +2,7 @@ import React from "react";
 import {Link, NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
 import './navbarStyle.css'
-import {useState} from 'react';
+import { useState } from 'react';
 
 const Navbar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -10,32 +10,27 @@ const Navbar = () => {
     const handleCollapse = () => {
         setIsCollapsed(!isCollapsed);
     };
+
     return (
-        <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">
-            <div className="container-fluid m-2">
-                <div className="navbar-header">
+        <nav class="navbar navbar-expand-md navbar-expand-lg fixed-top">
+            <div class="container-fluid m-2">
+                <div class="navbar-header">
                     <Link class="navbar-brand" to="/">
-                        <span className="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
+                        <span class="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
                         Newsagregator
                     </Link>
                 </div>
-                <button className="navbar-toggler" type="button" onClick={handleCollapse}>
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-            </div>
-            <div className={`collapse navbar-collapse ${isCollapsed ? 'show' : ''}`}>
-                <ul className="nav navbar-nav justify-content-center align-items-center">
+                <ul class="nav navbar-nav allign-items-center mr-4">
                     <li>
                         <NavLink to="/">Home</NavLink>
                     </li>
-                    <li className="nav-item dropdown">
+                    <li>
                         <NavLink class="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
-                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Articles
-                        </NavLink>
-                        <div className="dropdown-menu btn-outline-secondary dropdown-menu-left"
+                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
+
+                        <div class="dropdown-menu btn-outline-secondary dropdown-menu-left"
                              aria-labelledby="articlesDropdown">
-                            <ul className="list-inline mx-4">
+                            <ul class="list-inline mx-4">
                                 <li><NavLink to="/articles">All</NavLink></li>
                                 <li><NavLink to={`/articles?p=latest`}>Latest</NavLink></li>
                                 <li><NavLink to={`/articles?p=economics`}>Economics</NavLink></li>
@@ -55,7 +50,6 @@ const Navbar = () => {
                 </ul>
             </div>
         </nav>
-
     );
 };
 
