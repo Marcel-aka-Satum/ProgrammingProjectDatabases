@@ -12,7 +12,7 @@ export default function Registerform() {
                         <form className="card-body cardbody-color p-lg-5">
                             <div className="mb-3">
                                 <input type="text" className="form-control" id="Username" aria-describedby="emailHelp"
-                                       placeholder="User Name"/>
+                                       placeholder="Username"/>
                             </div>
                             <div className="mb-3">
                                 <input type="email" className="form-control" id="email" aria-describedby="emailHelp"

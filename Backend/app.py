@@ -37,7 +37,7 @@ def register_user():
     db.session.add(new_user)
     db.session.commit()
     return jsonify({
-        "id":  new_user.id,
+        "id": new_user.id,
         "email": new_user.email
     })
 
@@ -47,25 +47,31 @@ def login_user():
     email = request.json["email"]
     password = request.json["password"]
     user_exists = User.query.filter_by(email=email).first()
-    
+
     if user_exists is None:
         return jsonify({"error": "Unauthorized"}), 401
-    
+
     if not bcrypt.check_password_hash(user_exists.password, password):
         return jsonify({"error": "Unauthorized"}), 401
-    
+
     acces_token = create_access_token(identity=email)
     return jsonify({
-        "id":  user_exists.id,
+        "id": user_exists.id,
         "email": user_exists.email,
         "token": acces_token
     })
 
+@cross_origin()
+@app.route("/api/getUsers")
+def get_users():
+    users = User.query.all()
+    return jsonify([{"username":user.username, "email": user.email, "is_admin": user.is_admin} for user in users])
 
 @cross_origin
 @app.route("/members")
 def members():
-    return{"members": ["member1", "member2", "member3"]}
+    return {"members": ["member1", "member2", "member3"]}
+
 
 @app.route('/')
 def index():
@@ -123,7 +129,6 @@ def articles(tag="Economie"):
         'references': 'https://www.mayoclinic.org/tests-procedures/meditation/in-depth/meditation/art-20045858',
         'article_id': 4
     }
-
 
     if tag == 'latest':
         ## get the latest articles
