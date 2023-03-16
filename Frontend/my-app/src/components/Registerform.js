@@ -1,6 +1,5 @@
 import React from 'react'
 import "../css/login_register_form.css"
-import {Button} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function Registerform() {
