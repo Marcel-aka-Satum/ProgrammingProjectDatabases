@@ -28,7 +28,10 @@ class DBConnection():
         if self.connection == None or self.cursor == None:
             print("database is not connected")
             return
-        return self.cursor.execute("SELECT * FROM newsaggregator.newsarticles")
+
+        self.cursor.execute("SELECT * FROM newsaggregator.newsarticles;")
+
+        return self.cursor.fetchall()
 
 
 DB = DBConnection()
