@@ -1,5 +1,5 @@
 import psycopg2
-#testing smth git related
+
 # Connect to your postgres DB 
 conn = psycopg2.connect(user="postgres")
 conn.autocommit = True
@@ -8,7 +8,7 @@ conn.autocommit = True
 cur = conn.cursor()
 
 #SQL to initialize db
-sql0 = '''
+sql1 = '''
         DROP SCHEMA IF EXISTS newsaggregator CASCADE;
         DROP TABLE IF EXISTS rssfeeds CASCADE;
         DROP TABLE IF EXISTS newsarticles CASCADE;
@@ -16,19 +16,11 @@ sql0 = '''
         DROP TABLE IF EXISTS hasclicked CASCADE;
         '''
 
-sql1 = '''
-        DROP DATABASE IF EXISTS my_db;
-        '''
-
 sql2 = '''
-        CREATE DATABASE my_db;
-       '''
-
-sql3 = '''
         CREATE SCHEMA newsaggregator;
        '''
 
-sql4 = '''
+sql3 = '''
         CREATE TABLE newsaggregator.rssfeeds (
             URL varchar PRIMARY KEY, 
             Publisher varchar, 
@@ -55,17 +47,14 @@ sql4 = '''
         '''
 
 #Executing SQL statements
-cur.execute(sql0)
-print("tables dropped........")
+
 cur.execute(sql1)
-print("db dropped........")
+print("schema and tables dropped........")
 cur.execute(sql2)
-print("db made........")
+print("schema made........")
 cur.execute(sql3)
-print("schema added......")
-cur.execute(sql4)
-conn.commit()
-print("tables added........")
+print("tables added......")
+
 
 #Closing the connection
 conn.close()
