@@ -1,6 +1,6 @@
 import psycopg2
-
-# Connect to your postgres DB
+#testing smth git related
+# Connect to your postgres DB 
 conn = psycopg2.connect(user="postgres")
 conn.autocommit = True
 
