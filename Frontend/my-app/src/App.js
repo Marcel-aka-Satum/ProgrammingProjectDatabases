@@ -9,18 +9,22 @@ import Settings from "./components/Admin/Settings";
 import Footer from './components/Footer/Footer'
 import Home from './pages/Home';
 import {Routes, Route} from 'react-router-dom'
-import React from 'react'
+import React, {useState, createContext} from 'react'
+import {User} from './components/User/User'
 
 /////////////////// import css
 import "./components/Navbar/navbarStyle.css"
 import "./components/Footer/footerStyle.css"
-
 ///////////////////
 
-function App() {
 
+let userSession = createContext();
+function App() {
+    document.title = "PPDBT8"
+    let [user, setUser] = useState(new User());
     return (
-        <div id="main-container">
+        <userSession.Provider value={{user, setUser}}>
+            <div id="main-container">
             <Navbar/>
             <Routes>
                 <Route path="/" element={<Home/>}></Route>
@@ -46,11 +50,12 @@ function App() {
                 <Route path="/admin/users/delete/:id" element={<Users/>}></Route>
 
                 <Route path="/admin/settings" element={<Settings/>}></Route> {/* frequency of updates from news sources*/}
-
             </Routes>
             <Footer/>
         </div>
+        </userSession.Provider>
     );
 }
 
 export default App;
+export {userSession};

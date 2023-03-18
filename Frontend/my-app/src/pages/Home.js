@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext, useEffect} from 'react'
 import { NavLink } from 'react-router-dom'
 import Carousel from 'react-bootstrap/Carousel'
 import example1 from "./example1.jpg"
@@ -6,8 +6,13 @@ import example2 from "./example2.png"
 import example3 from "./example3.png"
 import "./Home.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { userSession } from '../App'
+
+
 
 const Home = () => {
+  let usersession = useContext(userSession);
+  
   return (
     <div class="container">
       <ul class="list-inline mt-3 mb-0">

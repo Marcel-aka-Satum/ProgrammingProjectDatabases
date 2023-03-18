@@ -6,3 +6,4 @@ flask-jwt-extended
 flask-cors
 redis
 flask-session
+flask-migrate

@@ -6,12 +6,13 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 db.init_app(app)
-CORS(app, supports_credentials=True)
-
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 bcrypt = Bcrypt(app)
 
 # Setup the Flask-JWT-Extended extension
@@ -23,10 +24,10 @@ with app.app_context():
 
 
 @app.route("/api/register", methods=["POST"])
+@cross_origin()
 def register_user():
     email = request.json["email"]
     password = request.json["password"]
-
     user_exists = User.query.filter_by(email=email).first() is not None
 
     if (user_exists):
@@ -43,6 +44,7 @@ def register_user():
 
 
 @app.route("/api/login", methods=["POST"])
+@cross_origin()
 def login_user():
     email = request.json["email"]
     password = request.json["password"]
@@ -62,15 +64,15 @@ def login_user():
     })
 
 
-@cross_origin
-@app.route("/members")
-def members():
-    return{"members": ["member1", "member2", "member3"]}
+@app.route("/api/getUsers", methods=["GET"])
+@cross_origin()
+def get_users():
+    users = User.query.all()
+    return jsonify([{"id": user.id, "email": user.email} for user in users])
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/articles', strict_slashes=False)
 @app.route('/articles/<tag>', strict_slashes=False)
