@@ -3,6 +3,7 @@ import json
 import init_db as init_db
 import populate_db as populate_db
 import querry_db as query
+#import Scraper.scraper_py.Scraper as scraper
 
 """
     An interface of the DataBase
@@ -73,30 +74,56 @@ class DBConnection:
     !!! Tag are currently not in the database, you get all the articles !!! 
     """
 
-    def getArticle(self, tag: str) -> json:
+    def getArticle(self, tag: str = "") -> json:
         if not self.is_connected():
             print("database is not connected")
             return
-
-        self.cursor.execute("SELECT * FROM newsaggregator.newsarticles;")
+        self.cursor.execute(query.get_newsarticles())
         data = []
         for i in self.cursor.fetchall():
             Article = {}
             Article["URL"] = i[0]
-            Article["Title"] = i[0]
-            Article["Summary"] = i[0]
-            Article["Published"] = i[0]
-            Article["Image"] = i[0]
+            Article["Title"] = i[1]
+            Article["Summary"] = i[2]
+            Article["Published"] = i[3]
+            Article["Image"] = i[4]
             data.append(Article)
         return json.dumps(data)
+
+    """
+    get the users from the database
+    """
+
+    def getUsers(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+
+        self.cursor.execute(query.get_users())
+        data = []
+        for i in self.cursor.fetchall():
+            user = {}
+            user["Username"] = i[0]
+            user["Password"] = i[1]
+            user["Is_Admin"] = i[2]
+            data.append(user)
+        return json.dumps(data)
+
+    def ParseRSSFeeds(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+
+        self.cursor.execute(query.get_rssfeeds())
+        for i in self.cursor.fetchall():
+            #print(scraper.scraper(i[0]))
+            break
+        return ""
 
 
 DB = DBConnection()
 DB.connect()
 DB.redefine()
-DB.cursor.execute(query.insert_newsarticles("1", "2", "3", "4", "5", "6"))
-DB.cursor.execute(query.insert_rssfeeds("1", "2", "3"))
-DB.cursor.execute("SELECT * FROM newsaggregator.rssfeeds;")
-print(DB.cursor.fetchall())
-# DB.populate()
-#print(DB.getArticle(""))
+DB.populate()
+print(DB.getArticle())
+DB.ParseRSSFeeds()
