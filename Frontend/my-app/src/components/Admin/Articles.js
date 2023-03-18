@@ -1,5 +1,6 @@
 import React from 'react'
 import {useState, useEffect} from 'react';
+import "./admin.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function Articles() {
@@ -183,6 +184,13 @@ export default function Articles() {
                                         <h5 className="card-title">{article.title}</h5>
                                         <p className="card-text">{article.description}</p>
                                         <div className="btn-group" role="group">
+                                            <button
+                                                type="button"
+                                                className="btn btn-success"
+                                                onClick={() => console.log(`Viewing article with id ${article.id}`)}
+                                            >
+                                                Read More
+                                            </button>
                                             <button
                                                 type="button"
                                                 className="btn btn-primary"
