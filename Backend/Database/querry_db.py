@@ -8,17 +8,17 @@ def insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str:
             """
 
 
-def insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str) -> str:
+def insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str:
     return f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL)
-            VALUES ({URL}, {Title}, {Summary}, {Published}, {Image_URL});
+            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, Topic)
+            VALUES ({URL}, {Title}, {Summary}, {Published}, {Image_URL}, {RSS_URL}, {Topic});
             """
 
 
-def insert_users(Username: str, Password: str, Is_Admin: bool) -> str:
+def insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
     return f"""
-            INSERT INTO newsaggregator.users (Username, Password, Is_Admin)
-            VALUES ({Username}, {Password}, {Is_Admin});
+            INSERT INTO newsaggregator.users (Username, Email, Password, Is_Admin)
+            VALUES ({Username}, {Email}, {Password}, {Is_Admin});
             """
 
 

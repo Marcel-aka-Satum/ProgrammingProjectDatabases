@@ -1,9 +1,9 @@
+from dataclasses import dataclass
 import psycopg2
 import json
 import init_db as init_db
 import populate_db as populate_db
 import querry_db as query
-#import Scraper.scraper_py.Scraper as scraper
 
 """
     An interface of the DataBase
@@ -87,6 +87,8 @@ class DBConnection:
             Article["Summary"] = i[2]
             Article["Published"] = i[3]
             Article["Image"] = i[4]
+            Article["RSS_URL"] = i[5]
+            Article["Topic"] = i[6]
             data.append(Article)
         return json.dumps(data)
 
@@ -104,8 +106,9 @@ class DBConnection:
         for i in self.cursor.fetchall():
             user = {}
             user["Username"] = i[0]
-            user["Password"] = i[1]
-            user["Is_Admin"] = i[2]
+            user["Email"] = i[1]
+            user["Password"] = i[2]
+            user["Is_Admin"] = i[3]
             data.append(user)
         return json.dumps(data)
 
@@ -115,15 +118,22 @@ class DBConnection:
             return
 
         self.cursor.execute(query.get_rssfeeds())
+        data = []
         for i in self.cursor.fetchall():
-            #print(scraper.scraper(i[0]))
-            break
-        return ""
+            rss_info = {}
+            rss_info["URL"] = i[0]
+            rss_info["Publisher"] = i[1]
+            rss_info["Topic"] = i[2]
+            data.append(rss_info)
+        return json.dumps(data)
+
 
 
 DB = DBConnection()
 DB.connect()
 DB.redefine()
 DB.populate()
+import Scraper
 print(DB.getArticle())
 DB.ParseRSSFeeds()
+
