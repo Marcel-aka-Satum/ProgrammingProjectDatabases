@@ -9,6 +9,7 @@ import axios from 'axios'
 export default function Registerform() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     let usersession = useContext(userSession);
 
     const handleRegister = async (e) => {
@@ -17,6 +18,8 @@ export default function Registerform() {
             const data2 = await axios.post('http://localhost:4444/api/register',{
                 email:email,
                 password:password,
+                username:username,
+                is_admin:0,
                 headers: {
                     'Content-Type': 'application/json'
                   }
@@ -47,7 +50,7 @@ export default function Registerform() {
                     <div class="card my-5">
                         <form class="card-body cardbody-color p-lg-5">
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="Username" aria-describedby="emailHelp"
+                                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} class="form-control" id="Username" aria-describedby="emailHelp"
                                        placeholder="User Name"/>
                             </div>
                             <div class="mb-3">

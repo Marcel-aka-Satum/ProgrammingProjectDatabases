@@ -6,12 +6,11 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
-from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(ApplicationConfig)
 db.init_app(app)
-CORS(app)
+CORS(app, origins=['http://localhost:3000'])
 app.config['CORS_HEADERS'] = 'Content-Type'
 bcrypt = Bcrypt(app)
 
@@ -28,12 +27,16 @@ with app.app_context():
 def register_user():
     email = request.json["email"]
     password = request.json["password"]
+
+    is_admin = request.json["is_admin"]
+
+    username = request.json["username"]
     user_exists = User.query.filter_by(email=email).first() is not None
 
     if (user_exists):
         return jsonify({"error": "User already exists"}), 409
     hashed_password = bcrypt.generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password)
+    new_user = User(email=email, password=hashed_password, is_admin=is_admin, username=username)
     acces_token = create_access_token(identity=email)
     db.session.add(new_user)
     db.session.commit()
@@ -68,7 +71,58 @@ def login_user():
 @cross_origin()
 def get_users():
     users = User.query.all()
-    return jsonify([{"id": user.id, "email": user.email} for user in users])
+    return jsonify([{"id": user.id, "email": user.email, "username": user.username, "is_admin":user.is_admin} for user in users])
+
+# update user
+@app.route("/api/updateUser/<id>", methods=["PUT"])
+@cross_origin()
+def update_user(id):
+    user = User.query.get(id)
+    user.email = request.json["email"]
+    user.username = request.json["username"]
+    user.is_admin = request.json["is_admin"]
+    db.session.commit()
+    return jsonify({"id": user.id, "email": user.email, "username": user.username, "is_admin":user.is_admin})
+
+# delete user
+@app.route("/api/deleteUser/<id>", methods=["DELETE"])
+@cross_origin()
+def delete_user(id):
+    user = User.query.get(id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"id": user.id, "email": user.email, "username": user.username, "is_admin":user.is_admin})
+
+# add user
+@app.route("/api/addUser", methods=["POST"])
+@cross_origin()
+def add_user():
+    email = request.json["email"]
+    password = request.json["password"]
+    is_admin = request.json["is_admin"]
+    username = request.json["username"]
+    user_exists = User.query.filter_by(email=email).first() is not None
+
+    print(email, password, is_admin, username)
+    if (user_exists):
+        return jsonify({"error": "User already exists"}), 409
+    hashed_password = bcrypt.generate_password_hash(password)
+    new_user = User(email=email, password=hashed_password, is_admin=is_admin, username=username)
+    acces_token = create_access_token(identity=email)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({
+        "id":  new_user.id,
+        "email": new_user.email,
+        "username": new_user.username,
+        "is_admin":new_user.is_admin
+    })
+
+@app.route("/api/getUser/<id>", methods=["GET"])
+@cross_origin()
+def get_user(id):
+    user = User.query.get(id)
+    return jsonify({"id": user.id, "email": user.email, "username": user.username, "is_admin":user.is_admin})
 
 @app.route('/')
 def index():
@@ -125,7 +179,6 @@ def articles(tag="Economie"):
         'references': 'https://www.mayoclinic.org/tests-procedures/meditation/in-depth/meditation/art-20045858',
         'article_id': 4
     }
-
 
     if tag == 'latest':
         ## get the latest articles
