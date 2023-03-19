@@ -315,7 +315,8 @@ export default function Users() {
                                                                 data-bs-dismiss="modal">
                                                             Close
                                                         </button>
-                                                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal"
+                                                        <button type="button" className="btn btn-primary"
+                                                                data-bs-dismiss="modal"
                                                                 onClick={() => {
                                                                     applyUserChanges(
                                                                         selectedUser.id,
@@ -338,7 +339,8 @@ export default function Users() {
                                         >
                                             Delete
                                         </button>
-                                        <div className="modal fade" id="deleteUserModal" tabIndex="-1" aria-hidden="true">
+                                        <div className="modal fade" id="deleteUserModal" tabIndex="-1"
+                                             aria-hidden="true">
                                             <div className="modal-dialog">
                                                 <div className="modal-content">
                                                     <div className="modal-header">
@@ -356,7 +358,8 @@ export default function Users() {
                                                                 data-bs-dismiss="modal">
                                                             Close
                                                         </button>
-                                                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal"
+                                                        <button type="button" className="btn btn-danger"
+                                                                data-bs-dismiss="modal"
                                                                 onClick={() => {
                                                                     applyDeleteUser(user.id);
                                                                 }}>Delete User
@@ -372,8 +375,6 @@ export default function Users() {
                                         >
                                             {user.is_admin ? "Demote" : "Promote"}
                                         </button>
-
-
                                     </div>
                                 </li>
                             ))}

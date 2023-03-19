@@ -115,12 +115,31 @@ def add_user():
         "username": new_user.username,
         "is_admin":new_user.is_admin
     })
-
-@app.route("/api/getUser/<id>", methods=["GET"])
+# get topics of rss feed and remove duplicates return list of topics
+@app.route("/api/getTopics", methods=["GET"])
 @cross_origin()
-def get_user(id):
-    user = User.query.get(id)
-    return jsonify({"id": user.id, "email": user.email, "username": user.username, "is_admin":user.is_admin})
+def get_topics():
+    topics = []
+    for article in articles:
+        topics.append(article['category'])
+    return jsonify(list(set(topics)))
+
+# addfeed api to db
+@app.route("/api/addFeed", methods=["POST"])
+@cross_origin()
+def add_feed():
+    url = request.json["url"]
+    topic = request.json["topic"]
+    publisher = request.json["publisher"]
+    new_feed = RssFeed(url=url, topic=topic, publisher=publisher)
+    db.session.add(new_feed)
+    db.session.commit()
+    return jsonify({
+        "id":  new_feed.id,
+        "url": new_feed.url,
+        "topic": new_feed.topic,
+        "publisher":new_feed.publisher
+    })
 
 @app.route('/')
 def index():
