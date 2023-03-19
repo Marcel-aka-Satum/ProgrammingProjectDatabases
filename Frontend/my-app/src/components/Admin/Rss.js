@@ -161,7 +161,6 @@ export default function Rss() {
                     </table>
                 </div>
             </div>
-            <ToastContainer limit={3}/>
         </div>
     );
 }

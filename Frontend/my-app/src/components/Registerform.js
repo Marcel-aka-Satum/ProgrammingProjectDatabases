@@ -34,7 +34,6 @@ export default function Registerform() {
         } catch (err){
             console.error(err.message)
         }
-
     }
 
     return (

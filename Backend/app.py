@@ -103,12 +103,10 @@ def add_user():
     username = request.json["username"]
     user_exists = User.query.filter_by(email=email).first() is not None
 
-    print(email, password, is_admin, username)
     if (user_exists):
         return jsonify({"error": "User already exists"}), 409
     hashed_password = bcrypt.generate_password_hash(password)
     new_user = User(email=email, password=hashed_password, is_admin=is_admin, username=username)
-    acces_token = create_access_token(identity=email)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({
