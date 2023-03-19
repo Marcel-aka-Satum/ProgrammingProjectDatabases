@@ -48,8 +48,7 @@ cd ProgrammingProjectDatabases
 ```
 
 ## Usage
-Soon to be added.
-
+* Database: We use a postgres database, so make sure postgres is installed. In order to initialize simply navigate to Backend/Database/ and run ui_db.py This will make a connection to the database as the postgres user and initialize the database. Subsequently the database will be filled with some rss feeds and the scraper will scrape them. Finally the articles will be inserted into the database where they can be accesed directly via SQL or through the functionality provided by the DBConnection class found in ui_db.py.
 ## Contributing
 Soon to be added.
 
