@@ -5,7 +5,7 @@ import feedparser
 import pandas as pd
 import time
 
-RSSFeeds = pd.read_csv('RSSFeeds.csv')
+#RSSFeeds = pd.read_csv('RSSFeeds.csv')
 
 def scraper(RSSFeeds):
     
@@ -46,4 +46,4 @@ def scraper(RSSFeeds):
     return NewsArticles
 
 
-scraper(RSSFeeds)
+# scraper(RSSFeeds)
