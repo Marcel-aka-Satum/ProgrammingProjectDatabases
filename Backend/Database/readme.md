@@ -6,37 +6,37 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 - ## Code Documentation for ui_db.py
 
-- ### Class `DBConnection`
-- `__init__(self)`
-- `__del__(self)`
-- `is_connected(self) -> bool`
-- `redefine(self)`
-- `populate(self)`
-- `connect(self) -> bool`
-- `getArticle(self, tag: str = "") -> json`
-- `getUsers(self) -> json`
-- `ParseRSSFeeds(self) -> json`
+    - ### Class `DBConnection`
+    - `__init__(self)`
+    - `__del__(self)`
+    - `is_connected(self) -> bool`
+    - `redefine(self)`
+    - `populate(self)`
+    - `connect(self) -> bool`
+    - `getArticle(self, tag: str = "") -> json`
+    - `getUsers(self) -> json`
+    - `ParseRSSFeeds(self) -> json`
 
 - ## Code Documentation for init_db.py
 
-- `initialize_db(cur)`
+    - `initialize_db(cur)`
 
 - ## Code Documentation for populate_db.py
 
-- `populate_db(conn, cur)`
+    - `populate_db(conn, cur)`
 
 - ## Code Documentation for Scraper.py
 
-- `scraper()`
+    - `scraper()`
 
 - ## Code Documentation for querry_db.py
 
-- `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
-- `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
-- `insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
-- `get_rssfeeds() -> str`
-- `get_newsarticles() -> str`
-- `get_users() -> str`
+    - `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
+    - `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
+    - `insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
+    - `get_rssfeeds() -> str`
+    - `get_newsarticles() -> str`
+    - `get_users() -> str`
 
 # Code Documentation for ui_db.py
 
