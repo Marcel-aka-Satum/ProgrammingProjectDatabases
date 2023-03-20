@@ -30,6 +30,16 @@ export default function Articles() {
                     "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 image: "https://unsplash.com/photos/4MwMccZDuWs/download?force=true"
             },
+            {
+                id: 666,
+                title: "Duis Aute Irure",
+                description:
+                    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
+                    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
+                    "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                image: "https://unsplash.com/photos/4MwMccZDuWs/download?force=true"
+
+            }
         ];
         setArticles(dummyArticles);
     }, []);
@@ -74,8 +84,8 @@ export default function Articles() {
     return (
         <div className="container">
             <div className="row">
-                <div className="col-md-12">
-                    <h2 className="text-center text-dark mt-5">Articles</h2>
+                <div className="col-md-8 offset-2">
+                    <h2 className="text-center text-dark mt-5">Article Management System</h2>
                     <div className="form-group">
                         <label htmlFor="filter">Filter by Title or Description</label>
                         <input
@@ -83,13 +93,13 @@ export default function Articles() {
                             className="form-control"
                             id="filter"
                             name="filter"
-                            placeholder="Enter text to filter"
+                            placeholder="Search"
                             value={filterText}
                             onChange={handleFilterChange}
                         />
                     </div>
                     <button
-                        className="btn btn-primary mb-2"
+                        className="btn btn-primary mb-2 mt-1"
                         onClick={() => setShowForm(true)}
                     >
                         Add New Article
@@ -183,7 +193,7 @@ export default function Articles() {
                                     <div className="card-body">
                                         <h5 className="card-title">{article.title}</h5>
                                         <p className="card-text">{article.description}</p>
-                                        <div className="btn-group" role="group">
+                                        <div className="btn-group float-end" role="group">
                                             <button
                                                 type="button"
                                                 className="btn btn-success"

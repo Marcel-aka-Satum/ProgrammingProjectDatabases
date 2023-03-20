@@ -14,7 +14,6 @@ export default function Users() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedUser, setSelectedUser] = useState(null);
     const [FirstTime, setFirstTime] = useState(false);
 
     useEffect(() => {
@@ -214,9 +213,9 @@ export default function Users() {
     return (
         <div className="container">
             <div className="row">
-                <div className="col-md-12">
+                <div className="col-md-8 offset-2">
                     <h2 className="text-center text-dark mt-5">User Management System</h2>
-                    <div className="mb-3 col-md-2">
+                    <div className="mb-3 col-md-4 d-flex justify-content-between">
                         <input
                             type="text"
                             className="form-control"
@@ -224,162 +223,164 @@ export default function Users() {
                             value={searchTerm}
                             onChange={handleSearchChange}
                         />
-                    </div>
-                    <div>
-                        <div className="btn-group mb-3">
-                            <button
-                                type="button"
-                                className={`btn ${filter === "all" ? "btn-primary" : "btn-outline-primary"}`}
-                                onClick={() => setFilter("all")}
-                            >
-                                All
-                            </button>
-                            <button
-                                type="button"
-                                className={`btn ${filter === "admin" ? "btn-primary" : "btn-outline-primary"}`}
-                                onClick={() => setFilter("admin")}
-                            >
-                                Admin
-                            </button>
-
-                        </div>
                         <button
                             type="button"
-                            className="btn btn-info float-end"
-                            onClick={generateRandomAccount}
+                            className={`btn w-25 ms-1 btn-outline-danger ${searchTerm === '' ? 'd-none' : ''}`}
+                            onClick={() => setSearchTerm('')}
                         >
-                            Generate Account
+                            X
                         </button>
-                        <ul className="list-group">
-                            {currentUsers.map((user) => (
-                                <li className="list-group-item" key={user.id}>
-                                    {user.username} | {user.email}
-                                    {user.is_admin ? (
-                                        <span className="badge bg-success ms-2">Admin</span>
-                                    ) : (
-                                        <span className="badge bg-primary ms-2">User</span>
-                                    )}
-                                    <div className="btn-group float-end">
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editUserModal"
-                                            onClick={() => setSelectedUser(user)
-                                            }
-                                        >
-                                            Edit
-                                        </button>
-                                        <div className="modal fade" id="editUserModal" tabIndex="-1">
-                                            <div className="modal-dialog">
-                                                <div className="modal-content">
-                                                    <div className="modal-header">
-                                                        <h5 className="modal-title">Edit User</h5>
-                                                        <button type="button" className="btn-close"
-                                                                data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    {selectedUser && (
-                                                        <div className="modal-body">
-                                                            <form>
-                                                                <div className="mb-3">
-                                                                    <label htmlFor="username"
-                                                                           className="form-label">Username</label>
-                                                                    <input type="text" className="form-control"
-                                                                           id="username"
-                                                                           defaultValue={selectedUser.username}/>
-                                                                </div>
-                                                                <div className="mb-3">
-                                                                    <label htmlFor="email"
-                                                                           className="form-label">Email</label>
-                                                                    <input type="email" className="form-control"
-                                                                           id="email"
-                                                                           defaultValue={selectedUser.email}/>
-                                                                </div>
-                                                                <div className="mb-3">
-                                                                    <label htmlFor="is_admin"
-                                                                           className="form-label">Admin</label>
-
-                                                                    <select className="form-select" id="is_admin"
-                                                                            defaultValue={getValueAdmin(selectedUser.is_admin)}>
-                                                                        <option value="True">True</option>
-                                                                        <option value="False">False</option>
-                                                                    </select>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    )}
-
-                                                    <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary"
-                                                                data-bs-dismiss="modal">
-                                                            Close
-                                                        </button>
-                                                        <button type="button" className="btn btn-primary"
-                                                                data-bs-dismiss="modal"
-                                                                onClick={() => {
-                                                                    applyUserChanges(
-                                                                        selectedUser.id,
-                                                                        document.querySelector("#username").value,
-                                                                        document.querySelector("#email").value,
-                                                                        selectedUser.password,
-                                                                        document.querySelector("#is_admin").value === 'True',
-                                                                        'edit')
-                                                                }}>Apply Changes
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="btn btn-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteUserModal"
-                                        >
-                                            Delete
-                                        </button>
-                                        <div className="modal fade" id="deleteUserModal" tabIndex="-1"
-                                             aria-hidden="true">
-                                            <div className="modal-dialog">
-                                                <div className="modal-content">
-                                                    <div className="modal-header">
-                                                        <h5 className="modal-title">Delete User</h5>
-                                                        <button type="button" className="btn-close"
-                                                                data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    <div className="modal-body">
-                                                        <p>Are you sure you want to delete user {user.username}?</p>
-                                                    </div>
-
-                                                    <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary"
-                                                                data-bs-dismiss="modal">
-                                                            Close
-                                                        </button>
-                                                        <button type="button" className="btn btn-danger"
-                                                                data-bs-dismiss="modal"
-                                                                onClick={() => {
-                                                                    applyDeleteUser(user.id);
-                                                                }}>Delete User
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className={`btn ${user.is_admin ? "btn-warning" : "btn-success"}`}
-                                            onClick={() => handlePromoteUser(user.id)}
-                                        >
-                                            {user.is_admin ? "Demote" : "Promote"}
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
                     </div>
+                    <div className="btn-group mb-3">
+                        <button
+                            type="button"
+                            className={`btn ${filter === "all" ? "btn-primary" : "btn-outline-primary"}`}
+                            onClick={() => setFilter("all")}
+                        >
+                            All
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn ${filter === "admin" ? "btn-primary" : "btn-outline-primary"}`}
+                            onClick={() => setFilter("admin")}
+                        >
+                            Admin
+                        </button>
+                    </div>
+                    <button
+                        type="button"
+                        className="btn btn-info float-end"
+                        onClick={generateRandomAccount}
+                    >
+                        Generate Demo Account
+                    </button>
+                    <ul className="list-group">
+                        {currentUsers.map((user) => (
+                            <li className="list-group-item d-flex justify-content-between align-items-center" key={user.id}>
+                                <p> {user.username} | {user.email}
+                                {user.is_admin ? (
+                                    <span className="badge bg-success ms-2">Admin</span>
+                                ) : (
+                                    <span className="badge bg-primary ms-2">User</span>
+                                )}
+                                </p>
+                                <div className="btn-group">
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target={`#editUserModal-${user.id}`}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target={`#deleteUserModal-${user.id}`}
+                                    >
+                                        Delete
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`btn ${user.is_admin ? "btn-warning" : "btn-success"}`}
+                                        onClick={() => handlePromoteUser(user.id)}
+                                    >
+                                        {user.is_admin ? "Demote" : "Promote"}
+                                    </button>
+                                </div>
+
+                                <div className="modal fade" id={`editUserModal-${user.id}`} tabIndex="-1">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title">Edit User</h5>
+                                                <button type="button" className="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <form>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="username"
+                                                               className="form-label">Username</label>
+                                                        <input type="text" className="form-control"
+                                                               id={`username-${user.id}`}
+                                                               defaultValue={user.username}/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="email"
+                                                               className="form-label">Email</label>
+                                                        <input type="email" className="form-control"
+                                                               id={`email-${user.id}`}
+                                                               defaultValue={user.email}/>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="is_admin"
+                                                               className="form-label">Admin</label>
+
+                                                        <select className="form-select" id={`is_admin-${user.id}`}
+                                                                defaultValue={getValueAdmin(user.is_admin)}>
+                                                            <option value="True">True</option>
+                                                            <option value="False">False</option>
+                                                        </select>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary"
+                                                        data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" className="btn btn-primary"
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => {
+                                                            applyUserChanges(
+                                                                user.id,
+                                                                document.querySelector(`#username-${user.id}`).value,
+                                                                document.querySelector(`#email-${user.id}`).value,
+                                                                user.password,
+                                                                document.querySelector(`#is_admin-${user.id}`).value === 'True',
+                                                                'edit')
+                                                        }}>Apply Changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal fade" id={`deleteUserModal-${user.id}`} tabIndex="-1"
+                                     aria-hidden="true">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title">Delete User</h5>
+                                                <button type="button" className="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <p>Are you sure you want to delete user {user.username}?</p>
+                                                <small className="text-muted">This action cannot be undone.</small>
+                                            </div>
+
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary"
+                                                        data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" className="btn btn-danger"
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => {
+                                                            applyDeleteUser(user.id);
+                                                        }}>Delete User
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                     <div className="mt-3">
                         <button
                             type="submit"
