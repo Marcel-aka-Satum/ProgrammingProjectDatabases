@@ -1,7 +1,68 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from models import db, User
+import os
+from config import ApplicationConfig
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+app.config.from_object(ApplicationConfig)
+db.init_app(app)
+CORS(app, supports_credentials=True)
 
+bcrypt = Bcrypt(app)
+
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
+jwt = JWTManager(app)
+
+with app.app_context():
+    db.create_all()
+
+
+@app.route("/api/register", methods=["POST"])
+def register_user():
+    email = request.json["email"]
+    password = request.json["password"]
+
+    user_exists = User.query.filter_by(email=email).first() is not None
+
+    if (user_exists):
+        return jsonify({"error": "User already exists"}), 409
+    hashed_password = bcrypt.generate_password_hash(password)
+    new_user = User(email=email, password=hashed_password)
+    acces_token = create_access_token(identity=email)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({
+        "id":  new_user.id,
+        "email": new_user.email
+    })
+
+
+@app.route("/api/login", methods=["POST"])
+def login_user():
+    email = request.json["email"]
+    password = request.json["password"]
+    user_exists = User.query.filter_by(email=email).first()
+    
+    if user_exists is None:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    if not bcrypt.check_password_hash(user_exists.password, password):
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    acces_token = create_access_token(identity=email)
+    return jsonify({
+        "id":  user_exists.id,
+        "email": user_exists.email,
+        "token": acces_token
+    })
+
+
+@cross_origin
 @app.route("/members")
 def members():
     return{"members": ["member1", "member2", "member3"]}
@@ -11,9 +72,8 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/articles', strict_slashes=False)
-@app.route('/articles/<tag>', strict_slashes=False)
-def articles(tag="Economie"):
+@app.route('/api/articles', strict_slashes=False, methods=['GET'])
+def articles():
     article_1 = {
         'title': '10 Tips for Better Time Management',
         'content': 'In today’s fast-paced world, effective time management is essential. Here are some practical tips to help you make the most of your time.',
@@ -62,27 +122,11 @@ def articles(tag="Economie"):
         'references': 'https://www.mayoclinic.org/tests-procedures/meditation/in-depth/meditation/art-20045858',
         'article_id': 4
     }
+    all_articles = [article_1, article_2, article_3, article_4]
+    return all_articles
 
 
-    if tag == 'latest':
-        ## get the latest articles
-        # articles = get_latest_articles()
-        articles = [article_1, article_2]
-    elif tag == 'popular':
-        ## get the most popular articles
-        # articles = get_popular_articles()
-        articles = [article_3, article_4]
-    elif tag == 'all':
-        # get all articles
-        # articles = get_all_articles(limit=25)
-        articles = [article_1, article_2, article_3, article_4]
-    else:
-        return redirect(url_for('articles', tag='all'))
-
-    return render_template('articles.html', articles=articles, tag=tag)
-
-
-@app.route('/article/<int:article_id>')
+@app.route('/api/article/<int:article_id>', methods=["GET"])
 def article(article_id):
     # Retrieve article from database/api
     # Do this by checking the exact article_id
