@@ -6,7 +6,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 ## Code Documentation for ui_db.py
 
-## Class `DBConnection`
+- # Class `DBConnection`
 - `__init__(self)`
 - `__del__(self)`
 - `is_connected(self) -> bool`
@@ -44,41 +44,41 @@ This code is written in Python and uses the psycopg2 library to interact with th
 
 ## Class `DBConnection`
 
-- `__init__(self)`
+ `__init__(self)`
 
-This is the constructor of the `DBConnection` class that initializes the `connection` and `cursor` attributes to `None`.
+- This is the constructor of the `DBConnection` class that initializes the `connection` and `cursor` attributes to `None`.
 
-- `__del__(self)`
+ `__del__(self)`
 
-This method is called when an object of the `DBConnection` class is deleted and it closes the connection to the database.
+- This method is called when an object of the `DBConnection` class is deleted and it closes the connection to the database.
 
-- `is_connected(self) -> bool`
+ `is_connected(self) -> bool`
 
-This method checks if the connection to the database exists and returns a boolean value accordingly.
+- This method checks if the connection to the database exists and returns a boolean value accordingly.
 
-- `redefine(self)`
+ `redefine(self)`
 
-This method recreates the database by dropping and re-creating the schema and tables.
+- This method recreates the database by dropping and re-creating the schema and tables.
 
-- `populate(self)`
+ `populate(self)`
 
-This method populates the database with hardcoded data by inserting rows into the `rssfeeds` and `newsarticles` tables.
+- This method populates the database with hardcoded data by inserting rows into the `rssfeeds` and `newsarticles` tables.
 
-- `connect(self) -> bool`
+ `connect(self) -> bool`
 
-This method tries to establish a connection with the database and returns a boolean value indicating whether the connection was successful.
+- This method tries to establish a connection with the database and returns a boolean value indicating whether the connection was successful.
 
-- `getArticle(self, tag: str = "") -> json`
+ `getArticle(self, tag: str = "") -> json`
 
-This method retrieves all rows from the `newsarticles` table and returns them as a JSON object.
+- This method retrieves all rows from the `newsarticles` table and returns them as a JSON object.
 
-- `getUsers(self) -> json`
+`getUsers(self) -> json`
 
-This method retrieves all rows from the `users` table and returns them as a JSON object.
+- This method retrieves all rows from the `users` table and returns them as a JSON object.
 
-- `ParseRSSFeeds(self) -> json`
+ `ParseRSSFeeds(self) -> json`
 
-This method retrieves all rows from the `rssfeeds` table and returns them as a JSON object.
+- This method retrieves all rows from the `rssfeeds` table and returns them as a JSON object.
 
 ## Example usage
 
@@ -90,36 +90,46 @@ from ui_db import DBConnection
 ```
 
 - Create a DBConnection object
+```
 DB = DBConnection()
-
+```
 - Connect to the database
+```
 DB.connect()
-
+```
 - Redefine the database
+```
 DB.redefine()
-
+```
 - Populate the database
+```
 DB.populate()
-
-- Retrieve articles from the database
-articles = DB.getArticle()
-
-- Retrieve users from the database
-users = DB.getUsers()
-
-- Retrieve RSS feeds from the database
-rss_feeds = DB.ParseRSSFeeds()
-
+```
 - Use the scraper to insert new articles into the database
+```
 Scraper.scraper()
+```
+- Retrieve articles from the database
+```
+articles = DB.getArticle()
+```
+- Retrieve users from the database
+```
+users = DB.getUsers()
+```
+- Retrieve RSS feeds from the database
+```
+rss_feeds = DB.ParseRSSFeeds()
+```
+
 
 ### Code Documentation for init_db.py
 
 This code is written in Python and uses the psycopg2 library to connect to a PostgreSQL database. The purpose of this code is to initialize a new database and create tables for a news aggregator.
 
-## `initialize_db(cur)`
+ `initialize_db(cur)`
 
-This function takes in a cursor object `cur` as a parameter, which is used to execute SQL statements. The function creates a new schema called `newsaggregator` and three tables within it: `rssfeeds`, `newsarticles`, and `users`. It also creates a fourth table called `hasclicked` that stores information about which users have clicked on which articles.
+- This function takes in a cursor object `cur` as a parameter, which is used to execute SQL statements. The function creates a new schema called `newsaggregator` and three tables within it: `rssfeeds`, `newsarticles`, and `users`. It also creates a fourth table called `hasclicked` that stores information about which users have clicked on which articles.
 
 ### SQL statements
 
