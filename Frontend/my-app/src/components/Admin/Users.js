@@ -163,6 +163,7 @@ export default function Users() {
                     }
                 }).then(response => {
                     if (response.status === 200) {
+                        // get list of users
                         SUCCESS(`User - ${username} added successfully`)
                         refreshUsers();
                         try {
@@ -174,7 +175,7 @@ export default function Users() {
                             document.querySelector("body").setAttribute("style", "padding-right: 0px;");
                             document.querySelector(".modal-backdrop").remove();
                         } catch (err) {
-                            console.log(err);
+                            ERROR(err);
                         }
                     } else {
                         ERROR(`Failed to add user`);
@@ -247,22 +248,23 @@ export default function Users() {
                             Admin
                         </button>
                     </div>
-                    <button
-                        type="button"
-                        className="btn btn-info float-end"
-                        onClick={generateRandomAccount}
-                    >
-                        Generate Demo Account
-                    </button>
+                    {/*<button*/}
+                    {/*    type="button"*/}
+                    {/*    className="btn btn-info float-end"*/}
+                    {/*    onClick={generateRandomAccount}*/}
+                    {/*>*/}
+                    {/*    Generate Demo Account*/}
+                    {/*</button>*/}
                     <ul className="list-group">
                         {currentUsers.map((user) => (
-                            <li className="list-group-item d-flex justify-content-between align-items-center" key={user.id}>
+                            <li className="list-group-item d-flex justify-content-between align-items-center"
+                                key={user.id}>
                                 <p> {user.username} | {user.email}
-                                {user.is_admin ? (
-                                    <span className="badge bg-success ms-2">Admin</span>
-                                ) : (
-                                    <span className="badge bg-primary ms-2">User</span>
-                                )}
+                                    {user.is_admin ? (
+                                        <span className="badge bg-success ms-2">Admin</span>
+                                    ) : (
+                                        <span className="badge bg-primary ms-2">User</span>
+                                    )}
                                 </p>
                                 <div className="btn-group">
                                     <button

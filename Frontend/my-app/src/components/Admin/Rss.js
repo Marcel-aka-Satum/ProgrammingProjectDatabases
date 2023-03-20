@@ -1,11 +1,8 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {SUCCESS, ERROR, UNKNOWN_ERROR} from "../Helpers/custom_alert";
 import 'react-toastify/dist/ReactToastify.css';
-import {FaSpinner} from 'react-icons/fa';
-import axios from "axios";
-import {useEffect} from "react";
 
 export default function Rss() {
     const [feeds, setFeeds] = useState([
@@ -19,7 +16,6 @@ export default function Rss() {
     const [topic, setTopic] = useState('');
     const [publisher, setPublisher] = useState('');
 
-    const [newFeed, setNewFeed] = useState('');
     const addFeed = () => {
 
         // check if url, topic and publisher are not empty
@@ -156,7 +152,7 @@ export default function Rss() {
                             <li className="list-group-item d-flex justify-content-between align-items-center"
                                 key={feed.id}>
                                 <p>{feed.url} > <small>{feed.topic}</small>
-                                    <a href="" onClick={(e) => {
+                                    <a href="/" onClick={(e) => {
                                         e.preventDefault();
                                         setSearchTerm(feed.publisher);
                                     }}
@@ -185,7 +181,6 @@ export default function Rss() {
                                     >
                                         Delete
                                     </button>
-
                                 </div>
                                 <div className="modal fade" id={`editFeedModal-${feed.id}`} tabIndex="-1"
                                      aria-hidden="true">
