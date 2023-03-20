@@ -72,9 +72,8 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/articles', strict_slashes=False)
-@app.route('/articles/<tag>', strict_slashes=False)
-def articles(tag="Economie"):
+@app.route('/api/articles', strict_slashes=False, methods=['GET'])
+def articles():
     article_1 = {
         'title': '10 Tips for Better Time Management',
         'content': 'In today’s fast-paced world, effective time management is essential. Here are some practical tips to help you make the most of your time.',
@@ -123,31 +122,11 @@ def articles(tag="Economie"):
         'references': 'https://www.mayoclinic.org/tests-procedures/meditation/in-depth/meditation/art-20045858',
         'article_id': 4
     }
+    all_articles = [article_1, article_2, article_3, article_4]
+    return all_articles
 
 
-    if tag == 'latest':
-        ## get the latest articles
-        # articles = get_latest_articles()
-        articles = [article_1, article_2]
-    elif tag == 'popular':
-        ## get the most popular articles
-        # articles = get_popular_articles()
-        articles = [article_3, article_4]
-    elif tag == 'all':
-        # get all articles
-        # articles = get_all_articles(limit=25)
-        articles = [article_1, article_2, article_3, article_4]
-    elif tag == 'Economie':
-        # get all articles
-        # articles = get_all_articles()
-        articles = rssScraper("Hardcoded rssFeed from HLN")
-    else:
-        return redirect(url_for('articles', tag='all'))
-
-    return render_template('articles.html', articles=articles, tag=tag)
-
-
-@app.route('/article/<int:article_id>')
+@app.route('/api/article/<int:article_id>', methods=["GET"])
 def article(article_id):
     # Retrieve article from database/api
     # Do this by checking the exact article_id
