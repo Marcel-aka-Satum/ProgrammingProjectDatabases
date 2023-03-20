@@ -4,8 +4,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 # Table of Contents
 
-- ## Code Documentation for ui_db.py
-
+1. [Code Documentation for ui_db.py](#Code Documentation for ui_db.py)
     - ### Class `DBConnection`
     - `__init__(self)`
     - `__del__(self)`
@@ -17,19 +16,19 @@ This suite of Python code is designed to provide a comprehensive news aggregator
     - `getUsers(self) -> json`
     - `ParseRSSFeeds(self) -> json`
 
-- ## Code Documentation for init_db.py
+2.  [Code Documentation for init_db.py](#Code Documentation for init_db.py)
 
     - `initialize_db(cur)`
 
-- ## Code Documentation for populate_db.py
+3.  [Code Documentation for populate_db.py](#Code Documentation for populate_db.py)
 
     - `populate_db(conn, cur)`
 
-- ## Code Documentation for Scraper.py
+4.  [Code Documentation for Scraper.py](#Code Documentation for Scraper.py)
 
     - `scraper()`
 
-- ## Code Documentation for querry_db.py
+5.  [Code Documentation for querry_db.py](#Code Documentation for querry_db.py)
 
     - `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
     - `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
