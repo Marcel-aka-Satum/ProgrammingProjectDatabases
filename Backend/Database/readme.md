@@ -4,7 +4,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 # Table of Contents
 
-1. [Code Documentation for ui_db.py](#Code Documentation for ui_db.py)
+1. [Code Documentation for ui_db.py](#ui_db.py)
     - ### Class `DBConnection`
     - `__init__(self)`
     - `__del__(self)`
@@ -16,19 +16,19 @@ This suite of Python code is designed to provide a comprehensive news aggregator
     - `getUsers(self) -> json`
     - `ParseRSSFeeds(self) -> json`
 
-2.  [Code Documentation for init_db.py](#Code Documentation for init_db.py)
+2.  [Code Documentation for init_db.py](#init_db.py)
 
     - `initialize_db(cur)`
 
-3.  [Code Documentation for populate_db.py](#Code Documentation for populate_db.py)
+3.  [Code Documentation for populate_db.py](#populate_db.py)
 
     - `populate_db(conn, cur)`
 
-4.  [Code Documentation for Scraper.py](#Code Documentation for Scraper.py)
+4.  [Code Documentation for Scraper.py](#Scraper.py)
 
     - `scraper()`
 
-5.  [Code Documentation for querry_db.py](#Code Documentation for querry_db.py)
+5.  [Code Documentation for querry_db.py](#querry_db.py)
 
     - `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
     - `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
@@ -37,7 +37,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
     - `get_newsarticles() -> str`
     - `get_users() -> str`
 
-# Code Documentation for ui_db.py
+# ui_db.py
 
 This code is written in Python and uses the psycopg2 library to interact with the `newsaggregator` schema of a PostgreSQL database. The purpose of this code is to provide an interface to the database, allowing users to connect to the database, define it, populate it, and retrieve data from it.
 
@@ -122,7 +122,7 @@ rss_feeds = DB.ParseRSSFeeds()
 ```
 
 
-# Code Documentation for init_db.py
+# init_db.py
 
 This code is written in Python and uses the psycopg2 library to connect to a PostgreSQL database. The purpose of this code is to initialize a new database and create tables for a news aggregator.
 
@@ -150,7 +150,7 @@ This code is written in Python and uses the psycopg2 library to connect to a Pos
 
 The SQL statements are executed using the `execute()` method of the cursor object. Once each SQL statement is executed, a message is printed to the console to indicate which action has been taken.
 
-# Code Documentation for populate_db.py
+# populate_db.py
 
 This code is written in Python and uses the psycopg2 and pandas libraries to connect to a PostgreSQL database and read data from a CSV file. The purpose of this code is to populate the `rssfeeds` table in the `newsaggregator` schema with data from a CSV file.
 
@@ -202,7 +202,7 @@ To use this function, you must first ensure that the database has been initializ
 scraper()
 ```
 
-# Code Documentation for querry_db.py
+# querry_db.py
 
 This code is written in Python and uses the psycopg2 library to generate SQL statements that interact with the `newsaggregator` schema of a PostgreSQL database. The purpose of this code is to define functions that return SQL statements for inserting or retrieving data from the `rssfeeds`, `newsarticles`, and `users` tables in the schema.
 
