@@ -6,15 +6,15 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 1. [Code Documentation for ui_db.py](#ui_db.py)
     - ### Class `DBConnection`
-    - `__init__(self)`
-    - `__del__(self)`
-    - `is_connected(self) -> bool`
-    - `redefine(self)`
-    - `populate(self)`
-    - `connect(self) -> bool`
-    - `getArticle(self, tag: str = "") -> json`
-    - `getUsers(self) -> json`
-    - `ParseRSSFeeds(self) -> json`
+        - `__init__(self)`
+        - `__del__(self)`
+        - `is_connected(self) -> bool`
+        - `redefine(self)`
+        - `populate(self)`
+        - `connect(self) -> bool`
+        - `getArticle(self, tag: str = "") -> json`
+        - `getUsers(self) -> json`
+        - `ParseRSSFeeds(self) -> json`
 
 2.  [Code Documentation for init_db.py](#init_db.py)
 
@@ -170,7 +170,7 @@ The function uses an SQL statement called `rss_insert_query` to insert data into
 
 The SQL statement is executed using the `execute()` method of the cursor object. The function iterates through each row of the CSV file and inserts the data into the `rssfeeds` table one row at a time. After each row is inserted, the changes are committed to the database.
 
-# Code Documentation for Scraper.py
+# Scraper.py
 
 This code is written in Python and uses the feedparser library to scrape RSS feeds and the psycopg2 library to connect to a PostgreSQL database. The purpose of this code is to scrape news articles from RSS feeds and insert them into the `newsarticles` table in the `newsaggregator` schema of the database.
 
