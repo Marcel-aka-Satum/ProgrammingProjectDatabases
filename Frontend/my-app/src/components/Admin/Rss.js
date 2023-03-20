@@ -106,7 +106,6 @@ export default function Rss() {
         refreshTopics();
     }
 
-
     return (
         <div className="container">
             <div className="row">
@@ -333,7 +332,6 @@ export default function Rss() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

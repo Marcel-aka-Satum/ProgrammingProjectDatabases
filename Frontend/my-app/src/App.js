@@ -37,20 +37,11 @@ function App() {
                     <Route path="/admin/dashboard" element={<Dashboard/>}></Route>
 
                     <Route path="/admin/articles" element={<Articles/>}></Route>
-                    <Route path="/admin/articles/:id" element={<Articles/>}></Route>
+                    <Route path="/admin/articles/view/:id" element={<Articles/>}></Route>
 
                     <Route path="/admin/rss" element={<Rss/>}></Route>
-                    <Route path="/admin/rss/:id" element={<Rss/>}></Route>
-                    <Route path="/admin/rss/add" element={<Rss/>}></Route>
-                    <Route path="/admin/rss/edit/:id" element={<Rss/>}></Route>
-                    <Route path="/admin/rss/delete/:id" element={<Rss/>}></Route>
 
                     <Route path="/admin/users" element={<Users/>}></Route>
-                    <Route path="/admin/users/:id" element={<Users/>}></Route>
-                    <Route path="/admin/users/add" element={<Users/>}></Route>
-                    <Route path="/admin/users/edit/:id" element={<Users/>}></Route>
-                    <Route path="/admin/users/delete/:id" element={<Users/>}></Route>
-
                     <Route path="/admin/settings"
                            element={<Settings/>}></Route> {/* frequency of updates from news sources*/}
                 </Routes>

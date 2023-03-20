@@ -59,15 +59,15 @@ export default function Registerform() {
                             <div class="mb-3">
                                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} class="form-control" id="password" placeholder="Password"/>
                             </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" id="confirmPassword"
+                            <div className="mb-3">
+                                <input type="password" className="form-control" id="confirmPassword"
                                        placeholder="Confirm Password"/>
                             </div>
                             <div class="text-center">
                                 <button type="submit" onClick={handleRegister} class="btn btn-outline-secondary px-5 mb-5 w-100">Register</button>
                             </div>
-                            <div id="emailHelp" class="form-text text-center mb-5 text-dark">Already have an account? <a
-                                href="/login" class="text-dark fw-bold">Log in</a></div>
+                            <div id="emailHelp" className="form-text text-center mb-5 text-dark">Already have an account? <a
+                                href="/login" className="text-dark fw-bold">Log in</a></div>
                         </form>
                     </div>
                 </div>

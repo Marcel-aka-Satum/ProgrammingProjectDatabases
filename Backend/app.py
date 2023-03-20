@@ -209,10 +209,6 @@ def articles(tag="Economie"):
         # get all articles
         # articles = get_all_articles(limit=25)
         articles = [article_1, article_2, article_3, article_4]
-    elif tag == 'Economie':
-        # get all articles
-        # articles = get_all_articles()
-        articles = rssScraper("Hardcoded rssFeed from HLN")
     else:
         return redirect(url_for('articles', tag='all'))
 

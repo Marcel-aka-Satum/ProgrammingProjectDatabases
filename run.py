@@ -13,7 +13,7 @@ def start_frontend():
 def start_scraper():
     print('Starting scraping')
     # Start the scraper script by executing "python3 Scraper.py" command in "Backend/Scraper/scraper_py/" directory
-    subprocess.Popen(["python3", "Scraper.py"], cwd="Backend/Scraper/scraper_py/")
+    subprocess.Popen(["python3", "Scraper.py"], cwd="Backend/Database/")
 
     # Re-run the scraper every 600 seconds (10 minutes)
     threading.Timer(600, start_scraper).start()

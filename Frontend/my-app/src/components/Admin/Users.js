@@ -9,6 +9,7 @@ import {SUCCESS, ERROR, UNKNOWN_ERROR} from '../Helpers/custom_alert.js';
 import axios from 'axios'
 
 
+
 export default function Users() {
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -87,7 +88,6 @@ export default function Users() {
                 UNKNOWN_ERROR(`Failed to delete user`);
             });
     }
-
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };

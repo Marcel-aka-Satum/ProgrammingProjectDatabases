@@ -67,6 +67,7 @@ export default function Articles() {
             }
         ]);
         SUCCESS("Article added successfully!");
+
         setNewArticle({
             title: "",
             description: "",
@@ -86,7 +87,6 @@ export default function Articles() {
         setArticles(newArticles);
         SUCCESS("Article edited successfully!");
     }
-
 
     const handleFilterChange = (event) => {
         setFilterText(event.target.value);
@@ -116,7 +116,6 @@ export default function Articles() {
                             onChange={handleFilterChange}
                         />
                     </div>
-
                     <button
                         type="sumbit"
                         className="btn btn-primary mb-2 mt-1"

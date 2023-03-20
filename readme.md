@@ -47,9 +47,9 @@ git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
 cd ProgrammingProjectDatabases
 ```
 
-## Usage
-Soon to be added.
 
+## Usage
+* Database: Please find the extended documentation withing the README at Backend/Database/
 ## Contributing
 Soon to be added.
 
