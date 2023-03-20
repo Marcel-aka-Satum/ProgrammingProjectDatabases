@@ -4,7 +4,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 # Table of Contents
 
-## Code Documentation for ui_db.py
+- ## Code Documentation for ui_db.py
 
 - ### Class `DBConnection`
 - `__init__(self)`
@@ -17,19 +17,19 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 - `getUsers(self) -> json`
 - `ParseRSSFeeds(self) -> json`
 
-## Code Documentation for init_db.py
+- ## Code Documentation for init_db.py
 
 - `initialize_db(cur)`
 
-## Code Documentation for populate_db.py
+- ## Code Documentation for populate_db.py
 
 - `populate_db(conn, cur)`
 
-## Code Documentation for Scraper.py
+- ## Code Documentation for Scraper.py
 
 - `scraper()`
 
-## Code Documentation for querry_db.py
+- ## Code Documentation for querry_db.py
 
 - `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
 - `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
@@ -155,9 +155,9 @@ The SQL statements are executed using the `execute()` method of the cursor objec
 
 This code is written in Python and uses the psycopg2 and pandas libraries to connect to a PostgreSQL database and read data from a CSV file. The purpose of this code is to populate the `rssfeeds` table in the `newsaggregator` schema with data from a CSV file.
 
-## `populate_db(conn, cur)`
+`populate_db(conn, cur)`
 
-This function takes in a connection object `conn` and a cursor object `cur` as parameters. The `conn` object is used to commit changes to the database, while the `cur` object is used to execute SQL statements. The function reads data from a CSV file called `RSSFeeds.csv` and inserts it into the `rssfeeds` table.
+- This function takes in a connection object `conn` and a cursor object `cur` as parameters. The `conn` object is used to commit changes to the database, while the `cur` object is used to execute SQL statements. The function reads data from a CSV file called `RSSFeeds.csv` and inserts it into the `rssfeeds` table.
 
 ### Reading data from CSV file
 
@@ -175,9 +175,9 @@ The SQL statement is executed using the `execute()` method of the cursor object.
 
 This code is written in Python and uses the feedparser library to scrape RSS feeds and the psycopg2 library to connect to a PostgreSQL database. The purpose of this code is to scrape news articles from RSS feeds and insert them into the `newsarticles` table in the `newsaggregator` schema of the database.
 
-## `scraper()`
+`scraper()`
 
-This function scrapes news articles from RSS feeds and inserts them into the `newsarticles` table in the database. It does this by iterating through each RSS feed in the `rssfeeds` table of the database and using the feedparser library to scrape news articles from each feed. The function then inserts the scraped data into the `newsarticles` table.
+- This function scrapes news articles from RSS feeds and inserts them into the `newsarticles` table in the database. It does this by iterating through each RSS feed in the `rssfeeds` table of the database and using the feedparser library to scrape news articles from each feed. The function then inserts the scraped data into the `newsarticles` table.
 
 ### Initializing DB object
 
