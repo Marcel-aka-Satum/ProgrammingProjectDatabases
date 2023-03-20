@@ -40,6 +40,46 @@ function CreateHomepage () {
 
   }
 
+function CHomepage () {
+  while (Homepage.current.firstChild) Homepage.current.removeChild(Homepage.current.firstChild)
+
+  Headers.forEach(header=>{
+
+    const list = (
+      <ListGroup className="list-inline mt-3 mb-0">
+        <ListGroupItem className="list-inline-item">
+          <h1>{header}</h1>
+        </ListGroupItem>
+        <ListGroupItem className="list-inline-item">
+          <NavLink to={`/artikels/${header}`}>See More</NavLink>
+        </ListGroupItem>
+      </ListGroup>
+    );
+    Homepage.current.appendChild(list)
+
+    let articles = (
+      <div className="row p-2">
+        <div className="col-sm-4 col-md-4 col-lg-4 text-left">
+          <img className="d-block w-100" src={example1} alt="article" />
+          <NavLink to={`/artikels/${header}`}>title</NavLink>
+        </div>
+      </div>
+    );
+    Homepage.current.appendChild(articles);
+    console.log('hallo')
+  });
+
+  }
+
+
+  const Articles = [
+    {category: "Fruits", price: "$1", stocked: true, name: "Apple"},
+    {category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit"},
+    {category: "Fruits", price: "$2", stocked: false, name: "Passionfruit"},
+    {category: "Vegetables", price: "$2", stocked: true, name: "Spinach"},
+    {category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin"},
+    {category: "Vegetables", price: "$1", stocked: true, name: "Peas"}
+  ];
   return (
     <div class="container">
       <section className="slider container mb-3">
