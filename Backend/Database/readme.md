@@ -6,7 +6,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 ## Code Documentation for ui_db.py
 
-- # Class `DBConnection`
+- ### Class `DBConnection`
 - `__init__(self)`
 - `__del__(self)`
 - `is_connected(self) -> bool`
@@ -123,7 +123,7 @@ rss_feeds = DB.ParseRSSFeeds()
 ```
 
 
-### Code Documentation for init_db.py
+# Code Documentation for init_db.py
 
 This code is written in Python and uses the psycopg2 library to connect to a PostgreSQL database. The purpose of this code is to initialize a new database and create tables for a news aggregator.
 
@@ -133,19 +133,19 @@ This code is written in Python and uses the psycopg2 library to connect to a Pos
 
 ### SQL statements
 
-The SQL statements that are executed in this function are as follows:
+- The SQL statements that are executed in this function are as follows:
 
 #### `sql1`
 
-This SQL statement drops any existing schema and tables with the same names as the ones being created. It is necessary to do this to ensure that the database is properly initialized.
+- This SQL statement drops any existing schema and tables with the same names as the ones being created. It is necessary to do this to ensure that the database is properly initialized.
 
 #### `sql2`
 
-This SQL statement creates a new schema called `newsaggregator`.
+- This SQL statement creates a new schema called `newsaggregator`.
 
 #### `sql3`
 
-This SQL statement creates three tables within the `newsaggregator` schema: `rssfeeds`, `newsarticles`, and `users`. It also creates a fourth table called `hasclicked` that stores information about which users have clicked on which articles. Each table has a set of columns with specific data types and constraints.
+- This SQL statement creates three tables within the `newsaggregator` schema: `rssfeeds`, `newsarticles`, and `users`. It also creates a fourth table called `hasclicked` that stores information about which users have clicked on which articles. Each table has a set of columns with specific data types and constraints.
 
 ### Executing SQL statements
 
@@ -203,33 +203,33 @@ To use this function, you must first ensure that the database has been initializ
 scraper()
 ```
 
-## Code Documentation for querry_db.py
+# Code Documentation for querry_db.py
 
 This code is written in Python and uses the psycopg2 library to generate SQL statements that interact with the `newsaggregator` schema of a PostgreSQL database. The purpose of this code is to define functions that return SQL statements for inserting or retrieving data from the `rssfeeds`, `newsarticles`, and `users` tables in the schema.
 
-### `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
+`insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
 
-This function takes in three parameters representing the URL, publisher, and topic of an RSS feed and returns an SQL statement for inserting this information into the `rssfeeds` table.
+- This function takes in three parameters representing the URL, publisher, and topic of an RSS feed and returns an SQL statement for i nserting this information into the `rssfeeds` table.
 
-### `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
+`insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
 
-This function takes in seven parameters representing the URL, title, summary, published date, image URL, RSS URL, and topic of a news article and returns an SQL statement for inserting this information into the `newsarticles` table.
+- This function takes in seven parameters representing the URL, title, summary, published date, image URL, RSS URL, and topic of a news article and returns an SQL statement for inserting this information into the `newsarticles` table.
 
-### `insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
+`insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
 
-This function takes in four parameters representing the username, email, password, and administrative status of a user and returns an SQL statement for inserting this information into the `users` table.
+- This function takes in four parameters representing the username, email, password, and administrative status of a user and returns an SQL statement for inserting this information into the `users` table.
 
-### `get_rssfeeds() -> str`
+`get_rssfeeds() -> str`
 
-This function returns an SQL statement for retrieving all rows from the `rssfeeds` table.
+- This function returns an SQL statement for retrieving all rows from the `rssfeeds` table.
 
-### `get_newsarticles() -> str`
+`get_newsarticles() -> str`
 
-This function returns an SQL statement for retrieving all rows from the `newsarticles` table.
+- This function returns an SQL statement for retrieving all rows from the `newsarticles` table.
 
-### `get_users() -> str`
+`get_users() -> str`
 
-This function returns an SQL statement for retrieving all rows from the `users` table.
+- This function returns an SQL statement for retrieving all rows from the `users` table.
 
 ### Executing SQL statements
 
