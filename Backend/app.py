@@ -16,12 +16,10 @@ db.connect()
 # db.redefine()
 # db.populate()
 Scraper.scraper()
-import pandas as pd
-articles = pd.read_csv("Database/NewsArticles.csv")
 
-@app.route("/members")
-def members():
-    return{"members": ["member1", "member2", "member3"]}
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
+jwt = JWTManager(app)
 
 @app.route('/')
 def index():
@@ -106,23 +104,37 @@ def deleteUser(username):
     db.deleteUser(username)
     return json.loads('{"message": "user deleted successfully"}')
 
-    if tag == 'latest':
-        ## get the latest articles
-        # articles = get_latest_articles()
-        articles = [article_1, article_2]
-    elif tag == 'popular':
-        ## get the most popular articles
-        # articles = get_popular_articles()
-        articles = [article_3, article_4]
-    elif tag == 'all':
-        # get all articles
-        # articles = get_all_articles(limit=25)
-        articles = [article_1, article_2, article_3, article_4]
-    else:
-        return redirect(url_for('articles', tag='all'))
 
-    return render_template('articles.html', articles=articles, tag=tag)
+################# RSS FEED ROUTES #################
+@app.route('/api/rssfeeds', methods=['GET'])
+@cross_origin()
+def getRSSFeeds():
+    rssfeeds = db.ParseRSSFeeds()
+    print('rssfeeds:', rssfeeds)
+    return json.loads(rssfeeds)
 
+@app.route('/api/add_rssfeed', methods=['POST'])
+@cross_origin()
+def addRSSFeed():
+    data = request.get_json()
+    print('data:', data)
+    # db.addRSSFeed(data['URL'], data['Publisher'], data['Topic'])
+    return json.loads('{"message": "rssfeed added successfully"}')
+
+@app.route('/api/update_rssfeed/<url>', methods=['POST'])
+@cross_origin()
+def updateRSSFeed(url):
+    data = request.get_json()
+    print('data:', data)
+    # db.updateRSSFeed(url, data['Publisher'], data['Topic'])
+    return json.loads('{"message": "rssfeed updated successfully"}')
+
+@app.route('/api/delete_rssfeed/<url>', methods=['POST'])
+@cross_origin()
+def deleteRSSFeed(url):
+    print('url:', url)
+    # db.deleteRSSFeed(url)
+    return json.loads('{"message": "rssfeed deleted successfully"}')
 
 ################# NEWS ARTICLE ROUTES #################
 # @app.route('/api/articles', methods=['GET'])
@@ -237,6 +249,29 @@ def articles():
     all_articles = [article_1, article_2, article_3, article_4, article_5, article_6, article_7]
     return all_articles
 
+
+@app.route('/api/add_article', methods=['POST'])
+@cross_origin()
+def addArticle():
+    data = request.get_json()
+    print('data:', data)
+    # db.addArticle(data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
+    return json.loads('{"message": "article added successfully"}')
+
+@app.route('/api/update_article/<article_url>', methods=['POST'])
+@cross_origin()
+def updateArticle(article_url):
+    data = request.get_json()
+    print('data:', data)
+    # db.updateArticle(article_url, data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
+    return json.loads('{"message": "article updated successfully"}')
+
+@app.route('/api/delete_article/<article_url>', methods=['POST'])
+@cross_origin()
+def deleteArticle(article_url):
+    print('article_url:', article_url)
+    # db.deleteArticle(article_url)
+    return json.loads('{"message": "article deleted successfully"}')
 
 @app.errorhandler(404)
 @app.errorhandler(500)
