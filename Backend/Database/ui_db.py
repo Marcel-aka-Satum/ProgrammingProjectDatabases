@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 import psycopg2
 import json
-import init_db as init_db
-import populate_db as populate_db
-import querry_db as query
+from .init_db import initialize_db
+from .populate_db import populate_db
+from . import query_db
+
 
 """
     An interface of the DataBase
@@ -40,7 +41,7 @@ class DBConnection:
         if not self.is_connected():
             print("database is not connected")
             return
-        init_db.initialize_db(self.cursor)
+        initialize_db(self.cursor)
 
     """
     populates the database with hardcoded data
@@ -50,7 +51,7 @@ class DBConnection:
         if not self.is_connected():
             print("database is not connected")
             return
-        populate_db.populate_db(self.connection, self.cursor)
+        populate_db(self.connection, self.cursor)
 
     """
     try to open the connection with the database
@@ -74,11 +75,11 @@ class DBConnection:
     !!! Tag are currently not in the database, you get all the articles !!! 
     """
 
-    def getArticle(self, tag: str = "") -> json:
+    def getArticles(self, tag: str = "") -> json:
         if not self.is_connected():
             print("database is not connected")
             return
-        self.cursor.execute(query.get_newsarticles())
+        self.cursor.execute(query_db.get_newsarticles())
         data = []
         for i in self.cursor.fetchall():
             Article = {}
@@ -93,6 +94,41 @@ class DBConnection:
         return json.dumps(data)
 
     """
+    add an article to the database
+    """
+
+    def addArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.insert_newsarticle(url, title, summary, published, image, rss_url, topic))
+        return 0, "success"
+
+    """
+    delete an article from the database
+    """
+
+    def deleteArticle(self, url: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.delete_newsarticle(url))
+
+    """
+    update an article in the database
+    """
+
+    def updateArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.update_newsarticle(url, title, summary, published, image, rss_url, topic))
+
+
+    """
     get the users from the database
     """
 
@@ -101,23 +137,93 @@ class DBConnection:
             print("database is not connected")
             return
 
-        self.cursor.execute(query.get_users())
+        self.cursor.execute(query_db.get_users())
         data = []
         for i in self.cursor.fetchall():
             user = {}
-            user["Username"] = i[0]
-            user["Email"] = i[1]
-            user["Password"] = i[2]
-            user["Is_Admin"] = i[3]
+            user["UID"] = i[0]
+            user["Username"] = i[1]
+            user["Email"] = i[2]
+            user["Password"] = i[3]
+            user["Is_Admin"] = i[4]
             data.append(user)
         return json.dumps(data)
+
+    """
+    get the user from the database with a specific email, if exists return True, else False
+    """
+
+    def getUser(self, email: str) -> bool:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_user(email))
+        user_data = self.cursor.fetchone()
+        if user_data is None:
+            return False, {}
+
+        print(user_data)
+        # return True and dict with user data
+        return True, {
+            "UID": user_data[0],
+            "Username": user_data[1],
+            "Email": user_data[2],
+            "Password": user_data[3],
+            "Is_Admin": user_data[4]
+        }
+
+    """
+    Add a user to the database
+    """
+
+    def addUser(self, username: str, email: str, password: str, is_admin: bool):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        query, params = query_db.insert_user(username, email, password, is_admin)
+        # self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
+        self.cursor.execute(query, params)
+        user = self.getUser(email)
+
+        return 1, {
+            "UID": user[1]["UID"],
+            "Username": user[1]["Username"],
+            "Email": user[1]["Email"],
+            "Password": user[1]["Password"],
+            "Is_Admin": user[1]["Is_Admin"]
+        }
+
+    """
+    Update a user in the database
+    """
+
+    def updateUser(self, id:int, username: str, email: str, password: str, is_admin: bool):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+
+        self.cursor.execute(query_db.update_user(id, username, email, password, is_admin))
+
+    """
+    Delete a user from the database
+    """
+
+    def deleteUser(self, username: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.delete_user(username))
+
 
     def ParseRSSFeeds(self) -> json:
         if not self.is_connected():
             print("database is not connected")
             return
 
-        self.cursor.execute(query.get_rssfeeds())
+        self.cursor.execute(query_db.get_rssfeeds())
         data = []
         for i in self.cursor.fetchall():
             rss_info = {}
@@ -127,13 +233,34 @@ class DBConnection:
             data.append(rss_info)
         return json.dumps(data)
 
+    def addRSSFeed(self, url: str, publisher: str, topic: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.insert_rssfeed(url, publisher, topic))
+
+    def deleteRSSFeed(self, url: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.delete_rssfeed(url))
+
+    def updateRSSFeed(self, url: str, publisher: str, topic: str):
+        if not self.is_connected():
+            print("database is not connected")
+            return -1, "database is not connected"
+
+        self.cursor.execute(query_db.update_rssfeed(url, publisher, topic))
 
 
-DB = DBConnection()
-DB.connect()
-DB.redefine()
-DB.populate()
-import Scraper
-print(DB.getArticle())
-DB.ParseRSSFeeds()
-
+# give terminal command for listing all the tables in the database in a specific schema
+# \dt newsaggregator.*
+if __name__ == "__main__":
+    DB = DBConnection()
+    DB.connect()
+    DB.redefine()
+    DB.populate()
+    print(DB.getArticle())
+    DB.ParseRSSFeeds()
