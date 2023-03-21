@@ -2,12 +2,12 @@ import psycopg2
 import pandas as pd
 
 def populate_db(conn, cur):
-    RSSFeeds = pd.read_csv("RSSFeeds.csv")
-
+    RSSFeeds = pd.read_csv("Database/RSSFeeds.csv")
 
     rss_url = list(RSSFeeds['URL'])
     rss_publisher = list(RSSFeeds['Publisher'])
     rss_topic = list(RSSFeeds['Topic'])
+
 
     rss_insert_query = '''
                         INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
@@ -24,6 +24,7 @@ def populate_db(conn, cur):
         conn.commit()
 
     print("Done inserting values")
+
     # populate users
     users = [
         {'username': 'admin', 'email': 'admin@gmail.com', 'password': 'admin', 'is_admin': True},

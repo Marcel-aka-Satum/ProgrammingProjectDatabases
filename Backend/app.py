@@ -13,8 +13,8 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # bcrypt = Bcrypt(app)
 db = ui_db.DBConnection()
 db.connect()
-# db.redefine()
-# db.populate()
+db.redefine()
+db.populate()
 Scraper.scraper()
 
 # Setup the Flask-JWT-Extended extension
