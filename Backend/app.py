@@ -1,14 +1,31 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+import os, sys
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS, cross_origin
+import ui_db
 
 app = Flask(__name__)
+CORS(app, origins=['http://localhost:3000'])
+app.config['CORS_HEADERS'] = 'Content-Type'
+bcrypt = Bcrypt(app)
+db = ui_db.DBConnection()
+db.redefine()
+db.populate()
 
-@app.route("/members")
-def members():
-    return{"members": ["member1", "member2", "member3"]}
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
+jwt = JWTManager(app)
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/api/users', methods=['GET'])
+def getUsers():
+    print('users:', db.getUsers())
+    return db.getUsers()
 
 
 @app.route('/articles', strict_slashes=False)
