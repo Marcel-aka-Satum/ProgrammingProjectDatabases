@@ -34,22 +34,24 @@ The articles are presented in a simple layout, such as a list with articles stac
 One of the main challenges is that multiple news sources often publish very similar (or sometimes identical) articles. Only one version of such similar articles can be displayed, with links to the different news sources. A simple classification algorithm can be used to determine if two articles are similar enough to be grouped together by counting the number of similar words in the title. **Extra: Think about which version should be displayed.**
 
 ### Technologies
-The following technologies can be used for the project:
-* Frontend: ...
-* Backend: ...
-* Framework: ...
-* Database: ...
+The following technologies are used for the project:
+* Frontend: React
+* Backend: Flask
+* Database: Postgresql
 
 ## Installation
 To install the project, clone the repository from Github and install the required dependencies.
 ```
 git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
-cd ProgrammingProjectDatabases
+cd ProgrammingProjectDatabases/Frontend/my-app and npm install
+cd ProgrammingProjectDatabases/Backend and pip install -r requirements.txt
+cd ProgrammingProjectDatabases and run file run.py that start both frontend and backend (a website should open automatically)
 ```
 
-## Usage
-Soon to be added.
 
+## Usage
+* Database: Please find the extended documentation within the README at Backend/Database/
+* Frontend: Please find the extended documentation within the README at Frontend 
 ## Contributing
 Soon to be added.
 

@@ -9,53 +9,81 @@ import Settings from "./components/Admin/Settings";
 import Footer from './components/Footer/Footer'
 import Home from './pages/Home';
 import {Routes, Route} from 'react-router-dom'
-import React, {useState, useEffect} from 'react'
+import React, {useState, createContext, useEffect} from 'react'
+import {User} from './components/User/User'
+import {SUCCESS, ERROR, UNKNOWN_ERROR} from "./components/Helpers/custom_alert";
 
 /////////////////// import css
 import "./components/Navbar/navbarStyle.css"
 import "./components/Footer/footerStyle.css"
-
+import {ToastContainer} from "react-toastify";
 ///////////////////
 
+let userSession = createContext();
 
 function App() {
-
+    document.title = "PPDBT8"
+    let [user, setUser] = useState(new User());
     //test if Backend works
-    const [data, setData] = useState([{}])
-    useEffect(() => {
-        fetch("/members").then(
-            res => res.json()
-        ).then(
-            data => {
-                setData(data)
-                console.log(data)
-            }
-        )
-    }, []);
 
     return (
-        <div id="main-container">
-            <Navbar/>
-            <Routes>
-                <Route path="/" element={<Home/>}></Route>
-                {['/login', '/admin'].map(path => <Route path={path} element={<Loginform/>} />)}
-                <Route path="/register" element={<Registerform/>}></Route>
+        <userSession.Provider value={{user, setUser}}>
+            <div id="main-container">
+                <Navbar/>
+                <Routes>
+                    <Route path="/" element={<Home/>}></Route>
+                    {/*{['/login', '/admin'].map(path => <Route path={path} element={<Loginform/>}/>)}*/}
+                    <Route path="/login" element={<Loginform/>}></Route>
+                    <Route path="/admin" element={<Loginform/>}></Route>
 
-                <Route path="/admin/dashboard" element={<Dashboard/>}></Route>
+                    <Route path="/register" element={<Registerform/>}></Route>
 
-                <Route path="/admin/articles" element={<Articles/>}></Route>
-                <Route path="/admin/articles/view/:id" element={<Articles/>}></Route>
+                    {/*{*/}
+                    {/*    user.isLogged && user.isAdmin && user.token !== false ? (*/}
+                    {/*            <>*/}
+                    {/*                <Route path="/admin/dashboard" element={<Dashboard/>}*/}
+                    {/*                       isLoggedIn={user.isLogged}/>*/}
+                    {/*                <Route path="/admin/articles" element={<Articles/>} isLoggedIn={user.isLogged}/>*/}
+                    {/*                <Route path="/admin/rss" element={<Rss/>} isLoggedIn={user.isLogged}/>*/}
+                    {/*                <Route path="/admin/users" element={<Users/>} isLoggedIn={user.isLogged}/>*/}
+                    {/*                <Route*/}
+                    {/*                    path="/admin/settings"*/}
+                    {/*                    element={<Settings/>}*/}
+                    {/*                    isLoggedIn={user.isLogged}*/}
+                    {/*                />*/}
+                    {/*            </>*/}
+                    {/*        ) :*/}
+                    {/*        <Route path="*" element={<Loginform/>}> </Route>*/}
+                    {/*}*/}
 
-                <Route path="/admin/rss" element={<Rss/>}></Route>
+                    <Route path="/admin/dashboard" element={<Dashboard/>}/>
+                    <Route path="/admin/articles" element={<Articles/>}/>
+                    <Route path="/admin/rss" element={<Rss/>}/>
+                    <Route path="/admin/users" element={<Users/>}/>
+                    <Route path="/admin/settings" element={<Settings/>}/>
 
-                <Route path="/admin/users" element={<Users/>}></Route>
 
-                <Route path="/admin/settings" element={<Settings/>}></Route> {/* frequency of updates from news sources*/}
+                    <Route path="/" element={<Home/>}></Route>
+                    <Route path="/productivity" element={<Home/>}></Route>
+                    <Route path="/wellness" element={<Home/>}></Route>
+                    <Route path="/health" element={<Home/>}></Route>
+                    <Route path="/mindfulness" element={<Home/>}></Route>
+                    <Route path="/joy" element={<Home/>}></Route>
 
-            </Routes>
-            <Footer/>
-        </div>
+                    <Route path="/economics" element={<Home/>}></Route>
+                    <Route path="/culture" element={<Home/>}></Route>
+                    <Route path="/sport" element={<Home/>}></Route>
+                    <Route path="/politics" element={<Home/>}></Route>
+                    <Route path="/inland" element={<Home/>}></Route>
+                    <Route path="/international" element={<Home/>}></Route>
+                    <Route path="/science" element={<Home/>}></Route>
+                </Routes>
+                <Footer/>
+            </div>
+            <ToastContainer limit={3}/>
+        </userSession.Provider>
     );
 }
 
 export default App;
+export {userSession};
