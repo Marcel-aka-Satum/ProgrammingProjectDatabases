@@ -20,7 +20,7 @@ def initialize_db(cur):
                 URL varchar PRIMARY KEY, 
                 Publisher varchar, 
                 Topic varchar);
-    
+
             CREATE TABLE newsaggregator.newsarticles (
                 URL varchar PRIMARY KEY, 
                 Title varchar, 
@@ -29,18 +29,19 @@ def initialize_db(cur):
                 Image_URL varchar,
                 RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE,
                 Topic varchar);
-            
+
             CREATE TABLE newsaggregator.users (
-                Username varchar PRIMARY KEY, 
-                Email varchar,
+                UID serial PRIMARY KEY,
+                Username varchar UNIQUE, 
+                Email varchar UNIQUE,
                 Password varchar, 
                 Is_Admin boolean);
-    
+
             CREATE TABLE newsaggregator.hasclicked (
-                _User varchar REFERENCES newsaggregator.users(Username),
+                _User int REFERENCES newsaggregator.users(UID),
                 Article varchar REFERENCES newsaggregator.newsarticles(URL),
                 PRIMARY KEY(_User, Article));
-    
+
             '''
 
     # Executing SQL statements

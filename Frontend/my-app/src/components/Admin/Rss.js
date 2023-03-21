@@ -1,6 +1,8 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import {SUCCESS, ERROR, UNKNOWN_ERROR} from "../Helpers/custom_alert";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Rss() {
     const [feeds, setFeeds] = useState([
@@ -61,82 +63,281 @@ export default function Rss() {
         setSearchTerm(event.target.value);
     };
 
-    const handleDeleteFeed = (index) => {
-        setFeeds(feeds.filter((_, i) => i !== index));
-    };
-
-    const handleEditFeed = (index, feed) => {
-        const newFeed = prompt('Edit Feed', feed);
-        if (newFeed) {
-            const updatedFeeds = feeds.map((feed, i) => (i === index ? newFeed : feed));
-            setFeeds(updatedFeeds);
+    const [filter, setFilter] = useState('all');
+    const filteredFeeds = feeds.filter((feed) => {
+        // filter by topic and url and publisher
+        if (filter === 'all') {
+            return feed.url.toLowerCase().includes(searchTerm.toLowerCase()) || feed.topic.toLowerCase().includes(searchTerm.toLowerCase()) || feed.publisher.toLowerCase().includes(searchTerm.toLowerCase());
         }
+        return feed.topic === filter && (feed.url.toLowerCase().includes(searchTerm.toLowerCase()) || feed.topic.toLowerCase().includes(searchTerm.toLowerCase()) || feed.publisher.toLowerCase().includes(searchTerm.toLowerCase()));
+    });
+
+    const getTopics = () => {
+        let topics = [];
+        feeds.forEach((feed) => {
+            if (!topics.includes(feed.topic)) {
+                topics.push(feed.topic);
+            }
+        });
+        return topics;
+    }
+    useEffect(() => {
+        setTopics(getTopics());
+    }, [feeds, getTopics]);
+    const refreshTopics = () => {
+        setTopics(getTopics());
     }
 
-    const handleRefreshFeed = (index, feed) => {
-        console.log("Refresh Feed: " + feed);
+    // get topics of localhost:444/api/getTopics
+    const [topics, setTopics] = useState(getTopics());
+
+    const DeleteFeed = (id) => {
+        console.log(id);
+        setFeeds(feeds.filter((feed) => feed.id !== id));
+        SUCCESS('Feed deleted successfully!');
+        refreshTopics();
     }
+    const EditFeed = (id, _url, _topic, _publisher) => {
+        console.log('edit feed', _url, _topic, _publisher);
+        setFeeds(feeds.map((feed) => feed.id === id ? {
+            ...feed,
+            url: _url,
+            topic: _topic,
+            publisher: _publisher
+        } : feed));
+        SUCCESS('Feed edited successfully!');
+        refreshTopics();
+    }
+
 
     return (
         <div className="container">
             <div className="row">
                 <div className="col-md-8 offset-2">
-                    <h2 className="text-center text-dark mt-5">RSS Feeds</h2>
-                    <form onSubmit={handleAddFeed}>
-                        <div className="form-group">
-                            <label htmlFor="newFeed">Add New Feed</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="newFeed"
-                                value={newFeed}
-                                onChange={(event) => setNewFeed(event.target.value)}
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-primary">
-                            Add Feed
+                    <h2 className="text-center text-dark mt-5">RSS Management System</h2>
+                    <div className="mb-3 col-md-4 d-flex justify-content-between">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search Feed"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                        <button
+                            type="button"
+                            className={`btn w-25 ms-1 btn-outline-danger ${searchTerm === '' ? 'd-none' : ''}`}
+                            onClick={() => setSearchTerm('')}
+                        >
+                            X
                         </button>
-                    </form>
-                    <table className="table mt-5">
-                        <thead>
-                        <tr>
-                            <th>Feed URL</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {feeds.map((feed, index) => (
-                            <tr key={index}>
-                                <td>{feed}</td>
-                                <td>
+                    </div>
+                    <div className="btn-group mb-3">
+                        <button
+                            type="button"
+                            className={`btn ${filter === "all" ? "btn-primary" : "btn-outline-primary"}`}
+                            onClick={() => setFilter('all')}
+                        >
+                            All
+                        </button>
+                        {topics.map((topic, index) => (
+                            <button
+                                type="button"
+                                className={`btn ${filter === topic ? "btn-primary" : "btn-outline-primary"}`}
+                                key={index}
+                                onClick={() => setFilter(topic)}
+                            >
+                                {topic}
+                            </button>
+                        ))}
+                    </div>
+                    <ul className="list-group">
+                        {filteredFeeds.map((feed) => (
+                            <li className="list-group-item d-flex justify-content-between align-items-center"
+                                key={feed.id}>
+                                <p>{feed.url} > <small>{feed.topic}</small>
+                                    <a href="/" onClick={(e) => {
+                                        e.preventDefault();
+                                        setSearchTerm(feed.publisher);
+                                    }}
+                                       data-toggle="tooltip"
+                                       data-html="true" title="Publisher">
+                                        <span className="badge bg-dark ms-2">
+                                        {feed.publisher}
+                                        </span>
+                                    </a>
+                                </p>
+
+                                <div className="btn-group">
                                     <button
                                         type="button"
                                         className="btn btn-primary"
-                                        onClick={() => handleEditFeed(index, feed)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target={`#editFeedModal-${feed.id}`}
                                     >
                                         Edit
                                     </button>
                                     <button
                                         type="button"
                                         className="btn btn-danger"
-                                        onClick={() => handleDeleteFeed(index)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target={`#deleteUserModal-${feed.id}`}
                                     >
                                         Delete
                                     </button>
+                                </div>
+                                <div className="modal fade" id={`editFeedModal-${feed.id}`} tabIndex="-1"
+                                     aria-hidden="true">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title">Edit Feed</h5>
+                                                <button type="button" className="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <form>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="url" className="form-label">URL</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            id={`url-${feed.id}`}
+                                                            defaultValue={feed.url}
+                                                            disabled={true}
+                                                        />
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="topic" className="form-label">Topic</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            id={`topic-${feed.id}`}
+                                                            defaultValue={feed.topic}
+                                                        />
+                                                    </div>
 
-                                    <button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={() => handleRefreshFeed(index, feed)}
-                                    >
-                                        Refresh
-                                    </button>
-                                </td>
-                            </tr>
+                                                    <div className="mb-3">
+                                                        <label htmlFor="publisher"
+                                                               className="form-label">Publisher</label>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            id={`publisher-${feed.id}`}
+                                                            defaultValue={feed.publisher}
+                                                        />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary"
+                                                        data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" className="btn btn-primary"
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => {
+                                                            EditFeed(feed.id,
+                                                                document.getElementById(`url-${feed.id}`).value,
+                                                                document.getElementById(`topic-${feed.id}`).value,
+                                                                document.getElementById(`publisher-${feed.id}`).value);
+                                                        }}>Apply Changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="modal fade" id={`deleteUserModal-${feed.id}`} tabIndex="-1"
+                                     aria-hidden="true">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title">Delete Feed</h5>
+                                                <button type="button" className="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <p>Are you sure you want to delete Feed {feed.url}?</p>
+                                                {/* also mention the topic of the feed in a badge*/}
+                                                Topic: <p className="badge bg-dark">{feed.topic}</p>
+                                                <br/>
+                                                <small className="text-muted">This action cannot be
+                                                    undone.</small>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary"
+                                                        data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" className="btn btn-danger"
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => {
+                                                            DeleteFeed(feed.id);
+                                                        }}>Delete Feed
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
                         ))}
-                        </tbody>
-                    </table>
+                    </ul>
+
+                    <div className="mt-3">
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addFeedModal"
+                        >
+                            Add Feed
+                        </button>
+                        <div className="modal fade" id="addFeedModal" tabIndex="-1">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Add Feed</h5>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <form>
+                                            <div className="mb-3">
+                                                <label htmlFor="username" className="form-label">URL</label>
+                                                <input type="text" className="form-control" id="username"
+                                                       value={url}
+                                                       onChange={(e) => setUrl(e.target.value)}/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="topic" className="form-label">Topic</label>
+                                                <input type="text" className="form-control" id="topic" value={topic}
+                                                       onChange={(e) => setTopic(e.target.value)}/>
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="publisher" className="form-label">Publisher</label>
+                                                <input type="text" className="form-control" id="publisher"
+                                                       value={publisher}
+                                                       onChange={(e) => setPublisher(e.target.value)}/>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="button" className="btn btn-primary" onClick={addFeed}>Add Feed
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     );
