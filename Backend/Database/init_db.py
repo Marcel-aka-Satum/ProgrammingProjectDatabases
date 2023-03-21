@@ -31,13 +31,14 @@ def initialize_db(cur):
                 Topic varchar);
             
             CREATE TABLE newsaggregator.users (
-                Username varchar PRIMARY KEY, 
-                Email varchar,
+                UID serial PRIMARY KEY,
+                Username varchar UNIQUE, 
+                Email varchar UNIQUE,
                 Password varchar, 
                 Is_Admin boolean);
     
             CREATE TABLE newsaggregator.hasclicked (
-                _User varchar REFERENCES newsaggregator.users(Username),
+                _User int REFERENCES newsaggregator.users(UID),
                 Article varchar REFERENCES newsaggregator.newsarticles(URL),
                 PRIMARY KEY(_User, Article));
     

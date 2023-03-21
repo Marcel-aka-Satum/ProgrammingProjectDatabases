@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import feedparser
-from ui_db import DBConnection 
+from Backend.Database.ui_db import DBConnection
 import json
 
 
@@ -15,11 +15,10 @@ def scraper():
 
     rss_info = DB.ParseRSSFeeds()
     rss_info = json.loads(rss_info)
-    
+
     for rss in rss_info:
         rss_url = rss['URL']
         topic = rss['Topic']
-        print(topic)
         feed = feedparser.parse(rss_url)
 
         for idx in range(len(feed)):
@@ -34,17 +33,12 @@ def scraper():
                 if lnk['type'] in ['image/jpeg']:
                     image = lnk['href']
 
-            rss_insert_query = '''
-                        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s);
-                        '''
             try:
-                DB.cursor.execute(rss_insert_query,
-                                        (link, title, summary, published, image, rss_url, topic)
-                                    )
-                DB.connection.commit()
+                DB.addRSSFeed(rss_url, topic, link, title, summary, published, image)
             except:
-                print("Most likely a duplicate")
-        print('The news articles corresponding to rss feed '+str(rss_url)+ ' have been inserted.')
+                # print("Most likely a duplicate")
+                continue
+
+        # print('The news articles corresponding to rss feed '+str(rss_url)+ ' have been inserted.')
 
 scraper()
