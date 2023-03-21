@@ -1,11 +1,11 @@
 import React from 'react'
 import {useState, useEffect} from 'react';
-import {SUCCESS, ERROR, UNKNOWN_ERROR} from "../Helpers/custom_alert";
 import "./admin.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export default function Articles() {
     const [articles, setArticles] = useState([]);
+    const [showForm, setShowForm] = useState(false);
     const [newArticle, setNewArticle] = useState({
         title: "",
         description: "",
@@ -30,44 +30,36 @@ export default function Articles() {
                     "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 image: "https://unsplash.com/photos/4MwMccZDuWs/download?force=true"
             },
-            {
-                id: 666,
-                title: "Duis Aute Irure",
-                description:
-                    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
-                    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
-                    "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                image: "https://images.unsplash.com/photo-1679215805560-3c8236d86862?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80"
-
-            }
         ];
         setArticles(dummyArticles);
     }, []);
 
-
-    const addArticle = () => {
-        if (!newArticle.title || !newArticle.description || !newArticle.image) {
-            ERROR("Please fill out all fields!");
-            return;
-        }
-        setArticles((prevState) => [
+    const handleFormChange = (event) => {
+        setNewArticle((prevState) => ({
             ...prevState,
-            {
-                id: Math.floor(Math.random() * 1000),
-                title: newArticle.title,
-                description: newArticle.description,
-                image: newArticle.image
+            [event.target.name]: event.target.value,
+        }));
+    };
 
-            }
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+        const newId = articles.length + 1;
+        setArticles([
+            ...articles,
+            {...newArticle, id: newId},
         ]);
-        SUCCESS("Article added successfully!");
+        setShowForm(false);
         setNewArticle({
             title: "",
             description: "",
             image: ""
         });
-    }
+    };
 
+    const handleEdit = (id) => {
+        // This is just a placeholder function for editing articles
+        console.log(`Editing article with id ${id}`);
+    };
 
     const handleFilterChange = (event) => {
         setFilterText(event.target.value);
@@ -79,87 +71,105 @@ export default function Articles() {
             article.description.toLowerCase().includes(filterText.toLowerCase())
     );
 
-
     return (
         <div className="container">
             <div className="row">
                 <div className="col-md-12">
-                    <h2 className="text-center text-dark mt-5">Article Management System</h2>
-                    <div className="form-group w-25">
+                    <h2 className="text-center text-dark mt-5">Articles</h2>
+                    <div className="form-group">
                         <label htmlFor="filter">Filter by Title or Description</label>
                         <input
                             type="text"
                             className="form-control"
                             id="filter"
                             name="filter"
-                            placeholder="Search"
+                            placeholder="Enter text to filter"
                             value={filterText}
                             onChange={handleFilterChange}
                         />
                     </div>
-
                     <button
-                        type="sumbit"
-                        className="btn btn-primary mb-2 mt-1"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addArticleModal"
+                        className="btn btn-primary mb-2"
+                        onClick={() => setShowForm(true)}
                     >
-                        Add Article
+                        Add New Article
                     </button>
-                    <div className="modal fade" id="addArticleModal" tabIndex="-1">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Add New Article</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div className="modal-body">
-                                    <form>
-                                        <div className="mb-3">
-                                            <label htmlFor="title" className="form-label">Title</label>
-                                            <input type="text" className="form-control" id="title"
-                                                   value={newArticle.title}
-                                                   onChange={(e) => setNewArticle({
-                                                       ...newArticle,
-                                                       title: e.target.value
-                                                   })}/>
+                    {showForm ? (
+                        <div className="modal show" tabIndex="-1" onClick={() => setShowForm(false)}>
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">Add New Article</h5>
+                                        <button
+                                            type="button"
+                                            className="close"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                            onClick={() => setShowForm(false)}
+                                        >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form onSubmit={handleFormSubmit}>
+                                        <div className="modal-body">
+                                            <div className="form-group">
+                                                <label htmlFor="title">Title</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    id="title"
+                                                    name="title"
+                                                    placeholder="Enter title"
+                                                    value={newArticle.title}
+                                                    onChange={handleFormChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label htmlFor="description">Description</label>
+                                                <textarea
+                                                    className="form-control"
+                                                    id="description"
+                                                    name="description"
+                                                    rows="3"
+                                                    placeholder="Enter description"
+                                                    value={newArticle.description}
+                                                    onChange={handleFormChange}
+                                                    required
+                                                ></textarea>
+                                            </div>
+                                            <div className="form-group">
+                                                <label htmlFor="image">Image URL</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    id="image"
+                                                    name="image"
+                                                    placeholder="Enter image URL"
+                                                    value={newArticle.image}
+                                                    onChange={handleFormChange}
+                                                />
+                                            </div>
                                         </div>
-
-                                        <div className="mb-3">
-                                            <label htmlFor="description" className="form-label">Description</label>
-                                            <textarea className="form-control" id="description" rows="3"
-                                                      value={newArticle.description}
-                                                      onChange={(e) => setNewArticle({
-                                                          ...newArticle,
-                                                          description: e.target.value
-                                                      })}/>
-                                        </div>
-
-                                        <div className="mb-3">
-                                            <label htmlFor="image" className="form-label">Image</label>
-                                            <input type="text" className="form-control" id="image"
-                                                   value={newArticle.image}
-                                                   onChange={(e) => setNewArticle({
-                                                       ...newArticle,
-                                                       image: e.target.value
-                                                   })}/>
+                                        <div className="modal-footer">
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                data-dismiss="modal"
+                                                onClick={() => setShowForm(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button type="submit" className="btn btn-primary">
+                                                Save
+                                            </button>
                                         </div>
                                     </form>
                                 </div>
-
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                        Close
-                                    </button>
-                                    <button type="button" id="addnewarticle" data-bs-dismiss="modal"
-                                            className="btn btn-primary"
-                                            onClick={addArticle}>Add Article
-                                    </button>
-                                </div>
                             </div>
                         </div>
-                    </div>
+                    ) : null}
+
                     <div className="row">
                         {filteredArticles.map((article) => (
                             <div className="col-md-4 mb-4" key={article.id}>
@@ -168,52 +178,26 @@ export default function Articles() {
                                         src={article.image}
                                         className="card-img-top"
                                         alt="Article"
-                                        style={{
-                                            height: "300px",
-                                            objectFit: "cover",
-                                            objectPosition: "center center"
-                                        }}
+                                        style={{height: "300px", objectFit: "cover", objectPosition: "center center"}}
                                     />
                                     <div className="card-body">
                                         <h5 className="card-title">{article.title}</h5>
-                                        <p className="card-text" style={{
-                                            maxHeight: '100px',
-                                            minHeight: '100px',
-                                            overflow: 'hidden'
-                                        }}>{article.description}</p>
-                                        <div className="btn-group float-end" role="group">
+                                        <p className="card-text">{article.description}</p>
+                                        <div className="btn-group" role="group">
                                             <button
                                                 type="button"
                                                 className="btn btn-success"
-                                                data-bs-toggle="modal"
-                                                data-bs-target={`#readArticleModal-${article.id}`}
+                                                onClick={() => console.log(`Viewing article with id ${article.id}`)}
                                             >
                                                 Read More
                                             </button>
-                                        </div>
-                                        <div className="modal fade" id={`readArticleModal-${article.id}`}
-                                             tabIndex="-1"
-                                             aria-hidden="true">
-                                            <div className="modal-dialog">
-                                                <div className="modal-content">
-                                                    <div className="modal-header">
-                                                        <h5 className="modal-title">Article</h5>
-                                                        <button type="button" className="btn-close"
-                                                                data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    <div className="modal-body">
-                                                        <h5>{article.title}</h5>
-                                                        <p>{article.description}</p>
-                                                    </div>
-                                                    <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary"
-                                                                data-bs-dismiss="modal">
-                                                            Close
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={() => handleEdit(article.id)}
+                                            >
+                                                Edit
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
