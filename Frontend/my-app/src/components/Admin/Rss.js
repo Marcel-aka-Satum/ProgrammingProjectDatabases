@@ -7,17 +7,30 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Rss() {
     const [feeds, setFeeds] = useState([
         {'id': 1, 'url': 'https://www.w3schools.com/xml/simple.xml', 'topic': 'Economics', 'publisher': 'W3Schools'},
-        {'id': 2, 'url': 'https://www.w3schools.com/xml/note.xml', 'topic': 'Politics', 'publisher': 'Merkel'},
-        {'id': 3, 'url': 'https://www.w3schools.com/xml/cd_catalog.xml', 'topic': 'Sports', 'publisher': 'Trump'},
-        {'id': 4, 'url': 'https://www.w3schools.com/xml/books.xml', 'topic': 'Economics', 'publisher': 'Biden'},
-        {'id': 5, 'url': 'https://www.w3schools.com/xml/cd_catalog.xml', 'topic': 'Foreign', 'publisher': 'Putin'},
+        {'id': 2, 'url': 'https://www.w3schools.com/xml/note.xml', 'topic': 'Politics', 'publisher': 'Bob'},
+        {'id': 3, 'url': 'https://www.w3schools.com/xml/cd_catalog.xml', 'topic': 'Sports', 'publisher': 'Jan'},
+        {'id': 4, 'url': 'https://www.w3schools.com/xml/books.xml', 'topic': 'Economics', 'publisher': 'John'},
+        {'id': 5, 'url': 'https://www.w3schools.com/xml/cd_catalog.xml', 'topic': 'Foreign', 'publisher': 'Jane'},
     ]);
+    // const [feeds, setFeeds] = useState([]);
     const [url, setUrl] = useState('');
     const [topic, setTopic] = useState('');
     const [publisher, setPublisher] = useState('');
 
-    const addFeed = () => {
+    // useEffect(() => {
+    //     fetch('http://localhost:4444/api/rssfeeds')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log(data);
+    //             setFeeds(data);
+    //         })
+    //         .catch((error) => {
+    //             ERROR( error);
+    //         });
+    // }, []);
+    console.log(feeds);
 
+    const addFeed = () => {
         // check if url, topic and publisher are not empty
         if (url === '' || topic === '' || publisher === '') {
             ERROR('Please fill all fields!');

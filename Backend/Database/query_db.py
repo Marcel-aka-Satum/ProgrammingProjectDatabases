@@ -5,20 +5,22 @@ import psycopg2
 def insert_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
     return f"""
             INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
-            VALUES ('{URL}', '{Publisher}', '{Topic}');
+            VALUES (%s, %s, %s);
             """
 
 def insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str:
     return f"""
             INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, Topic)
-            VALUES ('{URL}', '{Title}', '{Summary}', '{Published}', '{Image_URL}', '{RSS_URL}', '{Topic}');
+            VALUES (%s, %s, %s, %s, %s, %s);
             """
 
-def insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
-    return f"""
+def insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> tuple[str, tuple]:
+    query = f"""
             INSERT INTO newsaggregator.users (Username, Email, Password, Is_Admin)
-            VALUES ('{Username}', '{Email}', '{Password}', '{Is_Admin}');
+            VALUES (%s, %s, %s, %s);
             """
+    params = (Username, Email, Password, Is_Admin)
+    return query, params
 
 
 #################### DELETERS ####################
@@ -33,10 +35,10 @@ def delete_newsarticle(URL: str) -> str:
             DELETE FROM newsaggregator.newsarticles
             WHERE URL = '{URL}';
             """
-def delete_user(Username: str) -> str:
+def delete_user(Uid: str) -> str:
     return f"""
             DELETE FROM newsaggregator.users
-            WHERE Username = '{Username}';
+            WHERE UID = '{Uid}';
             """
 
 
@@ -72,3 +74,9 @@ def get_newsarticles() -> str:
 
 def get_users() -> str:
     return "SELECT * FROM newsaggregator.users"
+
+def get_user(email: str) -> str:
+    return f"""
+            SELECT * FROM newsaggregator.users
+            WHERE Email = '{email}';
+            """

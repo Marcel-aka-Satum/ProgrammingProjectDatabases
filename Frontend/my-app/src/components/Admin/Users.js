@@ -102,13 +102,13 @@ export default function Users() {
     const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
     const handlePromoteUser = (_id) => {
-        const userToPromote = users.find((user) => user.ID === _id);
+        const userToPromote = users.find((user) => user.UID === _id);
         const updatedUser = {...userToPromote, Is_Admin: !userToPromote.Is_Admin};
 
         const type = updatedUser.Is_Admin ? 'promote' : 'demote';
-        applyUserChanges(updatedUser.ID, updatedUser.Username, updatedUser.Email, updatedUser.Password, updatedUser.Is_Admin, type);
+        applyUserChanges(updatedUser.UID, updatedUser.Username, updatedUser.Email, updatedUser.Password, updatedUser.Is_Admin, type);
 
-        const updatedUsers = users.map((user) => (user.ID === _id ? updatedUser : user));
+        const updatedUsers = users.map((user) => (user.UID === _id ? updatedUser : user));
         setUsers(updatedUsers);
     };
     const getValuePermission = (admin_bool) => {
@@ -141,9 +141,9 @@ export default function Users() {
         try {
             if (username && email && password) {
                 await axios.post('http://localhost:4444/api/add_user', {
-                    email: email,
-                    password: password,
-                    username: username,
+                    Email: email,
+                    Password: password,
+                    Username: username,
                     Is_Admin: document.querySelector("#Is_Admin").value === 'True',
                     headers: {
                         'Content-Type': 'application/json'
@@ -225,8 +225,8 @@ export default function Users() {
                     <ul className="list-group">
                         {currentUsers.map((user) => (
                             <li className="list-group-item d-flex justify-content-between align-items-center"
-                                key={user.ID}>
-                                <p><span className="badge bg-dark me-2">{user.ID}</span> {user.Username} | {user.Email}
+                                key={user.UID}>
+                                <p><span className="badge bg-dark me-2">{user.UID}</span> {user.Username} | {user.Email}
                                     {user.Is_Admin ? (
                                         <span className="badge bg-success ms-2">Admin</span>
                                     ) : (
@@ -238,7 +238,7 @@ export default function Users() {
                                         type="button"
                                         className="btn btn-primary"
                                         data-bs-toggle="modal"
-                                        data-bs-target={`#editUserModal-${user.ID}`}
+                                        data-bs-target={`#editUserModal-${user.UID}`}
                                     >
                                         Edit
                                     </button>
@@ -246,7 +246,7 @@ export default function Users() {
                                         type="button"
                                         className="btn btn-danger"
                                         data-bs-toggle="modal"
-                                        data-bs-target={`#deleteUserModal-${user.ID}`}
+                                        data-bs-target={`#deleteUserModal-${user.UID}`}
                                     >
                                         Delete
                                     </button>
@@ -254,14 +254,14 @@ export default function Users() {
                                         type="button"
                                         className={`btn ${user.Is_Admin ? "btn-warning" : "btn-success"}`}
                                         onClick={() => {
-                                            handlePromoteUser(user.ID)
+                                            handlePromoteUser(user.UID)
                                         }}
                                     >
                                         {user.Is_Admin ? "Demote" : "Promote"}
                                     </button>
                                 </div>
 
-                                <div className="modal fade" id={`editUserModal-${user.ID}`} tabIndex="-1">
+                                <div className="modal fade" id={`editUserModal-${user.UID}`} tabIndex="-1">
                                     <div className="modal-dialog">
                                         <div className="modal-content">
                                             <div className="modal-header">
@@ -276,21 +276,21 @@ export default function Users() {
                                                         <label htmlFor="username"
                                                                className="form-label">Username</label>
                                                         <input type="text" className="form-control"
-                                                               id={`username-${user.ID}`}
+                                                               id={`username-${user.UID}`}
                                                                defaultValue={user.Username}/>
                                                     </div>
                                                     <div className="mb-3">
                                                         <label htmlFor="email"
                                                                className="form-label">Email</label>
                                                         <input type="email" className="form-control"
-                                                               id={`email-${user.ID}`}
+                                                               id={`email-${user.UID}`}
                                                                defaultValue={user.Email}/>
                                                     </div>
                                                     <div className="mb-3">
                                                         <label htmlFor="Is_Admin"
                                                                className="form-label">Admin</label>
 
-                                                        <select className="form-select" id={`Is_Admin-${user.ID}`}
+                                                        <select className="form-select" id={`Is_Admin-${user.UID}`}
                                                                 defaultValue={getValuePermission(user.Is_Admin)}>
                                                             <option value="True">True</option>
                                                             <option value="False">False</option>
@@ -307,11 +307,11 @@ export default function Users() {
                                                         data-bs-dismiss="modal"
                                                         onClick={() => {
                                                             applyUserChanges(
-                                                                user.ID,
-                                                                document.querySelector(`#username-${user.Username}`).value,
-                                                                document.querySelector(`#email-${user.Username}`).value,
+                                                                user.UID,
+                                                                document.querySelector(`#username-${user.UID}`).value,
+                                                                document.querySelector(`#email-${user.UID}`).value,
                                                                 user.Password,
-                                                                document.querySelector(`#Is_Admin-${user.Username}`).value === 'True',
+                                                                document.querySelector(`#Is_Admin-${user.UID}`).value === 'True',
                                                                 'edit')
                                                         }}>Apply Changes
                                                 </button>
@@ -319,7 +319,7 @@ export default function Users() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal fade" id={`deleteUserModal-${user.ID}`} tabIndex="-1"
+                                <div className="modal fade" id={`deleteUserModal-${user.UID}`} tabIndex="-1"
                                      aria-hidden="true">
                                     <div className="modal-dialog">
                                         <div className="modal-content">
@@ -342,7 +342,7 @@ export default function Users() {
                                                 <button type="button" className="btn btn-danger"
                                                         data-bs-dismiss="modal"
                                                         onClick={() => {
-                                                            applyDeleteUser(user.ID);
+                                                            applyDeleteUser(user.UID);
                                                         }}>Delete User
                                                 </button>
                                             </div>

@@ -141,13 +141,36 @@ class DBConnection:
         data = []
         for i in self.cursor.fetchall():
             user = {}
-            user["ID"] = i[0]
+            user["UID"] = i[0]
             user["Username"] = i[1]
             user["Email"] = i[2]
             user["Password"] = i[3]
             user["Is_Admin"] = i[4]
             data.append(user)
         return json.dumps(data)
+
+    """
+    get the user from the database with a specific email, if exists return True, else False
+    """
+
+    def getUser(self, email: str) -> bool:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_user(email))
+        user_data = self.cursor.fetchone()
+        if user_data is None:
+            return False, {}
+
+        print(user_data)
+        # return True and dict with user data
+        return True, {
+            "UID": user_data[0],
+            "Username": user_data[1],
+            "Email": user_data[2],
+            "Password": user_data[3],
+            "Is_Admin": user_data[4]
+        }
 
     """
     Add a user to the database
@@ -158,7 +181,18 @@ class DBConnection:
             print("database is not connected")
             return -1, "database is not connected"
 
-        self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
+        query, params = query_db.insert_user(username, email, password, is_admin)
+        # self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
+        self.cursor.execute(query, params)
+        user = self.getUser(email)
+
+        return 1, {
+            "UID": user[1]["UID"],
+            "Username": user[1]["Username"],
+            "Email": user[1]["Email"],
+            "Password": user[1]["Password"],
+            "Is_Admin": user[1]["Is_Admin"]
+        }
 
     """
     Update a user in the database

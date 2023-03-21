@@ -45,3 +45,5 @@ def populate_db(conn, cur):
                      user['password'],
                      user['is_admin']))
         conn.commit()
+
+    print("Done inserting values")

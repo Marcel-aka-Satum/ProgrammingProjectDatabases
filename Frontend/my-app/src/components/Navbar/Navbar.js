@@ -31,16 +31,16 @@ const Navbar = () => {
                         <div className="dropdown-menu dropdown-menu-left custom-bg"
                              aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4">
-                                <li><NavLink to="/articles">All</NavLink></li>
-                                <li><NavLink to={`/articles?p=latest`}>Latest</NavLink></li>
-                                <li><NavLink to={`/articles?p=economics`}>Economics</NavLink></li>
-                                <li><NavLink to={`/articles?p=culture`}>Culture</NavLink></li>
-                                <li><NavLink to={`/articles?p=sport`}>Sport</NavLink></li>
-                                <li><NavLink to={`/articles?p=politics`}>Politics</NavLink></li>
-                                <li><NavLink to={`/articles?p=inland`}>Inland</NavLink></li>
-                                <li><NavLink to={`/articles?p=international`}>International</NavLink></li>
-                                <li><NavLink to={`/articles?p=science`}>Science</NavLink></li>
-                                <li><NavLink to="/articles"></NavLink></li>
+                                <li><NavLink to={`/economics`}>Economics</NavLink></li>
+                                <li><NavLink to={`/culture`}>Culture</NavLink></li>
+                                <li><NavLink to={`/sport`}>Sport</NavLink></li>
+                                <li><NavLink to={`/politics`}>Politics</NavLink></li>
+                                <li><NavLink to={`/inland`}>Inland</NavLink></li>
+                                <li><NavLink to={`/international`}>International</NavLink></li>
+                                <li><NavLink to={`/science`}>Science</NavLink></li>
+                                <li><NavLink to={`/wellness`}>wellness</NavLink></li>
+                                <li><NavLink to={`/health`}>health</NavLink></li>
+                                <li><NavLink to={`/joy`}>joy</NavLink></li>
                             </ul>
                         </div>
                     </li>
