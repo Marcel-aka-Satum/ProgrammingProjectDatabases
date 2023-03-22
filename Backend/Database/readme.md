@@ -16,7 +16,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 # ui_db.py
 
-This code is written in Python and uses the psycopg2 library to interact with the `newsaggregator` schema of a PostgreSQL database. The purpose of this code is to provide an interface to the database, allowing users to connect to the database, define it, populate it, and retrieve data from it.
+The DBConnection class is an interface for interacting with a PostgreSQL database that contains a newsaggregator schema. It provides methods for establishing a connection to the database, redefining the schema, populating the tables with hardcoded data, retrieving articles and RSS feeds, and performing CRUD operations on users, articles, and RSS feeds. The class also returns the data in JSON format. The class can be imported and instantiated, and its methods can be called to perform operations on the database.
 
 ## Class `DBConnection`
 
@@ -44,17 +44,57 @@ This code is written in Python and uses the psycopg2 library to interact with th
 
 - This method tries to establish a connection with the database and returns a boolean value indicating whether the connection was successful.
 
- `getArticle(self, tag: str = "") -> json`
+ `getArticles(self, tag: str = "") -> json`
 
 - This method retrieves all rows from the `newsarticles` table and returns them as a JSON object.
 
-`getUsers(self) -> json`
+ `addArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str)`
+
+- This method adds an article to the database.
+
+ `deleteArticle(self, url: str)`
+
+- This method deletes an article from the database.
+
+ `updateArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str)`
+
+- This method updates an article in the database.
+
+ `getUsers(self) -> json`
 
 - This method retrieves all rows from the `users` table and returns them as a JSON object.
+
+ `getUser(self, email: str) -> bool`
+
+- This method retrieves a user from the database with a specific email and returns a boolean value indicating whether the user exists. If the user exists, it also returns a dictionary with the user's data.
+
+ `addUser(self, username: str, email: str, password: str, is_admin: bool)`
+
+- This method adds a user to the database.
+
+ `updateUser(self, id:int, username: str, email: str, password: str, is_admin: bool)`
+
+- This method updates a user in the database.
+
+ `deleteUser(self, username: str)`
+
+- This method deletes a user from the database.
 
  `ParseRSSFeeds(self) -> json`
 
 - This method retrieves all rows from the `rssfeeds` table and returns them as a JSON object.
+
+ `addRSSFeed(self, url: str, publisher: str, topic: str)`
+
+- This method adds an RSS feed to the database.
+
+ `deleteRSSFeed(self, url: str)`
+
+- This method deletes an RSS feed from the database.
+
+ `updateRSSFeed(self, url: str, publisher: str, topic: str)`
+
+- This method updates an RSS feed in the database.
 
 ## Example usage
 
