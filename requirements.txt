@@ -7,3 +7,6 @@ flask-cors
 redis
 flask-session
 flask-migrate
+psycopg2
+feedparser
+pandas
