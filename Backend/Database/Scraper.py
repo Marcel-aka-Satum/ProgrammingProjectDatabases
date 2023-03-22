@@ -11,6 +11,8 @@ def scraper():
     DB = DBConnection()
     # Establish connection
     DB.connect()
+    if not DB.is_connected():
+        print("Scraper cannot connect to database")
 
     rss_info = DB.ParseRSSFeeds()
     rss_info = json.loads(rss_info)
