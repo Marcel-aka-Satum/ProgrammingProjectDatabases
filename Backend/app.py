@@ -60,7 +60,6 @@ def login_user():
     if user_exists[0] in [None, False]:
         return jsonify({"error": "Unauthorized > user does not exist."}), 401
 
-    print('comparing passwords: ', password, user_exists[1]['Password'])
 
     if password != user_exists[1]['Password']:
         return jsonify({"error": "Unauthorized > password is incorrect"}), 401
@@ -97,10 +96,10 @@ def updateUser(id):
     db.updateUser(id, data['Username'], data['Email'], data['Password'], data['Is_Admin'])
     return json.loads('{"message": "user updated successfully"}')
 
-@app.route('/api/delete_user/<username>', methods=['POST'])
+@app.route('/api/delete_user/<id>', methods=['POST'])
 @cross_origin()
-def deleteUser(username):
-    db.deleteUser(username)
+def deleteUser(id):
+    db.deleteUser(id)
     return json.loads('{"message": "user deleted successfully"}')
 
 
@@ -109,14 +108,12 @@ def deleteUser(username):
 @cross_origin()
 def getRSSFeeds():
     rssfeeds = db.ParseRSSFeeds()
-    print('rssfeeds:', rssfeeds)
     return json.loads(rssfeeds)
 
 @app.route('/api/add_rssfeed', methods=['POST'])
 @cross_origin()
 def addRSSFeed():
     data = request.get_json()
-    print('data:', data)
     # db.addRSSFeed(data['URL'], data['Publisher'], data['Topic'])
     return json.loads('{"message": "rssfeed added successfully"}')
 
@@ -124,14 +121,12 @@ def addRSSFeed():
 @cross_origin()
 def updateRSSFeed(url):
     data = request.get_json()
-    print('data:', data)
     # db.updateRSSFeed(url, data['Publisher'], data['Topic'])
     return json.loads('{"message": "rssfeed updated successfully"}')
 
 @app.route('/api/delete_rssfeed/<url>', methods=['POST'])
 @cross_origin()
 def deleteRSSFeed(url):
-    print('url:', url)
     # db.deleteRSSFeed(url)
     return json.loads('{"message": "rssfeed deleted successfully"}')
 
@@ -253,7 +248,6 @@ def articles():
 @cross_origin()
 def addArticle():
     data = request.get_json()
-    print('data:', data)
     # db.addArticle(data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
     return json.loads('{"message": "article added successfully"}')
 
@@ -261,14 +255,12 @@ def addArticle():
 @cross_origin()
 def updateArticle(article_url):
     data = request.get_json()
-    print('data:', data)
     # db.updateArticle(article_url, data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
     return json.loads('{"message": "article updated successfully"}')
 
 @app.route('/api/delete_article/<article_url>', methods=['POST'])
 @cross_origin()
 def deleteArticle(article_url):
-    print('article_url:', article_url)
     # db.deleteArticle(article_url)
     return json.loads('{"message": "article deleted successfully"}')
 
