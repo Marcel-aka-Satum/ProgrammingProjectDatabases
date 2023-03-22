@@ -19,6 +19,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 The DBConnection class is an interface for interacting with a PostgreSQL database that contains a newsaggregator schema. It provides methods for establishing a connection to the database, redefining the schema, populating the tables with hardcoded data, retrieving articles and RSS feeds, and performing CRUD operations on users, articles, and RSS feeds. The class also returns the data in JSON format. The class can be imported and instantiated, and its methods can be called to perform operations on the database.
 
 ## Class `DBConnection`
+### Connection methods
 
  `__init__(self)`
 
@@ -32,6 +33,12 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
 
 - This method checks if the connection to the database exists and returns a boolean value accordingly.
 
+ `connect(self) -> bool`
+
+- This method tries to establish a connection with the database and returns a boolean value indicating whether the connection was successful.
+
+### Database Operations
+
  `redefine(self)`
 
 - This method recreates the database by dropping and re-creating the schema and tables.
@@ -40,9 +47,7 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
 
 - This method populates the database with hardcoded data by inserting rows into the `rssfeeds` and `newsarticles` tables.
 
- `connect(self) -> bool`
-
-- This method tries to establish a connection with the database and returns a boolean value indicating whether the connection was successful.
+### Articles
 
  `getArticles(self, tag: str = "") -> json`
 
@@ -59,6 +64,8 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
  `updateArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str)`
 
 - This method updates an article in the database.
+
+### Users
 
  `getUsers(self) -> json`
 
@@ -80,6 +87,8 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
 
 - This method deletes a user from the database.
 
+### RSS Feeds
+
  `ParseRSSFeeds(self) -> json`
 
 - This method retrieves all rows from the `rssfeeds` table and returns them as a JSON object.
@@ -95,6 +104,7 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
  `updateRSSFeed(self, url: str, publisher: str, topic: str)`
 
 - This method updates an RSS feed in the database.
+
 
 ## Example usage
 
