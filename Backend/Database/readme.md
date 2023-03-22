@@ -5,33 +5,14 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 # Table of Contents
 
 1. [Code Documentation for ui_db.py](#ui_dbpy)
-    - ### Class `DBConnection`
-        - `__init__(self)`
-        - `__del__(self)`
-        - `is_connected(self) -> bool`
-        - `redefine(self)`
-        - `populate(self)`
-        - `connect(self) -> bool`
-        - `getArticle(self, tag: str = "") -> json`
-        - `getUsers(self) -> json`
-        - `ParseRSSFeeds(self) -> json`
 
 2. [Code Documentation for init_db.py](#init_dbpy)
-    - `initialize_db(cur)`
 
 3. [Code Documentation for populate_db.py](#populate_dbpy)
-    - `populate_db(conn, cur)`
 
 4. [Code Documentation for Scraper.py](#Scraperpy)
-    - `scraper()`
 
 5. [Code Documentation for querry_db.py](#querry_dbpy)
-    - `insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
-    - `insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
-    - `insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
-    - `get_rssfeeds() -> str`
-    - `get_newsarticles() -> str`
-    - `get_users() -> str`
 
 # ui_db.py
 
@@ -198,21 +179,45 @@ To use this function, you must first ensure that the database has been initializ
 scraper()
 ```
 
-# querry_db.py
+# query_db.py
 
-This code is written in Python and uses the psycopg2 library to generate SQL statements that interact with the `newsaggregator` schema of a PostgreSQL database. The purpose of this code is to define functions that return SQL statements for inserting or retrieving data from the `rssfeeds`, `newsarticles`, and `users` tables in the schema.
+This code is written in Python and uses the psycopg2 library to generate SQL statements that interact with the `newsaggregator` schema of a PostgreSQL database. The purpose of this code is to define functions that return SQL statements for inserting, updating, deleting or retrieving data from the `rssfeeds`, `newsarticles`, and `users` tables in the schema.
 
-`insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> str`
+`insert_rssfeed(URL: str, Publisher: str, Topic: str) -> str`
 
-- This function takes in three parameters representing the URL, publisher, and topic of an RSS feed and returns an SQL statement for i nserting this information into the `rssfeeds` table.
+- This function takes in three parameters representing the URL, publisher, and topic of an RSS feed and returns an SQL statement for inserting this information into the `rssfeeds` table.
 
-`insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
+`insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
 
 - This function takes in seven parameters representing the URL, title, summary, published date, image URL, RSS URL, and topic of a news article and returns an SQL statement for inserting this information into the `newsarticles` table.
 
-`insert_users(Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
+`insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> tuple()`
 
-- This function takes in four parameters representing the username, email, password, and administrative status of a user and returns an SQL statement for inserting this information into the `users` table.
+- This function takes in four parameters representing the username, email, password, and administrative status of a user and returns a tuple with the SQL statement for inserting this information into the `users` table and the parameters for the query.
+
+`delete_rssfeed(URL: str) -> str`
+
+- This function takes in the URL of an RSS feed and returns an SQL statement for deleting the corresponding row from the `rssfeeds` table.
+
+`delete_newsarticle(URL: str) -> str`
+
+- This function takes in the URL of a news article and returns an SQL statement for deleting the corresponding row from the `newsarticles` table.
+
+`delete_user(Uid: str) -> str`
+
+- This function takes in the UID of a user and returns an SQL statement for deleting the corresponding row from the `users` table.
+
+`update_rssfeed(URL: str, Publisher: str, Topic: str) -> str`
+
+- This function takes in three parameters representing the URL, publisher, and topic of an RSS feed and returns an SQL statement for updating this information in the corresponding row of the `rssfeeds` table.
+
+`update_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str`
+
+- This function takes in seven parameters representing the URL, title, summary, published date, image URL, RSS URL, and topic of a news article and returns an SQL statement for updating this information in the corresponding row of the `newsarticles` table.
+
+`update_user(ID: int, Username: str, Email: str, Password: str, Is_Admin: bool) -> str`
+
+- This function takes in five parameters representing the UID, username, email, password, and administrative status of a user and returns an SQL statement for updating this information in the corresponding row of the `users` table.
 
 `get_rssfeeds() -> str`
 
@@ -225,6 +230,10 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 `get_users() -> str`
 
 - This function returns an SQL statement for retrieving all rows from the `users` table.
+
+`get_user(email: str) -> str`
+
+- This function takes in an email address and returns an SQL statement for retrieving the corresponding row from the `users` table.
 
 ### Executing SQL statements
 
