@@ -43,8 +43,10 @@ The following technologies are used for the project:
 To install the project, clone the repository from Github and install the required dependencies.
 ```
 git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
-cd ProgrammingProjectDatabases/Frontend/my-app and npm install
-cd ProgrammingProjectDatabases/Backend and pip install -r requirements.txt
+cd ProgrammingProjectDatabases/Frontend/my-app
+npm install
+cd ProgrammingProjectDatabases/Backend 
+pip install -r requirements.txt
 cd ProgrammingProjectDatabases and run file run.py that start both frontend and backend (a website should open automatically)
 ```
 
