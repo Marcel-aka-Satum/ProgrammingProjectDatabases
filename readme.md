@@ -45,10 +45,9 @@ To install the project, clone the repository from Github and install the require
 git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
 cd ProgrammingProjectDatabases/Frontend/my-app
 npm install
-cd ProgrammingProjectDatabases/Backend 
+cd ProgrammingProjectDatabases
 pip install -r requirements.txt
-cd ProgrammingProjectDatabases and run file run.py that start both frontend and backend (a website should open automatically)
-```
+python run.py 
 
 
 ## Usage
