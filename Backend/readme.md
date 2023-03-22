@@ -1,133 +1,85 @@
-# API Documentation
+# UI Backend Documentation
 
-This is a professional documentation for the provided code, which includes authentication, user management, RSS feed management, and news article management routes.
+This code implements the backend for a User Interface (UI) that allows users to register and login, view, add, update and delete users, RSS feeds, and news articles. The API supports JSON requests and responses.
 
-## Table of Contents
+## Functions
 
-- [Imported Libraries](#imported-libraries)
-- [Application Initialization](#application-initialization)
-- [Database and Scraper Initialization](#database-and-scraper-initialization)
-- [Routes](#routes)
-  - [Homepage](#homepage)
-  - [Authentication Routes](#authentication-routes)
-  - [User Routes](#user-routes)
-  - [RSS Feed Routes](#rss-feed-routes)
-  - [News Article Routes](#news-article-routes)
+### `index()`
 
-## Imported Libraries
+Routing: `@app.route('/')`
 
-- Flask: A micro web framework for Python.
-- render_template, request, redirect, url_for, jsonify: Functions from Flask for rendering templates, handling requests, redirecting, URL manipulation, and JSON manipulation.
-- os, sys, json: Python standard libraries for working with the operating system, system-specific parameters, and JSON.
-- bcrypt: A library for working with passwords using the bcrypt hashing algorithm.
-- Flask-JWT-Extended: A library for handling JSON Web Tokens in Flask.
-- Flask-CORS: A library for handling Cross Origin Resource Sharing in Flask.
-- Database, Scraper: Custom modules for database management and web scraping.
+Renders the `index.html` template for the homepage.
 
-## Application Initialization
+### `register_user()`
 
-The Flask application is initialized with the following settings:
+Routing: `@app.route("/api/register", methods=["POST"])`
 
-- CORS is enabled, allowing requests from `http://localhost:3000`.
-- The application is configured with CORS headers for handling `Content-Type`.
+Endpoint to register a new user. Accepts a POST request with JSON data containing `Email`, `Password`, `Is_Admin`, and `Username`. The `Email` and `Username` must not be in use by another user. If successful, a new user is created, and a JWT access token is returned.
 
-## Database and Scraper Initialization
+### `login_user()`
 
-The database connection and scraper are initialized with the following steps:
+Routing: `@app.route("/api/login", methods=["POST"])`
 
-- A connection to the database is established.
-- The database tables are redefined.
-- The database is populated with initial data.
-- The scraper is run.
+Endpoint to login an existing user. Accepts a POST request with JSON data containing `Email` and `Password`. If successful, a JWT access token is returned.
 
-## Routes
+### `getUsers()`
 
-### Homepage
+Routing: `@app.route('/api/users', methods=['GET'])`
 
-**Route:** `/`
+Endpoint to retrieve a list of all users.
 
-**Method:** `GET`
+### `addUser()`
 
-**Description:** Renders the index.html template.
+Routing: `@app.route('/api/add_user', methods=['POST'])`
 
-### Authentication Routes
+Endpoint to add a new user. Accepts a POST request with JSON data containing `Email`, `Password`, `Is_Admin`, and `Username`.
 
-#### Register User
+### `updateUser(id)`
 
-**Route:** `/api/register`
+Routing: `@app.route('/api/update_user/<id>', methods=['POST'])`
 
-**Method:** `POST`
+Endpoint to update an existing user. Accepts a POST request with JSON data containing `Email`, `Password`, `Is_Admin`, and `Username`.
 
-**Description:** Registers a new user with the provided email, password, username, and admin status. If the user already exists, returns an error.
+### `deleteUser(username)`
 
-#### Login User
+Routing: `@app.route('/api/delete_user/<username>', methods=['POST'])`
 
-**Route:** `/api/login`
+Endpoint to delete an existing user.
 
-**Method:** `POST`
+### `getRSSFeeds()`
 
-**Description:** Authenticates a user with the provided email and password. If the user does not exist or the password is incorrect, returns an error.
+Routing: `@app.route('/api/rssfeeds', methods=['GET'])`
 
-### User Routes
+Endpoint to retrieve a list of all RSS feeds.
 
-#### Get Users
+### `addRSSFeed()`
 
-**Route:** `/api/users`
+Routing: `@app.route('/api/add_rssfeed', methods=['POST'])`
 
-**Method:** `GET`
+Endpoint to add a new RSS feed. Accepts a POST request with JSON data containing `URL`, `Publisher`, and `Topic`.
 
-**Description:** Returns a list of all users in the database.
+### `updateRSSFeed(url)`
 
-#### Add User
+Routing: `@app.route('/api/update_rssfeed/<url>', methods=['POST'])`
 
-**Route:** `/api/add_user`
+Endpoint to update an existing RSS feed. Accepts a POST request with JSON data containing `Publisher` and `Topic`.
 
-**Method:** `POST`
+### `deleteRSSFeed(url)`
 
-**Description:** Adds a new user with the provided email, password, username, and admin status.
+Routing: `@app.route('/api/delete_rssfeed/<url>', methods=['POST'])`
 
-#### Update User
+Endpoint to delete an existing RSS feed.
 
-**Route:** `/api/update_user/<id>`
+### `articles()`
 
-**Method:** `POST`
+Routing: `@app.route('/api/articles', strict_slashes=False, methods=['GET'])`
 
-**Description:** Updates an existing user with the provided email, password, username, and admin status.
+Endpoint to retrieve a list of all news articles.
 
-#### Delete User
+### `addArticle()`
 
-**Route:** `/api/delete_user/<username>`
+Routing: `@app.route('/api/add_article', methods=['POST'])`
 
-**Method:** `POST`
+Endpoint to add a new news article.
 
-**Description:** Deletes a user with the given username.
 
-### RSS Feed Routes
-
-#### Get RSS Feeds
-
-**Route:** `/api/rssfeeds`
-
-**Method:** `GET`
-
-**Description:** Returns a list of all RSS feeds in the database.
-
-#### Add RSS Feed
-
-**Route:** `/api/add_rssfeed`
-
-**Method:** `POST`
-
-**Description:** Adds a new RSS feed with the provided URL, publisher, and topic.
-
-#### Update RSS Feed
-
-**Route:** `/api/update_rssfeed/<url>`
-
-**Method:** `POST`
-
-**Description:** Updates an existing RSS feed with the provided publisher and topic.
-
-#### Delete RSS Feed
-
-**Route:** `/api/delete_rss
