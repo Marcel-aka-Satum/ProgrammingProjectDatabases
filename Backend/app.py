@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os, sys, json
-# from flask_bcrypt import Bcrypt
 import bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import JWTManager
@@ -10,11 +9,11 @@ from Database import ui_db, Scraper
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
 app.config['CORS_HEADERS'] = 'Content-Type'
-# bcrypt = Bcrypt(app)
 db = ui_db.DBConnection()
 db.connect()
 db.redefine()
 db.populate()
+
 Scraper.scraper()
 
 # Setup the Flask-JWT-Extended extension
