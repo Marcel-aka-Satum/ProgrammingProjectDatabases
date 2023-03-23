@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 import psycopg2
 import json
-from .init_db import initialize_db
-from .populate_db import populate_db
-from . import query_db
+from . import init_db, populate_db, query_db
+
 
 
 """
@@ -41,7 +40,7 @@ class DBConnection:
         if not self.is_connected():
             print("database is not connected")
             return
-        initialize_db(self.cursor)
+        init_db.initialize_db(self.cursor)
 
     """
     populates the database with hardcoded data
@@ -51,7 +50,7 @@ class DBConnection:
         if not self.is_connected():
             print("database is not connected")
             return
-        populate_db(self.connection, self.cursor)
+        populate_db.populate_db(self.connection, self.cursor)
 
     """
     try to open the connection with the database

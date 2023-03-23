@@ -4,17 +4,16 @@ import bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
-from Database import ui_db, Scraper
+from Database.ui_db import DBConnection
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
 app.config['CORS_HEADERS'] = 'Content-Type'
-db = ui_db.DBConnection()
+db = DBConnection()
 db.connect()
 db.redefine()
 db.populate()
 
-Scraper.scraper()
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')

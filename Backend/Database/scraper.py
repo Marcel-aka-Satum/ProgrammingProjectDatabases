@@ -1,14 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import feedparser
-from Backend.Database.ui_db import DBConnection
+from . import ui_db
 import json
 
 
 def scraper():
     # Initialize DB object
-    DB = DBConnection()
+    DB = ui_db.DBConnection()
     # Establish connection
     DB.connect()
     if not DB.is_connected():
@@ -42,5 +39,5 @@ def scraper():
 
         # print('The news articles corresponding to rss feed '+str(rss_url)+ ' have been inserted.')
 
-
-scraper()
+if __name__ == '__main__':
+    scraper()
