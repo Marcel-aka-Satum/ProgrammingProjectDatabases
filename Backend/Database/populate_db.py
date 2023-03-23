@@ -8,7 +8,6 @@ def populate_db(conn, cur):
     rss_publisher = list(RSSFeeds['Publisher'])
     rss_topic = list(RSSFeeds['Topic'])
 
-
     rss_insert_query = '''
                         INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
                         VALUES (%s, %s, %s);

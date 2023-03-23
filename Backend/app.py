@@ -113,20 +113,21 @@ def getRSSFeeds():
 @cross_origin()
 def addRSSFeed():
     data = request.get_json()
-    # db.addRSSFeed(data['URL'], data['Publisher'], data['Topic'])
+    db.addRSSFeed(data['URL'], data['Publisher'], data['Topic'])
     return json.loads('{"message": "rssfeed added successfully"}')
 
-@app.route('/api/update_rssfeed/<url>', methods=['POST'])
+@app.route('/api/update_rssfeed/', methods=['POST'])
 @cross_origin()
-def updateRSSFeed(url):
+def updateRSSFeed():
     data = request.get_json()
-    # db.updateRSSFeed(url, data['Publisher'], data['Topic'])
+    db.updateRSSFeed(data['URL'], data['Publisher'], data['Topic'])
     return json.loads('{"message": "rssfeed updated successfully"}')
 
-@app.route('/api/delete_rssfeed/<url>', methods=['POST'])
+@app.route('/api/delete_rssfeed/', methods=['POST'])
 @cross_origin()
-def deleteRSSFeed(url):
-    # db.deleteRSSFeed(url)
+def deleteRSSFeed():
+    data = request.get_json()
+    db.deleteRSSFeed(data['URL'])
     return json.loads('{"message": "rssfeed deleted successfully"}')
 
 ################# NEWS ARTICLE ROUTES #################

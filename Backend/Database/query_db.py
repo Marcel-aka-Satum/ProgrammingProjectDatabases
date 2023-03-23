@@ -2,11 +2,13 @@ import psycopg2
 
 
 #################### INSERTERS ####################
-def insert_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
-    return f"""
+def insert_rssfeed(URL: str, Publisher: str, Topic: str) -> tuple():
+    query = f"""
             INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
             VALUES (%s, %s, %s);
             """
+    params = (URL, Publisher, Topic)
+    return query, params
 
 def insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str:
     return f"""

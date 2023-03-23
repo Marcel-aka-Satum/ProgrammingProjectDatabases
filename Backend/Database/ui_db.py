@@ -181,7 +181,6 @@ class DBConnection:
             return -1, "database is not connected"
 
         query, params = query_db.insert_user(username, email, password, is_admin)
-        # self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
         self.cursor.execute(query, params)
         user = self.getUser(email)
 
@@ -237,7 +236,8 @@ class DBConnection:
             print("database is not connected")
             return -1, "database is not connected"
 
-        self.cursor.execute(query_db.insert_rssfeed(url, publisher, topic))
+        query, params = query_db.insert_rssfeed(url, publisher, topic)
+        self.cursor.execute(query, params)
 
     def deleteRSSFeed(self, url: str):
         if not self.is_connected():
