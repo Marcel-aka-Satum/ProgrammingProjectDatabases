@@ -14,7 +14,7 @@ export default function Users() {
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(async () =>{
+    useEffect(async () => {
         await fetch('http://127.0.0.1:4444/api/users')
             .then(response => response.json())
             .then(data => setUsers(data))
@@ -28,9 +28,9 @@ export default function Users() {
             .catch(error => console.error(error));
     }
 
-    const applyUserChanges = (_id, new_username, new_email, new_password, new_is_admin, type) => {
+    const applyUserChanges = async (_id, new_username, new_email, new_password, new_is_admin, type) => {
         // console.log('BEFORE applyUserChanges',_id, new_username, new_email, new_password, new_is_admin, type);
-        fetch(`http://127.0.0.1:4444/api/update_user/${_id}`, {
+        const response = await fetch(`http://127.0.0.1:4444/api/update_user/${_id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -42,45 +42,74 @@ export default function Users() {
                 Is_Admin: new_is_admin
             })
         })
-            .then(response => {
-                if (response.status === 200) {
-                    if (type === 'promote' || type === 'demote') {
-                        const action = type === 'promote' ? 'promoted' : 'demoted';
-                        SUCCESS(`User - ${_id} ${action} successfully`)
-                    } else {
-                        SUCCESS(`User - ${_id} updated successfully`);
-                    }
-                    refreshUsers();
-                } else {
-                    ERROR(`Failed to update user - ${_id}`);
-                }
-            })
-            .catch(() => {
-                UNKNOWN_ERROR(`Failed to update user`);
-            });
-        // console.log('AFTER applyUserChanges',_id, new_username, new_email, new_password, new_is_admin, type);
+        const data = await response.json();
+        if (data.status === 200) {
+            if (type === 'promote' || type === 'demote') {
+                const action = type === 'promote' ? 'Promoted' : 'Demoted';
+                SUCCESS(`User - ${_id} ${action} Successfully`)
+            } else {
+                SUCCESS(data.message);
+            }
+            refreshUsers();
+        } else {
+            ERROR(data.message);
+        }
     };
-
-
-    const applyDeleteUser = (_id) => {
-        fetch(`http://127.0.0.1:4444/api/delete_user/${_id}`, {
+    const applyDeleteUser = async (_id) => {
+        const reponse = await fetch(`http://127.0.0.1:4444/api/delete_user/${_id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => {
-                    if (response.status === 200) {
-                        SUCCESS(`User - ${_id} deleted successfully`);
-                        refreshUsers();
-                    } else {
-                        ERROR(`Failed to delete user - ${_id}`);
+        const data = await reponse.json();
+        if (data.status === 200) {
+            SUCCESS(data.message);
+            refreshUsers();
+        } else {
+            ERROR(data.message);
+        }
+    }
+    const addUser = async (e) => {
+        e.preventDefault();
+        try {
+            if (username && email && password) {
+                const response = await fetch('http://localhost:4444/api/add_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Email: email,
+                        Password: password,
+                        Username: username,
+                        Is_Admin: document.querySelector("#Is_Admin").value === 'True',
+
+                    })
+
+                })
+                const data = await response.json();
+                if (data.status === 200) {
+                    SUCCESS(data.message)
+                    refreshUsers();
+                    try {
+                        document.querySelector("#addUserModal").style.display = "none";
+                        document.querySelector("#addUserModal").classList.remove("show");
+                        document.querySelector("#addUserModal").setAttribute("aria-hidden", "true");
+                        document.querySelector("#addUserModal").setAttribute("style", "display: none;");
+                        document.querySelector("body").classList.remove("modal-open");
+                        document.querySelector("body").setAttribute("style", "padding-right: 0px;");
+                        document.querySelector(".modal-backdrop").remove();
+                    } catch (err) {
+                        ERROR(err);
                     }
+                } else {
+                    ERROR(data.message);
                 }
-            )
-            .catch(() =>
-                ERROR(`Failed to delete user`)
-            );
+            }
+        } catch (err) {
+            UNKNOWN_ERROR(err);
+        }
     }
 
     const handleSearchChange = (event) => {
@@ -132,51 +161,10 @@ export default function Users() {
         }
         return items;
     };
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("new");
+    const [email, setEmail] = useState("new@gmail.com");
+    const [password, setPassword] = useState("new");
 
-    const addUser = async (e) => {
-        e.preventDefault();
-        try {
-            if (username && email && password) {
-                await axios.post('http://localhost:4444/api/add_user', {
-                    Email: email,
-                    Password: password,
-                    Username: username,
-                    Is_Admin: document.querySelector("#Is_Admin").value === 'True',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => {
-                    if (response.status === 200) {
-                        // get list of users
-                        SUCCESS(`User - ${username} added successfully`)
-                        refreshUsers();
-                        try {
-                            document.querySelector("#addUserModal").style.display = "none";
-                            document.querySelector("#addUserModal").classList.remove("show");
-                            document.querySelector("#addUserModal").setAttribute("aria-hidden", "true");
-                            document.querySelector("#addUserModal").setAttribute("style", "display: none;");
-                            document.querySelector("body").classList.remove("modal-open");
-                            document.querySelector("body").setAttribute("style", "padding-right: 0px;");
-                            document.querySelector(".modal-backdrop").remove();
-                        } catch (err) {
-                            ERROR(err);
-                        }
-                    } else {
-                        ERROR(`Failed to add user`);
-                    }
-                })
-            } else {
-                ERROR(`Please fill all fields`);
-            }
-        } catch (err) {
-            UNKNOWN_ERROR(`Failed to add user`);
-        }
-    }
-
-    console.log('users', users);
 
     return (
         <div className="container">
@@ -226,7 +214,8 @@ export default function Users() {
                         {currentUsers.map((user) => (
                             <li className="list-group-item d-flex justify-content-between align-items-center"
                                 key={user.UID}>
-                                <p><span className="badge bg-dark me-2">{user.UID}</span> {user.Username} | {user.Email}
+                                <p><span
+                                    className="badge bg-dark me-2">{user.UID}</span> {user.Username} | {user.Email}
                                     {user.Is_Admin ? (
                                         <span className="badge bg-success ms-2">Admin</span>
                                     ) : (
@@ -374,7 +363,8 @@ export default function Users() {
                                     <form>
                                         <div className="mb-3">
                                             <label htmlFor="username" className="form-label">Username</label>
-                                            <input type="text" className="form-control" id="username" value={username}
+                                            <input type="text" className="form-control" id="username"
+                                                   value={username}
                                                    onChange={(e) => setUsername(e.target.value)}/>
                                         </div>
                                         <div className="mb-3">

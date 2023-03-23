@@ -161,7 +161,6 @@ class DBConnection:
         if user_data is None:
             return False, {}
 
-        print(user_data)
         # return True and dict with user data
         return True, {
             "UID": user_data[0],

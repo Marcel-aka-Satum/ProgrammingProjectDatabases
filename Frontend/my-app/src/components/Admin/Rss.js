@@ -6,16 +6,16 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Rss() {
     const [feeds, setFeeds] = useState([]);
+    const [topics, setTopics] = useState([]);
+
     let [url, setUrl] = useState('');
     let [topic, setTopic] = useState('');
     let [publisher, setPublisher] = useState('');
-
 
     const fetchFeeds = () => {
         fetch('http://localhost:4444/api/rssfeeds')
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 setFeeds(data);
             })
             .catch((error) => {
@@ -23,9 +23,35 @@ export default function Rss() {
             });
     }
     useEffect(() => {
-            fetchFeeds();
+        fetchFeeds();
+    }, []);
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+    const [filter, setFilter] = useState('all');
+    const filteredFeeds = feeds.filter((feed) => {
+        // filter by topic and url and publisher
+        if (filter === 'all') {
+            return feed.URL.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Topic.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Publisher.toLowerCase().includes(searchTerm.toLowerCase());
         }
-        , []);
+        return feed.Topic === filter && (feed.URL.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Topic.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Publisher.toLowerCase().includes(searchTerm.toLowerCase()));
+    });
+
+    const refreshTopics = () => {
+        let _topics = [];
+        feeds.forEach((feed) => {
+            if (!_topics.includes(feed.Topic)) {
+                _topics.push(feed.Topic);
+            }
+        });
+        setTopics(_topics);
+    }
+
+    useEffect(() => {
+        refreshTopics()
+    }, [feeds]);
 
     const addFeed = () => {
         // check if url, topic and publisher are not empty
@@ -33,7 +59,6 @@ export default function Rss() {
             ERROR('Please fill all fields!');
             return;
         }
-        // strip url, topic and publisher from whitespaces
         url = url.trim();
         topic = topic.trim();
         publisher = publisher.trim();
@@ -48,9 +73,7 @@ export default function Rss() {
             return;
         }
 
-
-        // add feed to database to /api/add_rssfeed
-        fetch('http://localhost:4444/api/add_rssfeed', {
+        fetch('http://127.0.0.1:4444/api/add_rssfeed', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,20 +84,21 @@ export default function Rss() {
                     Publisher: publisher
                 }
             )
-        })
-            .then(response => {
-                    if (response.status === 200) {
-                        SUCCESS('Feed added successfully');
-                        fetchFeeds();
-                    } else {
-                        ERROR('Failed to add feed');
-                    }
+        }).then(response => {
+                if (response.status === 200) {
+                    SUCCESS(`Feed - ${url} added successfully`)
+                    fetchFeeds();
+                } else {
+                    ERROR(`Failed to add feed - ${url}`);
                 }
-            )
-
-        setUrl('');
-        setTopic('');
-        setPublisher('');
+            }
+        ).catch(() => {
+                UNKNOWN_ERROR(`Failed to add feed`);
+            }
+        );
+        setUrl('')
+        setTopic('')
+        setPublisher('')
         try {
             document.querySelector("#addFeedModal").style.display = "none";
             document.querySelector("#addFeedModal").classList.remove("show");
@@ -84,41 +108,9 @@ export default function Rss() {
             document.querySelector("body").setAttribute("style", "padding-right: 0px;");
             document.querySelector(".modal-backdrop").remove();
         } catch (err) {
-            // pass
+            UNKNOWN_ERROR(err.message);
         }
     }
-
-    // Search and Filter
-    const [searchTerm, setSearchTerm] = useState('');
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    const [filter, setFilter] = useState('all');
-    const filteredFeeds = feeds.filter((feed) => {
-        // filter by topic and url and publisher
-        if (filter === 'all') {
-            return feed.URL.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Topic.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Publisher.toLowerCase().includes(searchTerm.toLowerCase());
-        }
-        return feed.Topic === filter && (feed.URL.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Topic.toLowerCase().includes(searchTerm.toLowerCase()) || feed.Publisher.toLowerCase().includes(searchTerm.toLowerCase()));
-    });
-
-    const getTopics = () => {
-        let topics = [];
-        feeds.forEach((feed) => {
-            if (!topics.includes(feed.Topic)) {
-                topics.push(feed.Topic);
-            }
-        });
-        return topics;
-    }
-    useEffect(() => {
-        setTopics(getTopics());
-    }, [feeds, getTopics]);
-
-    // get topics of localhost:444/api/getTopics
-    const [topics, setTopics] = useState(getTopics());
-
     const DeleteFeed = (_url) => {
         fetch(`http://127.0.0.1:4444/api/delete_rssfeed/`, {
             method: 'POST',
@@ -141,11 +133,8 @@ export default function Rss() {
                 UNKNOWN_ERROR(`Failed to delete feed`);
             });
     };
-
-    const EditFeed = (_url, _topic, _publisher) => {
-        console.log('edit feed', _url, _topic, _publisher);
-
-        fetch('http://127.0.0.1:4444/api/update_rssfeed/', {
+    const EditFeed = async (_url, _topic, _publisher) => {
+        const response = await fetch('http://127.0.0.1:4444/api/update_rssfeed/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -157,27 +146,45 @@ export default function Rss() {
                 }
             )
         })
-            .then(response => {
-                    if (response.status === 200) {
-                        SUCCESS(`Feed - ${_url} edited successfully`)
-                        fetchFeeds();
-                    } else {
-                        ERROR(`Failed to edit feed - ${_url}`);
-                    }
-                }
-            )
-            .catch(() => {
-                    UNKNOWN_ERROR(`Failed to edit feed`);
-                }
-            );
-    };
-
+        const data = await response.json();
+        if (response.status === 200) {
+            console.log(data.message)
+            SUCCESS(data.message);
+            fetchFeeds();
+        }
+    }
 
     function urlToSelector(url) {
         const base64Url = btoa(url);
         const sanitizedUrl = base64Url.replace(/=/g, ''); // remove padding characters
         return sanitizedUrl;
     }
+
+    const refreshAllFeeds = () => {
+        //     loop over all feeds
+        for (let i = 0; i < feeds.length; i++) {
+            refreshFeed(feeds[i].URL);
+        }
+    }
+    const refreshFeed = async (_url) => {
+        try {
+            const response = await fetch("http://127.0.0.1:4444/api/check_rssfeed", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({URL: _url})
+            });
+            const data = await response.json();
+            if (data.status === 200) {
+                SUCCESS(_url + " => " + data.status);
+            } else {
+                ERROR(_url + " => " + data.status);
+            }
+        } catch (error) {
+            UNKNOWN_ERROR(error.message);
+        }
+    };
 
     return (<div className="container">
         <div className="row">
@@ -250,6 +257,14 @@ export default function Rss() {
                                 >
                                     Delete
                                 </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-success"
+                                    onClick={() => refreshFeed(feed.URL)}
+                                >
+                                    Refresh
+                                </button>
+
                             </div>
                             <div className="modal fade" id={`editFeedModal-${urlToSelector(feed.URL)}`}
                                  tabIndex="-1"
@@ -403,9 +418,17 @@ export default function Rss() {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <button
+                        type="submit"
+                        className="btn btn-success ms-2"
+                        onClick={refreshAllFeeds}
+                    >
+                        Refresh All
+                    </button>
 
+                </div>
+
+            </div>
         </div>
     </div>);
 }

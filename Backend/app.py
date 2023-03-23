@@ -1,3 +1,4 @@
+import flask
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os, sys, json
 import bcrypt
@@ -5,6 +6,8 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
 from Database.ui_db import DBConnection
+from Helpers.ErrorDetectionRoutes import *
+import requests
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
@@ -14,14 +17,15 @@ db.connect()
 db.redefine()
 db.populate()
 
-
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
 jwt = JWTManager(app)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 ################# AUTHENTICATION ROUTES #################
 
@@ -59,7 +63,6 @@ def login_user():
     if user_exists[0] in [None, False]:
         return jsonify({"error": "Unauthorized > user does not exist."}), 401
 
-
     if password != user_exists[1]['Password']:
         return jsonify({"error": "Unauthorized > password is incorrect"}), 401
     else:
@@ -73,7 +76,6 @@ def login_user():
     })
 
 
-
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
 @cross_origin()
@@ -81,25 +83,42 @@ def getUsers():
     users = db.getUsers()
     return json.loads(users)
 
+
 @app.route('/api/add_user', methods=['POST'])
 @cross_origin()
 def addUser():
     data = request.get_json()
-    db.addUser(data['Username'], data['Email'], data['Password'], data['Is_Admin'])
-    return json.loads('{"message": "user added successfully"}')
+    username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
+    forbidden = [' ', '`', '~', '[', ']', '{', '}', '(', ')', '|', ';', ':', '"', "'", ',', '<', '>', '.', '?', '/']
+
+    users = json.loads(db.getUsers())
+    message, status = validate_user(username, email, password, users)
+
+    if status == 401:
+        return jsonify({"message": message, "status": status})
+    elif status == 200:
+        db.addUser(username, email, password, is_admin)
+        return jsonify({"message": "User added successfully", "status": 200})
+    else:
+        return jsonify({"message": "Something went wrong", "status": 500})
 
 @app.route('/api/update_user/<id>', methods=['POST'])
 @cross_origin()
 def updateUser(id):
     data = request.get_json()
-    db.updateUser(id, data['Username'], data['Email'], data['Password'], data['Is_Admin'])
-    return json.loads('{"message": "user updated successfully"}')
+    username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
+    db.updateUser(id, username, email, password, is_admin)
+    return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
 
 @app.route('/api/delete_user/<id>', methods=['POST'])
 @cross_origin()
 def deleteUser(id):
-    db.deleteUser(id)
-    return json.loads('{"message": "user deleted successfully"}')
+    user = db.getUser(id)
+    if user[0]:
+        return jsonify({"message": f"USER ({id}) Not Found", "status": 404})
+    else:
+        db.deleteUser(id)
+        return jsonify({"message": f"USER ({id}) Deleted Successfully", "status": 200})
 
 
 ################# RSS FEED ROUTES #################
@@ -109,26 +128,51 @@ def getRSSFeeds():
     rssfeeds = db.ParseRSSFeeds()
     return json.loads(rssfeeds)
 
-@app.route('/api/add_rssfeed', methods=['POST'])
+
+@app.route('/api/add_rssfeed/', methods=['POST'])
 @cross_origin()
 def addRSSFeed():
     data = request.get_json()
-    db.addRSSFeed(data['URL'], data['Publisher'], data['Topic'])
-    return json.loads('{"message": "rssfeed added successfully"}')
+    url, publisher, topic = data['URL'], data['Publisher'], data['Topic']
+    print('url:', url, 'publisher:', publisher, 'topic:', topic)
+
+    db.addRSSFeed(url, publisher, topic)
+    return jsonify({"message": f"FEED ({url}). Added Successfully", "status": 200})
+
 
 @app.route('/api/update_rssfeed/', methods=['POST'])
 @cross_origin()
 def updateRSSFeed():
     data = request.get_json()
-    db.updateRSSFeed(data['URL'], data['Publisher'], data['Topic'])
-    return json.loads('{"message": "rssfeed updated successfully"}')
+    url, publisher, topic = data['URL'], data['Publisher'], data['Topic']
+    db.updateRSSFeed(url, publisher, topic)
+    return jsonify({"message": f"FEED ({url}). Updated Successfully", "status": 200})
+
 
 @app.route('/api/delete_rssfeed/', methods=['POST'])
 @cross_origin()
 def deleteRSSFeed():
     data = request.get_json()
     db.deleteRSSFeed(data['URL'])
-    return json.loads('{"message": "rssfeed deleted successfully"}')
+    return jsonify({"message": "rssfeed deleted successfully"})
+
+
+@app.route('/api/check_rssfeed', methods=['POST'])
+@cross_origin()
+def checkRSSFeed(url=None):
+    data = request.get_json()
+
+    feed_url = data['URL']
+
+    try:
+        response = requests.get(feed_url, timeout=5)
+        if response.status_code == 200:
+            return jsonify({"message": f"RSS Feed is responsive", "status": 200})
+        else:
+            return jsonify({"message": f"RSS Feed is not responsive", "status": 401})
+    except requests.exceptions.RequestException as e:
+        return jsonify({"message": f"RSS Feed is not responsive", "status": 401})
+
 
 ################# NEWS ARTICLE ROUTES #################
 # @app.route('/api/articles', methods=['GET'])
@@ -251,6 +295,7 @@ def addArticle():
     # db.addArticle(data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
     return json.loads('{"message": "article added successfully"}')
 
+
 @app.route('/api/update_article/<article_url>', methods=['POST'])
 @cross_origin()
 def updateArticle(article_url):
@@ -258,11 +303,13 @@ def updateArticle(article_url):
     # db.updateArticle(article_url, data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
     return json.loads('{"message": "article updated successfully"}')
 
+
 @app.route('/api/delete_article/<article_url>', methods=['POST'])
 @cross_origin()
 def deleteArticle(article_url):
     # db.deleteArticle(article_url)
     return json.loads('{"message": "article deleted successfully"}')
+
 
 @app.errorhandler(404)
 @app.errorhandler(500)
