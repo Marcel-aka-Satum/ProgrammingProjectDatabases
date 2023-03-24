@@ -1,4 +1,8 @@
-def validate_user(username, email, password):
+import requests
+from requests.exceptions import RequestException
+import feedparser
+
+def validate_pwd(password):
     forbidden = ['"', "'", ';', ':', ',', '\\', '/', '[', ']', '{', '}', '|', '<', '>', '?', '`', '~']
 
     # check for password strength
@@ -19,6 +23,18 @@ def validate_user(username, email, password):
     return "User Added Successfully", 200
 
 def validate_rssFeed(url):
-    # this should check if url is a valid rss feed (not just a valid url)
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+    except RequestException as e:
+        return str(e), 401
 
-    return "RSS Feed Added Successfully", 200
+    feed = feedparser.parse(response.text)
+
+    if feed.version:  # feed.version will be empty if it's not a valid RSS feed
+        return "RSS Feed Added Successfully", 200
+    else:
+        return "Valid URL, but not a valid RSS Feed", 401
+
+if __name__ == "__main__":
+    print(validate_rssFeed("https://www.tijd.be/rss/politiek_economie.xml"))

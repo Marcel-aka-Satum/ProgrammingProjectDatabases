@@ -91,13 +91,12 @@ def addUser():
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
     forbidden = [' ', '`', '~', '[', ']', '{', '}', '(', ')', '|', ';', ':', '"', "'", ',', '<', '>', '.', '?', '/']
 
-    message_pwd_val, status_pwd_val = validate_user(username, email, password)
+    message_pwd_val, status_pwd_val = validate_pwd(password)
 
     if status_pwd_val == 401:
         return jsonify({"message": message_pwd_val, "status": status_pwd_val})
     elif status_pwd_val == 200:
         status_db, message_db = db.addUser(username, email, password, is_admin)
-        print('status:', status_db, 'message:', message_db)
         if status_db:
             return jsonify({"message": "User added successfully", "status": 200})
         else:
@@ -141,13 +140,12 @@ def addRSSFeed():
     data = request.get_json()
     url, publisher, topic = data['URL'], data['Publisher'], data['Topic']
 
-    message_rss_val, status_rss_val = validate_rssFeed(url) # TODO: not finished
+    message_rss_val, status_rss_val = validate_rssFeed(url)
 
     if status_rss_val == 401:
         return jsonify({"message": message_rss_val, "status": status_rss_val})
     elif status_rss_val == 200:
         status_db, message_db = db.addRSSFeed(url, publisher, topic)
-        print('status:', status_db, 'message:', message_db)
         if status_db:
             return jsonify({"message": "RSS Feed added successfully", "status": 200})
         else:
@@ -182,18 +180,14 @@ def deleteRSSFeed():
 @cross_origin()
 def checkRSSFeed(url=None):
     data = request.get_json()
-
     feed_url = data['URL']
-
-    try:
-        response = requests.get(feed_url, timeout=5)
-        if response.status_code == 200:
-            return jsonify({"message": f"RSS Feed is responsive", "status": 200})
-        else:
-            return jsonify({"message": f"RSS Feed is not responsive", "status": 401})
-    except requests.exceptions.RequestException as e:
-        return jsonify({"message": f"RSS Feed is not responsive", "status": 401})
-
+    message_rss_val, status_rss_val = validate_rssFeed(feed_url)
+    if status_rss_val == 401:
+        return jsonify({"message": message_rss_val, "status": status_rss_val})
+    elif status_rss_val == 200:
+        return jsonify({"message": "RSS Feed is valid", "status": 200})
+    else:
+        return jsonify({"message": "Something went wrong", "status": 500})
 
 ################# NEWS ARTICLE ROUTES #################
 # @app.route('/api/articles', methods=['GET'])
