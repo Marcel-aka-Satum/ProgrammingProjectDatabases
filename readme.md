@@ -41,6 +41,13 @@ The following technologies are used for the project:
 
 ## Installation
 To install the project, clone the repository from Github and install the required dependencies.
+
+## Documentation
+[Link to Backend README](./Backend/read.md) In this documentation u can find more about our backend architecture.
+[Link to Backend Database README](./Backend/Database/read.md) In this documentation u can find more about our database engineering.
+[Link to Frontend components README](./Frontend/my-app/src/components/readme.md) This documentation contains information abour our used component on the Frontend side.
+[Link to Frontend Admin README](./Frontend/my-app/src/components/Admin/readme.md) This documentation contains all the information about admin pages.
+
 ```
 git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
 cd ProgrammingProjectDatabases/Frontend/my-app
