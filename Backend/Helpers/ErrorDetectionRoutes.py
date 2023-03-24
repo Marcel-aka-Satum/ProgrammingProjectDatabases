@@ -1,4 +1,3 @@
-
 def validate_user(username, email, password):
     forbidden = ['"', "'", ';', ':', ',', '\\', '/', '[', ']', '{', '}', '|', '<', '>', '?', '`', '~']
 
@@ -18,3 +17,8 @@ def validate_user(username, email, password):
         if char in forbidden:
             return f"Password must not contain any of the following characters: {forbidden}", 401
     return "User Added Successfully", 200
+
+def validate_rssFeed(url):
+    # this should check if url is a valid rss feed (not just a valid url)
+
+    return "RSS Feed Added Successfully", 200

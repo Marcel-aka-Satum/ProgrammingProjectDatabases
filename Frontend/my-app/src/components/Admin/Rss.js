@@ -53,7 +53,7 @@ export default function Rss() {
         refreshTopics()
     }, [feeds]);
 
-    const addFeed = () => {
+    const addFeed = async () => {
         // check if url, topic and publisher are not empty
         if (url === '' || topic === '' || publisher === '') {
             ERROR('Please fill all fields!');
@@ -63,42 +63,33 @@ export default function Rss() {
         topic = topic.trim();
         publisher = publisher.trim();
 
-        // check if url is valid and is not already in the list
-        if (!url.match(/^(http|https):\/\/[^ "]+$/)) {
-            ERROR('Please enter a valid URL!');
-            return;
-        }
-        if (feeds.some((feed) => feed.URL === url)) {
-            ERROR('URL already exists!');
-            return;
+        try {
+            const response = await fetch('http://127.0.0.1:4444/api/add_rssfeed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                        URL: url,
+                        Topic: topic,
+                        Publisher: publisher
+                    }
+                )
+            })
+            const data = await response.json();
+            if (data.status === 200) {
+                SUCCESS(data.message);
+                fetchFeeds();
+                setUrl('')
+                setTopic('')
+                setPublisher('')
+            } else {
+                ERROR(data.message);
+            }
+        } catch (err) {
+            UNKNOWN_ERROR(err.message);
         }
 
-        fetch('http://127.0.0.1:4444/api/add_rssfeed', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                    URL: url,
-                    Topic: topic,
-                    Publisher: publisher
-                }
-            )
-        }).then(response => {
-                if (response.status === 200) {
-                    SUCCESS(`Feed - ${url} added successfully`)
-                    fetchFeeds();
-                } else {
-                    ERROR(`Failed to add feed - ${url}`);
-                }
-            }
-        ).catch(() => {
-                UNKNOWN_ERROR(`Failed to add feed`);
-            }
-        );
-        setUrl('')
-        setTopic('')
-        setPublisher('')
         try {
             document.querySelector("#addFeedModal").style.display = "none";
             document.querySelector("#addFeedModal").classList.remove("show");
@@ -111,8 +102,8 @@ export default function Rss() {
             UNKNOWN_ERROR(err.message);
         }
     }
-    const DeleteFeed = (_url) => {
-        fetch(`http://127.0.0.1:4444/api/delete_rssfeed/`, {
+    const DeleteFeed = async (_url) => {
+        const response = await fetch(`http://127.0.0.1:4444/api/delete_rssfeed/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -121,17 +112,13 @@ export default function Rss() {
                 URL: _url
             })
         })
-            .then(response => {
-                if (response.status === 200) {
-                    SUCCESS(`Feed - ${_url} deleted successfully`)
-                    fetchFeeds();
-                } else {
-                    ERROR(`Failed to delete feed - ${_url}`);
-                }
-            })
-            .catch(() => {
-                UNKNOWN_ERROR(`Failed to delete feed`);
-            });
+        const data = await response.json();
+        if (data.status === 200) {
+            SUCCESS(data.message);
+            fetchFeeds();
+        } else{
+            ERROR(data.message);
+        }
     };
     const EditFeed = async (_url, _topic, _publisher) => {
         const response = await fetch('http://127.0.0.1:4444/api/update_rssfeed/', {
@@ -147,10 +134,12 @@ export default function Rss() {
             )
         })
         const data = await response.json();
-        if (response.status === 200) {
-            console.log(data.message)
+        if (data.status === 200) {
             SUCCESS(data.message);
             fetchFeeds();
+        }
+        else{
+            ERROR(data.message);
         }
     }
 

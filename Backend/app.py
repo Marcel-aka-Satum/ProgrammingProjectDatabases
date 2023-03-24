@@ -10,7 +10,7 @@ from Helpers.ErrorDetectionRoutes import *
 import requests
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:3000'])
+CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 db.connect()
@@ -135,16 +135,25 @@ def getRSSFeeds():
     rssfeeds = db.ParseRSSFeeds()
     return json.loads(rssfeeds)
 
-
-@app.route('/api/add_rssfeed/', methods=['POST'])
+@app.route('/api/add_rssfeed', methods=['POST'])
 @cross_origin()
 def addRSSFeed():
     data = request.get_json()
     url, publisher, topic = data['URL'], data['Publisher'], data['Topic']
-    print('url:', url, 'publisher:', publisher, 'topic:', topic)
 
-    db.addRSSFeed(url, publisher, topic)
-    return jsonify({"message": f"FEED ({url}). Added Successfully", "status": 200})
+    message_rss_val, status_rss_val = validate_rssFeed(url) # TODO: not finished
+
+    if status_rss_val == 401:
+        return jsonify({"message": message_rss_val, "status": status_rss_val})
+    elif status_rss_val == 200:
+        status_db, message_db = db.addRSSFeed(url, publisher, topic)
+        print('status:', status_db, 'message:', message_db)
+        if status_db:
+            return jsonify({"message": "RSS Feed added successfully", "status": 200})
+        else:
+            return jsonify({"message": message_db, "status": 401})
+    else:
+        return jsonify({"message": "Something went wrong", "status": 500})
 
 
 @app.route('/api/update_rssfeed/', methods=['POST'])
@@ -152,17 +161,22 @@ def addRSSFeed():
 def updateRSSFeed():
     data = request.get_json()
     url, publisher, topic = data['URL'], data['Publisher'], data['Topic']
-    db.updateRSSFeed(url, publisher, topic)
-    return jsonify({"message": f"FEED ({url}). Updated Successfully", "status": 200})
 
+    status_db, message_db = db.updateRSSFeed(url, publisher, topic)
+    if status_db:
+        return jsonify({"message": "RSS Feed updated successfully", "status": 200})
+    else:
+        return jsonify({"message": message_db, "status": 401})
 
 @app.route('/api/delete_rssfeed/', methods=['POST'])
 @cross_origin()
 def deleteRSSFeed():
     data = request.get_json()
-    db.deleteRSSFeed(data['URL'])
-    return jsonify({"message": "rssfeed deleted successfully"})
-
+    status_db, message_db = db.deleteRSSFeed(data['URL'])
+    if status_db:
+        return jsonify({"message": "RSS Feed deleted successfully", "status": 200})
+    else:
+        return jsonify({"message": message_db, "status": 401})
 
 @app.route('/api/check_rssfeed', methods=['POST'])
 @cross_origin()

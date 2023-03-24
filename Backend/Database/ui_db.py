@@ -238,28 +238,45 @@ class DBConnection:
             data.append(rss_info)
         return json.dumps(data)
 
-    def addRSSFeed(self, url: str, publisher: str, topic: str):
+    def addRSSFeed(self, url: str, publisher: str, topic: str) -> (bool, str):
+        if not self.is_connected():
+            print("database is not connected")
+            return False, "database is not connected"
+        try:
+            self.cursor.execute(query_db.insert_rssfeed(url, publisher, topic))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "rssfeeds_pkey" in str(e):
+                return False, f"URL '{url}' is already in use"
+            else:
+                return False, f"A unique constraint violation occurred: {e}"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
+
+    def deleteRSSFeed(self, url: str) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
             return -1, "database is not connected"
-
-        query, params = query_db.insert_rssfeed(url, publisher, topic)
-        self.cursor.execute(query, params)
-
-    def deleteRSSFeed(self, url: str):
-        if not self.is_connected():
-            print("database is not connected")
-            return -1, "database is not connected"
-
-        self.cursor.execute(query_db.delete_rssfeed(url))
+        try:
+            self.cursor.execute(query_db.delete_rssfeed(url))
+            return True, "success"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
     def updateRSSFeed(self, url: str, publisher: str, topic: str):
         if not self.is_connected():
             print("database is not connected")
             return -1, "database is not connected"
-
-        self.cursor.execute(query_db.update_rssfeed(url, publisher, topic))
-
+        try:
+            self.cursor.execute(query_db.update_rssfeed(url, publisher, topic))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "rssfeeds_pkey" in str(e):
+                return False, f"URL '{url}' is already in use"
+            else:
+                return False, f"A unique constraint violation occurred: {e}"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
 # give terminal command for listing all the tables in the database in a specific schema
 # \dt newsaggregator.*
