@@ -19,25 +19,23 @@ def scraper():
         topic = rss['Topic']
         feed = feedparser.parse(rss_url)
 
-        for idx in range(len(feed)):
-            link = feed.entries[idx]['link']
-            title = feed.entries[idx]['title']
-            summary = feed.entries[idx]['summary']
-            published = feed.entries[idx]['published']
+        for entry in feed.entries:
+            link = entry['link']
+            title = entry['title']
+            summary = entry['summary']
+            publisher = entry['published']
 
-            links = feed.entries[idx]['links']
             image = ''
-            for lnk in links:
+            for lnk in entry['links']:
                 if lnk['type'] in ['image/jpeg']:
                     image = lnk['href']
 
             try:
-                DB.addRSSFeed(rss_url, topic, link, title, summary, published, image)
-            except:
-                # print("Most likely a duplicate")
+                status, message = DB.addArticle(link, title, summary, publisher, image, rss_url, topic)
+                # print("Added article: ", link, 'from: ', rss_url)
+            except Exception as e:
+                print('error:', e)
                 continue
-
-        # print('The news articles corresponding to rss feed '+str(rss_url)+ ' have been inserted.')
 
 if __name__ == '__main__':
     scraper()

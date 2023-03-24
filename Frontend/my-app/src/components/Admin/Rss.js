@@ -103,7 +103,7 @@ export default function Rss() {
         }
     }
     const DeleteFeed = async (_url) => {
-        const response = await fetch(`http://127.0.0.1:4444/api/delete_rssfeed/`, {
+        const response = await fetch(`http://127.0.0.1:4444/api/delete_rssfeed`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ export default function Rss() {
         }
     };
     const EditFeed = async (_url, _topic, _publisher) => {
-        const response = await fetch('http://127.0.0.1:4444/api/update_rssfeed/', {
+        const response = await fetch('http://127.0.0.1:4444/api/update_rssfeed', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

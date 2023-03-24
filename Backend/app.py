@@ -83,6 +83,12 @@ def getUsers():
     users = db.getUsers()
     return json.loads(users)
 
+@app.route('/api/users/totalusers', methods=['GET'])
+@cross_origin()
+def getTotalUsers():
+    users = db.getUsers()
+    return jsonify({"totalUsers": len(json.loads(users))})
+
 
 @app.route('/api/add_user', methods=['POST'])
 @cross_origin()
@@ -134,6 +140,12 @@ def getRSSFeeds():
     rssfeeds = db.ParseRSSFeeds()
     return json.loads(rssfeeds)
 
+@app.route('/api/rssfeeds/totalrssfeeds', methods=['GET'])
+@cross_origin()
+def getTotalRSSFeeds():
+    rssfeeds = db.ParseRSSFeeds()
+    return jsonify({"totalRSSFeeds": len(json.loads(rssfeeds))})
+
 @app.route('/api/add_rssfeed', methods=['POST'])
 @cross_origin()
 def addRSSFeed():
@@ -154,7 +166,7 @@ def addRSSFeed():
         return jsonify({"message": "Something went wrong", "status": 500})
 
 
-@app.route('/api/update_rssfeed/', methods=['POST'])
+@app.route('/api/update_rssfeed', methods=['POST'])
 @cross_origin()
 def updateRSSFeed():
     data = request.get_json()
@@ -166,7 +178,7 @@ def updateRSSFeed():
     else:
         return jsonify({"message": message_db, "status": 401})
 
-@app.route('/api/delete_rssfeed/', methods=['POST'])
+@app.route('/api/delete_rssfeed', methods=['POST'])
 @cross_origin()
 def deleteRSSFeed():
     data = request.get_json()
@@ -190,16 +202,15 @@ def checkRSSFeed(url=None):
         return jsonify({"message": "Something went wrong", "status": 500})
 
 ################# NEWS ARTICLE ROUTES #################
-# @app.route('/api/articles', methods=['GET'])
-# @app.route('/articles/<tag>')
-# @cross_origin()
-# def getArticles(tag=""):
-#     articles = db.getArticles(tag)
-#     print('articles:', articles)
-#     return json.loads(articles)
-#
+@app.route('/apiv2/articles', methods=['GET'])
+@cross_origin()
+def getArticles():
+    articles_list = json.loads(db.getArticles())
+    return jsonify({"articles": articles_list, "status": 200})
 
-@app.route('/api/articles', strict_slashes=False, methods=['GET'])
+
+@app.route('/api/articles', methods=['GET'])
+@cross_origin()
 def articles():
     article_1 = {
         'title': 'Voor spaarders goed nieuws, maar sommigen zijn maandsalaris extra kwijt: de voor- en nadelen van stijgende rente',
@@ -299,32 +310,15 @@ def articles():
         'article_id': 8,
     }
 
-    all_articles = [article_1, article_2, article_3, article_4, article_5, article_6, article_7]
+    all_articles = [article_1, article_2, article_3, article_4, article_5, article_6, article_7, article_8]
     return all_articles
 
-
-@app.route('/api/add_article', methods=['POST'])
+@app.route('/api/articles/totalarticles', methods=['GET'])
 @cross_origin()
-def addArticle():
-    data = request.get_json()
-    # db.addArticle(data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
-    return json.loads('{"message": "article added successfully"}')
-
-
-@app.route('/api/update_article/<article_url>', methods=['POST'])
-@cross_origin()
-def updateArticle(article_url):
-    data = request.get_json()
-    # db.updateArticle(article_url, data['title'], data['content'], data['author'], data['date_posted'], data['image'], data['category'], data['tags'], data['comments'], data['references'])
-    return json.loads('{"message": "article updated successfully"}')
-
-
-@app.route('/api/delete_article/<article_url>', methods=['POST'])
-@cross_origin()
-def deleteArticle(article_url):
-    # db.deleteArticle(article_url)
-    return json.loads('{"message": "article deleted successfully"}')
-
+def getTotalArticles():
+    totalarticles = json.loads(db.getArticles())
+    print('total articles: ', len(totalarticles))
+    return jsonify({'totalArticles': len(totalarticles)})
 
 @app.errorhandler(404)
 @app.errorhandler(500)

@@ -1,5 +1,5 @@
 import psycopg2
-
+from typing import Tuple
 
 #################### INSERTERS ####################
 def insert_rssfeed(URL: str, Publisher: str, Topic: str) -> tuple():
@@ -8,11 +8,12 @@ def insert_rssfeed(URL: str, Publisher: str, Topic: str) -> tuple():
             VALUES('{URL}', '{Publisher}', '{Topic}')
             """
 
-def insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str, Topic: str) -> str:
-    return f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, Topic)
-            VALUES (%s, %s, %s, %s, %s, %s);
+def insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, rss_url: str, Topic: str) -> Tuple[str, Tuple]:
+    query = f"""
+            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
             """
+    return query, (URL, Title, Summary, Published, Image_URL, rss_url, Topic)
 
 def insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
     return  f"""

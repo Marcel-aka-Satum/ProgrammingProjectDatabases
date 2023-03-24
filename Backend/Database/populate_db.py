@@ -1,6 +1,7 @@
 import psycopg2
 import pandas as pd
 
+
 def populate_db(conn, cur):
     RSSFeeds = pd.read_csv("Database/RSSFeeds.csv")
 
@@ -27,7 +28,7 @@ def populate_db(conn, cur):
     # populate users
     users = [
         {'username': 'admin', 'email': 'admin@gmail.com', 'password': 'admin', 'is_admin': True},
-        {'username':'test', 'email':'test@gmail.com', 'password':'test', 'is_admin': False}
+        {'username': 'test', 'email': 'test@gmail.com', 'password': 'test', 'is_admin': False}
     ]
     # make an insert query into the users table
     insert_query = '''

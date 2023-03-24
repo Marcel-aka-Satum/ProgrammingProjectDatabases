@@ -2,6 +2,7 @@ import Navbar from './components/Navbar/Navbar'
 import Loginform from './components/Loginform';
 import Registerform from './components/Registerform';
 import Dashboard from "./components/Admin/Dashboard";
+import Statistics from "./components/Admin/Statistics";
 import Rss from "./components/Admin/Rss";
 import Users from "./components/Admin/Users";
 import Articles from "./components/Admin/Articles";
@@ -57,10 +58,11 @@ function App() {
                     {/*}*/}
 
                     <Route path="/admin/dashboard" element={<Dashboard/>}/>
-                    {/*<Route path="/admin/articles" element={<Articles/>}/>*/}
+                    <Route path="/admin/articles" element={<Articles/>}/>
                     <Route path="/admin/rss" element={<Rss/>}/>
                     <Route path="/admin/users" element={<Users/>}/>
                     <Route path="/admin/settings" element={<Settings/>}/>
+                    <Route path="/admin/statistics" element={<Statistics/>}/>
 
 
                     <Route path="/" element={<Home/>}></Route>

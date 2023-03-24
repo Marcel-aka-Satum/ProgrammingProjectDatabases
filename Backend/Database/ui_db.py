@@ -96,13 +96,16 @@ class DBConnection:
     add an article to the database
     """
 
-    def addArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str):
+    def addArticle(self, url: str, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
-            return -1, "database is not connected"
+            return False, "database is not connected"
 
-        self.cursor.execute(query_db.insert_newsarticle(url, title, summary, published, image, rss_url, topic))
-        return 0, "success"
+        try:
+            self.cursor.execute(*query_db.insert_newsarticle(url, title, summary, publisher, image, rss_url, topic))
+            return True, "success"
+        except Exception as e:
+            return False, str(e)
 
     """
     delete an article from the database
@@ -119,12 +122,12 @@ class DBConnection:
     update an article in the database
     """
 
-    def updateArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str):
+    def updateArticle(self, url: str, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str):
         if not self.is_connected():
             print("database is not connected")
             return -1, "database is not connected"
 
-        self.cursor.execute(query_db.update_newsarticle(url, title, summary, published, image, rss_url, topic))
+        self.cursor.execute(query_db.update_newsarticle(url, title, summary, publisher, image, rss_url, topic))
 
 
     """
