@@ -91,14 +91,17 @@ def addUser():
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
     forbidden = [' ', '`', '~', '[', ']', '{', '}', '(', ')', '|', ';', ':', '"', "'", ',', '<', '>', '.', '?', '/']
 
-    users = json.loads(db.getUsers())
-    message, status = validate_user(username, email, password, users)
+    message_pwd_val, status_pwd_val = validate_user(username, email, password)
 
-    if status == 401:
-        return jsonify({"message": message, "status": status})
-    elif status == 200:
-        db.addUser(username, email, password, is_admin)
-        return jsonify({"message": "User added successfully", "status": 200})
+    if status_pwd_val == 401:
+        return jsonify({"message": message_pwd_val, "status": status_pwd_val})
+    elif status_pwd_val == 200:
+        status_db, message_db = db.addUser(username, email, password, is_admin)
+        print('status:', status_db, 'message:', message_db)
+        if status_db:
+            return jsonify({"message": "User added successfully", "status": 200})
+        else:
+            return jsonify({"message": message_db, "status": 401})
     else:
         return jsonify({"message": "Something went wrong", "status": 500})
 
@@ -107,8 +110,12 @@ def addUser():
 def updateUser(id):
     data = request.get_json()
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
-    db.updateUser(id, username, email, password, is_admin)
-    return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
+
+    status, message = db.updateUser(id, username, email, password, is_admin)
+    if status:
+        return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
+    else:
+        return jsonify({"message": message, "status": 401})
 
 @app.route('/api/delete_user/<id>', methods=['POST'])
 @cross_origin()

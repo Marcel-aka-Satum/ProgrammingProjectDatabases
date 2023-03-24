@@ -29,7 +29,6 @@ export default function Users() {
     }
 
     const applyUserChanges = async (_id, new_username, new_email, new_password, new_is_admin, type) => {
-        // console.log('BEFORE applyUserChanges',_id, new_username, new_email, new_password, new_is_admin, type);
         const response = await fetch(`http://127.0.0.1:4444/api/update_user/${_id}`, {
             method: 'POST',
             headers: {

@@ -16,13 +16,12 @@ def insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image
             VALUES (%s, %s, %s, %s, %s, %s);
             """
 
-def insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> tuple():
-    query = f"""
+def insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
+    return  f"""
             INSERT INTO newsaggregator.users (Username, Email, Password, Is_Admin)
-            VALUES (%s, %s, %s, %s);
+            VALUES ('{Username}', '{Email}', '{Password}', {Is_Admin});
             """
-    params = (Username, Email, Password, Is_Admin)
-    return query, params
+
 
 
 #################### DELETERS ####################

@@ -174,34 +174,42 @@ class DBConnection:
     Add a user to the database
     """
 
-    def addUser(self, username: str, email: str, password: str, is_admin: bool):
+    def addUser(self, username: str, email: str, password: str, is_admin: bool) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
-            return -1, "database is not connected"
+            return False, "database is not connected"
 
-        query, params = query_db.insert_user(username, email, password, is_admin)
-        self.cursor.execute(query, params)
-        user = self.getUser(email)
+        try:
+            print('inserting user:', username, email, password, is_admin)
+            self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "users_email_key" in str(e):
+                return False, f"Email '{email}' is already in use"
+            elif "users_username_key" in str(e):
+                return False, f"Username '{username}' is already in use"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
-        return 1, {
-            "UID": user[1]["UID"],
-            "Username": user[1]["Username"],
-            "Email": user[1]["Email"],
-            "Password": user[1]["Password"],
-            "Is_Admin": user[1]["Is_Admin"]
-        }
 
     """
     Update a user in the database
     """
 
-    def updateUser(self, id:int, username: str, email: str, password: str, is_admin: bool):
+    def updateUser(self, id: int, username: str, email: str, password: str, is_admin: bool) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
-            return -1, "database is not connected"
-
-
-        self.cursor.execute(query_db.update_user(id, username, email, password, is_admin))
+            return False, "database is not connected"
+        try:
+            self.cursor.execute(query_db.update_user(id, username, email, password, is_admin))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "users_email_key" in str(e):
+                return False, f"Email '{email}' is already in use"
+            elif "users_username_key" in str(e):
+                return False, f"Username '{username}' is already in use"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
     """
     Delete a user from the database
