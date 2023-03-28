@@ -11,10 +11,9 @@ def start_frontend():
     subprocess.Popen(["npm", "start"], cwd="Frontend/my-app/")
 
 def start_scraper():
-    print('Starting scraping')
     scraper()
     # Re-run the scraper every 600 seconds (10 minutes)
-    threading.Timer(600, start_scraper).start()
+    threading.Timer(10, start_scraper).start()
 
 # Start the backend, frontend and scraper script in separate threads
 backend_thread = threading.Thread(target=start_backend)

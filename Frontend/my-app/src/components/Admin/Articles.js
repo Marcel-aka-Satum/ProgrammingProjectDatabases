@@ -168,7 +168,7 @@ export default function Articles() {
                                         }}
                                     />
                                     <div className="card-body">
-                                        <h5 className="card-title">{article.Title}</h5>
+                                        <h5 className="card-title"><a href={article.URL}>{article.Title}</a></h5>
                                         <div
                                             className="card-text"
                                             style={{

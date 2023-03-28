@@ -1,6 +1,7 @@
 import requests
 from requests.exceptions import RequestException
 import feedparser
+import re
 
 def validate_pwd(password):
     forbidden = ['"', "'", ';', ':', ',', '\\', '/', '[', ']', '{', '}', '|', '<', '>', '?', '`', '~']
@@ -35,6 +36,23 @@ def validate_rssFeed(url):
         return "RSS Feed Added Successfully", 200
     else:
         return "Valid URL, but not a valid RSS Feed", 401
+
+def validate_email(email):
+    """
+        Check if the given email address is valid.
+
+        Args:
+            email (str): The email address to validate.
+
+        Returns:
+            bool: True if the email is valid, False otherwise.
+        """
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    correct = bool(re.match(pattern, email))
+    if not correct:
+        return "Invalid email address", 401
+    return "Email Added Successfully", 200
+
 
 if __name__ == "__main__":
     print(validate_rssFeed("https://www.tijd.be/rss/politiek_economie.xml"))
