@@ -21,7 +21,7 @@ export default function Articles() {
             if (data.status === 200) {
                 console.log(data.articles);
                 SUCCESS("Articles loaded successfully!");
-                // only get the first 200 articles
+                // only get the first 20 articles
                 // data.articles = data.articles.slice(0, 20);
                 setArticles(data.articles);
             } else {
@@ -160,7 +160,7 @@ export default function Articles() {
                                     <img
                                         src={article.Image}
                                         className="card-img-top"
-                                        alt="Article"
+                                        alt="Article Image"
                                         style={{
                                             height: "300px",
                                             objectFit: "cover",

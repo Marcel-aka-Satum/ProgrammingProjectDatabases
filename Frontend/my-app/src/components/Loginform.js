@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from "react";
+import React, { useState, useContext} from "react";
 import "../css/login_register_form.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios';
@@ -42,30 +42,30 @@ export default function Loginform() {
     }
 
     return (
-        <div class="container">
+        <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
             <div>
                 <p>hi u are logged in as user </p>
 
                 <p> if u want to log out press this button</p>
-                <button type="submit" onClick={handleLogOut} class="btn btn-outline-secondary px-5 mb-5 w-100">Logout</button>
+                <button type="submit" onClick={handleLogOut} className="btn btn-outline-secondary px-5 mb-5 w-100">Logout</button>
             </div>
             :
             (
-                <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <h2 class="text-center text-dark mt-5">Login Form</h2>
-                    <div class="card my-5">
-                        <form class="card-body cardbody-color p-lg-5">
-                            <div class="mb-3">
-                                <input type="text" class="form-control" value={email} id="Username" aria-describedby="emailHelp"
+                <div className="row">
+                <div className="col-md-6 offset-md-3">
+                    <h2 className="text-center text-dark mt-5">Login Form</h2>
+                    <div className="card my-5">
+                        <form className="card-body cardbody-color p-lg-5">
+                            <div className="mb-3">
+                                <input type="text" className="form-control" value={email} id="Username" aria-describedby="emailHelp"
                                        placeholder="User Name" onChange={(e) => setEmail(e.target.value)}/>
                             </div>
-                            <div class="mb-3">
-                                <input type="password" class="form-control" value={password} id="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
+                            <div className="mb-3">
+                                <input type="password" className="form-control" value={password} id="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
                             </div>
-                            <div class="text-center">
-                                <button type="submit" onClick={handleLogIn} class="btn btn-outline-secondary px-5 mb-5 w-100">Login</button>
+                            <div className="text-center">
+                                <button type="submit" onClick={handleLogIn} className="btn btn-outline-secondary px-5 mb-5 w-100">Login</button>
 
                             </div>
                             <div id="emailHelp" className="form-text text-center mb-5 text-dark">Not
