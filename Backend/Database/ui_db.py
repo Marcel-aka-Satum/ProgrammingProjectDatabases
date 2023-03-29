@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 import psycopg2
 import json
+
+
+
 from . import init_db, populate_db, query_db
 
 
@@ -8,7 +11,6 @@ from . import init_db, populate_db, query_db
 """
     An interface of the DataBase
 """
-
 
 class DBConnection:
     def __init__(self):
@@ -96,7 +98,7 @@ class DBConnection:
     add an article to the database
     """
 
-    def addArticle(self, url: str, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str) -> (bool, str):
+    def addArticle(self, url, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
             return False, "database is not connected"
@@ -281,6 +283,104 @@ class DBConnection:
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
 
+
+    def getRSSFeeds(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_rssfeeds())
+        data = []
+        for i in self.cursor.fetchall():
+            dict = {}
+            dict["URL"] = i[0]
+            dict["Publisher"] = i[1]
+            dict["Topic"] = i[2]
+            data.append(dict)
+        return json.dumps(data)
+
+    def getNewsArticles(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_newsarticles())
+        data = []
+        for i in self.cursor.fetchall():
+            dict = {}
+            dict["URL"] = i[0]
+            dict["Title"] = i[1]
+            dict["Summary"] = i[2]
+            dict["Published"] = i[3]
+            dict["Image_URL"] = i[4]
+            dict["Topic"] = i[5]
+            dict["RSS_URL"] = i[6]
+            data.append(dict)
+        return json.dumps(data)
+
+    def getVisitors(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_visitors())
+        data = []
+        for i in self.cursor.fetchall():
+            dict = {}
+            dict["UID"] = i[0]
+            data.append(dict)
+        return json.dumps(data)
+
+    def getUsers(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_users())
+        data = []
+        for i in self.cursor.fetchall():
+            dict = {}
+            dict["UID"] = i[0]
+            dict["Username"] = i[1]
+            dict["Email"] = i[2]
+            dict["Password"] = i[3]
+            dict["Is_Admin"] = i[4]
+            data.append(dict)
+        return json.dumps(data)
+
+    def getCookies(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_cookies())
+        data = []
+        for i in self.cursor.fetchall():
+            dict = {}
+            dict["cookie"] = i[0]
+            dict["UID"] = i[1]
+            data.append(dict)
+        return json.dumps(data)
+
+    def getHasClicked(self) -> json:
+        if not self.is_connected():
+            print("database is not connected")
+            return
+        self.cursor.execute(query_db.get_hasclicked())
+        data = []
+        for i in self.cursor.fetchall():
+            dict = {}
+            dict["cookie"] = i[0]
+            dict["UID"] = i[1]
+            dict["Email"] = i[2]
+            dict["Password"] = i[3]
+            dict["Is_Admin"] = i[4]
+            data.append(dict)
+        return json.dumps(data)
+    '''
+                
+            CREATE TABLE newsaggregator.hasclicked (
+                _User int REFERENCES newsaggregator.visitors(UID),
+                Article varchar REFERENCES newsaggregator.newsarticles(URL),
+                PRIMARY KEY(_User, Article));
+            
+    '''
+
 # give terminal command for listing all the tables in the database in a specific schema
 # \dt newsaggregator.*
 if __name__ == "__main__":
@@ -288,5 +388,5 @@ if __name__ == "__main__":
     DB.connect()
     DB.redefine()
     DB.populate()
-    print(DB.getArticle())
-    DB.ParseRSSFeeds()
+    DB.cursor.execute(query_db.get_newsarticles())
+    print(DB.cursor.fetchall())

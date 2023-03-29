@@ -21,6 +21,36 @@ db.populate()
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
 jwt = JWTManager(app)
 
+@app.route('/test/rssfeeds')
+def TestRssfeeds():
+    return db.getRSSFeeds()
+
+
+@app.route('/test/newsarticles')
+def TestNewsarticles():
+    return db.getNewsArticles()
+
+
+@app.route('/test/visitors')
+def TestVisitors():
+    return db.getVisitors()
+
+
+@app.route('/test/users')
+def TestUsers():
+    return db.getUsers()
+
+
+@app.route('/test/cookies')
+def TestCookies():
+    return db.getCookies()
+
+
+@app.route('/test/hasclicked')
+def TestHasClicked():
+    return db.getHasClicked()
+
+
 
 @app.route('/')
 def index():
@@ -83,6 +113,7 @@ def getUsers():
     users = db.getUsers()
     return json.loads(users)
 
+
 @app.route('/api/users/totalusers', methods=['GET'])
 @cross_origin()
 def getTotalUsers():
@@ -110,6 +141,7 @@ def addUser():
     else:
         return jsonify({"message": "Something went wrong", "status": 500})
 
+
 @app.route('/api/update_user/<id>', methods=['POST'])
 @cross_origin()
 def updateUser(id):
@@ -121,6 +153,7 @@ def updateUser(id):
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
     else:
         return jsonify({"message": message, "status": 401})
+
 
 @app.route('/api/delete_user/<id>', methods=['POST'])
 @cross_origin()
@@ -140,11 +173,13 @@ def getRSSFeeds():
     rssfeeds = db.ParseRSSFeeds()
     return json.loads(rssfeeds)
 
+
 @app.route('/api/rssfeeds/totalrssfeeds', methods=['GET'])
 @cross_origin()
 def getTotalRSSFeeds():
     rssfeeds = db.ParseRSSFeeds()
     return jsonify({"totalRSSFeeds": len(json.loads(rssfeeds))})
+
 
 @app.route('/api/add_rssfeed', methods=['POST'])
 @cross_origin()
@@ -178,6 +213,7 @@ def updateRSSFeed():
     else:
         return jsonify({"message": message_db, "status": 401})
 
+
 @app.route('/api/delete_rssfeed', methods=['POST'])
 @cross_origin()
 def deleteRSSFeed():
@@ -187,6 +223,7 @@ def deleteRSSFeed():
         return jsonify({"message": "RSS Feed deleted successfully", "status": 200})
     else:
         return jsonify({"message": message_db, "status": 401})
+
 
 @app.route('/api/check_rssfeed', methods=['POST'])
 @cross_origin()
@@ -200,6 +237,7 @@ def checkRSSFeed(url=None):
         return jsonify({"message": "RSS Feed is valid", "status": 200})
     else:
         return jsonify({"message": "Something went wrong", "status": 500})
+
 
 ################# NEWS ARTICLE ROUTES #################
 @app.route('/apiv2/articles', methods=['GET'])
@@ -313,12 +351,14 @@ def articles():
     all_articles = [article_1, article_2, article_3, article_4, article_5, article_6, article_7, article_8]
     return all_articles
 
+
 @app.route('/api/articles/totalarticles', methods=['GET'])
 @cross_origin()
 def getTotalArticles():
     totalarticles = json.loads(db.getArticles())
     print('total articles: ', len(totalarticles))
     return jsonify({'totalArticles': len(totalarticles)})
+
 
 @app.errorhandler(404)
 @app.errorhandler(500)
