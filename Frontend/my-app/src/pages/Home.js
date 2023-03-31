@@ -187,27 +187,31 @@ const Home = () => {
         const articles = await getArticlesGenre(genre);
 
         const rowDiv = document.createElement('div');
-        rowDiv.className = "row p-2";
+        rowDiv.className = "row";
 
         // Loop through each article and create the DOM elements
         for (const article of articles) {
             // Create the card div
             let cardDiv = document.createElement('div');
-            cardDiv.className = "col-sm-4 col-md-4 col-lg-4 mb-3";
+            cardDiv.className = "col-4 mb-3";
 
             // Create the card element
             let card = document.createElement('div');
             card.className = "card article-card";
 
-            // Create the image element
-            let img = document.createElement('img');
-            img.src = article.Image;
-            img.className = "card-img-top";
-            img.alt = "Article";
-            img.style.height = "300px";
-            img.style.objectFit = "cover";
-            img.style.objectPosition = "center center";
-            card.appendChild(img);
+            // check if it has an image
+            if (article.Image) {
+                // Create the image element
+                let img = document.createElement('img');
+                img.src = article.Image;
+                img.className = "card-img-top";
+                img.alt = "Article";
+                img.style.height = "300px";
+                img.style.objectFit = "cover";
+                img.style.objectPosition = "center center";
+                card.appendChild(img);
+            }
+
 
             // Create the card body div
             let cardBody = document.createElement('div');
@@ -226,16 +230,6 @@ const Home = () => {
             p.className = "card-text";
             const [text, hasMoreText] = formatSummary(article.Summary, article.URL, 200);
             p.innerHTML = text;
-            if (hasMoreText) {
-                let button = document.createElement('button');
-                button.className = "btn btn-link";
-                button.innerHTML = "Read more";
-                button.onclick = () => {
-                    window.open(article.URL, '_blank');
-                }
-                p.appendChild(button);
-            }
-
             cardBody.appendChild(p);
 
             // Create the article date
@@ -252,7 +246,6 @@ const Home = () => {
 
             // Add the cardDiv to the rowDiv
             rowDiv.appendChild(cardDiv);
-
 
         }
         document.getElementById("container").appendChild(rowDiv);

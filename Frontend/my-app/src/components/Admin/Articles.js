@@ -72,6 +72,16 @@ export default function Articles() {
         return sanitizedUrl;
     }
 
+    function getHostName(url) {
+        var parser = document.createElement('a');
+        parser.href = url;
+        var hostname = parser.hostname;
+        if (hostname.startsWith('www.')) {
+            hostname = hostname.substring(4);
+        }
+        return hostname;
+    }
+
 
     return (
         <div className="container">
@@ -178,6 +188,8 @@ export default function Articles() {
                                             }}
                                             dangerouslySetInnerHTML={{__html: article.Summary}}
                                         ></div>
+                                        <span className="badge bg-primary">{getHostName(article.URL)}</span>
+
                                         <div className="btn-group float-end" role="group">
                                             <button
                                                 type="button"
