@@ -2,63 +2,85 @@ import React, {useEffect} from 'react'
 import {useLocation} from 'react-router-dom'
 import Carousel from 'react-bootstrap/Carousel'
 import "./Home.css"
-import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import {Modal} from "bootstrap";
 
+function addDashes(str) {
+    return str.replace(/\s+/g, '-');
+}
+
+function formatTitle(str) {
+    const words = str.split('-');
+    const formattedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    return formattedWords.join(' ');
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDate();
+    const month = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+}
+
+function formatSummary(text, url, limit = 200) {
+    if (text.length <= limit) {
+        return [text, false];
+    } else {
+        const id = urlToSelector(url);
+        const truncatedText = text.slice(0, limit);
+        const remainingText = text.slice(limit);
+        return [truncatedText.trim() + '...', true];
+    }
+}
+
+
+function urlToSelector(url) {
+    const base64Url = btoa(url);
+    const sanitizedUrl = base64Url.replace(/=/g, ''); // remove padding characters
+    return sanitizedUrl;
+}
 
 const Home = () => {
 
     const location = useLocation()
+    const pathWithDashes = addDashes(location.pathname);
 
     useEffect(() => {
         const genrePageElement = document.getElementById('container');
         genrePageElement.innerHTML = '';
 
+
         if (location.pathname === '/') {
             createHomepage();
-        }
-        if (location.pathname === '/economics') {
+        } else if (location.pathname === '/economics') {
             createGenrePage("Economics");
-        }
-        if (location.pathname === '/sport') {
+        } else if (location.pathname === '/sport') {
             createGenrePage("Sport");
-        }
-        if (location.pathname === '/culture') {
+        } else if (location.pathname === '/culture') {
             createGenrePage("Culture");
-        }
-        if (location.pathname === '/politics') {
+        } else if (location.pathname === '/politics') {
             createGenrePage("Politics");
-        }
-        if (location.pathname === '/inland') {
+        } else if (location.pathname === '/inland') {
             createGenrePage("Inland");
-        }
-        if (location.pathname === '/international') {
+        } else if (location.pathname === '/international') {
             createGenrePage("International");
-        }
-        if (location.pathname === '/science') {
+        } else if (location.pathname === '/science') {
             createGenrePage("Science");
-        }
-        if (location.pathname === '/productivity') {
-            createGenrePage("Productivity");
-        }
-        if (location.pathname === '/wellness') {
-            createGenrePage("Wellness");
-        }
-        if (location.pathname === '/health') {
+        } else if (location.pathname === '/health') {
             createGenrePage("Health");
+        } else {
+            createGenrePage(window.location.pathname.substring(1), true);
         }
-        if (location.pathname === '/mindfulness') {
-            createGenrePage("Mindfulness");
-        }
-        if (location.pathname === '/joy') {
-            createGenrePage("Joy");
-        }
+
         // code to run after render goes here
-    }, [location.pathname]);
+    }, [pathWithDashes]);
 
     // krijg array van articles
     async function getArticles() {
         const response = await axios.get('http://localhost:4444/api/articles')
+        console.log('articles: ', response.data)
         return response.data
     }
 
@@ -67,7 +89,7 @@ const Home = () => {
 
         let agenres = new Set()
         for (const article of articles) {
-            agenres.add(article.category)
+            agenres.add(article.Topic)
         }
         return agenres
 
@@ -80,10 +102,10 @@ const Home = () => {
 
         var dict = {}
         for (const article of articles) {
-            if (!dict.hasOwnProperty(article.category)) {
-                dict[article.category] = article
-            } else if (article.date_posted < dict[article.category].date_posted) {
-                dict[article.category] = article
+            if (!dict.hasOwnProperty(article.Topic)) {
+                dict[article.Topic] = article
+            } else if (article.date_posted < dict[article.Topic].date_posted) {
+                dict[article.Topic] = article
             }
         }
         return dict
@@ -102,7 +124,7 @@ const Home = () => {
                 return (articlesGenre)
 
             }
-            if (article.category === genre) {
+            if (article.Topic === genre) {
                 articlesGenre.push(article)
                 num += 1
             }
@@ -115,7 +137,7 @@ const Home = () => {
         const articles = await getArticles()
         let articlesGenre = []
         for (const article of articles) {
-            if (article.category === genre) {
+            if (article.Topic === genre) {
                 articlesGenre.push(article)
             }
         }
@@ -132,9 +154,9 @@ const Home = () => {
       console.log(article['Health'])
       return (
         <Carousel.Item className='slide'>
-          <img className="d-block w-100" src={article['Health'].image} alt="First slide" />
+          <img className="d-block w-100" src={article['Health'].Image} alt="First slide" />
           <Carousel.Caption className="text">
-            <NavLink to="/artikels">{article['Health'].title}</NavLink>
+            <NavLink to="/artikels">{article['Health'].Title}</NavLink>
           </Carousel.Caption>
         </Carousel.Item>
       );
@@ -143,7 +165,10 @@ const Home = () => {
      */
     }
 
-    const createGenrePage = async (genre) => {
+    const createGenrePage = async (genre, dynamic = false) => {
+        if (dynamic) {
+            genre = formatTitle(genre);
+        }
         // Create the section title
         let ul = document.createElement('ul');
         ul.className = "list-inline mt-5 mb-0";
@@ -158,30 +183,35 @@ const Home = () => {
         ul.appendChild(li);
         document.getElementById("container").appendChild(ul);
 
+        console.log('genre:', genre)
         const articles = await getArticlesGenre(genre);
 
         const rowDiv = document.createElement('div');
-        rowDiv.className = "row p-2";
+        rowDiv.className = "row";
 
         // Loop through each article and create the DOM elements
         for (const article of articles) {
             // Create the card div
             let cardDiv = document.createElement('div');
-            cardDiv.className = "col-sm-4 col-md-4 col-lg-4 mb-3";
+            cardDiv.className = "col-4 mb-3";
 
             // Create the card element
             let card = document.createElement('div');
-            card.className = "card";
+            card.className = "card article-card";
 
-            // Create the image element
-            let img = document.createElement('img');
-            img.src = article.image;
-            img.className = "card-img-top";
-            img.alt = "Article";
-            img.style.height = "300px";
-            img.style.objectFit = "cover";
-            img.style.objectPosition = "center center";
-            card.appendChild(img);
+            // check if it has an image
+            if (article.Image) {
+                // Create the image element
+                let img = document.createElement('img');
+                img.src = article.Image;
+                img.className = "card-img-top";
+                img.alt = "Article";
+                img.style.height = "300px";
+                img.style.objectFit = "cover";
+                img.style.objectPosition = "center center";
+                card.appendChild(img);
+            }
+
 
             // Create the card body div
             let cardBody = document.createElement('div');
@@ -189,10 +219,24 @@ const Home = () => {
 
             // Create the article title
             let ahref = document.createElement('a');
-            ahref.href = article.references;
+            ahref.href = article.URL;
             ahref.className = "card-title";
-            ahref.innerHTML = article.title;
+            ahref.innerHTML = article.Title;
+            ahref.target = "_blank";
             cardBody.appendChild(ahref);
+
+            // Create the article description
+            let p = document.createElement('p');
+            p.className = "card-text";
+            const [text, hasMoreText] = formatSummary(article.Summary, article.URL, 200);
+            p.innerHTML = text;
+            cardBody.appendChild(p);
+
+            // Create the article date
+            let date = document.createElement('p');
+            date.className = "card-text float-end";
+            date.innerHTML = formatDate(article.Published);
+            cardBody.appendChild(date);
 
             // Add card body to the card
             card.appendChild(cardBody);
@@ -202,6 +246,7 @@ const Home = () => {
 
             // Add the cardDiv to the rowDiv
             rowDiv.appendChild(cardDiv);
+
         }
         document.getElementById("container").appendChild(rowDiv);
     };
@@ -252,15 +297,15 @@ const Home = () => {
 
   let img = document.createElement('img');
   img.className = 'd-block w-100';
-  img.src = carouselItems[genre].image;
+  img.src = carouselItems[genre].Image;
   img.alt = 'slideX';
 
   let carouselCaption = document.createElement('div');
   carouselCaption.className = 'carousel-caption';
 
   let link = document.createElement('a');
-  link.href = `/artikels/${carouselItems[genre].category}`;
-  link.innerHTML = carouselItems[genre].title;
+  link.href = `/artikels/${carouselItems[genre].Topic}`;
+  link.innerHTML = carouselItems[genre].Title;
 
   carouselCaption.appendChild(link);
   carouselItem.appendChild(img);
@@ -293,7 +338,7 @@ const Home = () => {
             sectietitel.innerHTML = genre
 
             let linkSect = document.createElement('a')
-            linkSect.href = `/${genre.toLowerCase()}`
+            linkSect.href = `/${addDashes(genre.toLowerCase())}`
             linkSect.innerHTML = "See More"
 
             //create titleblock
@@ -316,14 +361,14 @@ const Home = () => {
 
                 // create image for div underneath
                 let img = document.createElement('img');
-                img.src = article.image; //deze link moet normaal gezien onze api terug geve
+                img.src = article.Image; //deze link moet normaal gezien onze api terug geve
                 img.className = "d-block w-100";
                 img.alt = "First slide"
 
                 //create link to artikel
                 let ahref = document.createElement('a');
-                ahref.href = article.references // dees zal onze user moete navigate naar specifieke artikel
-                ahref.innerHTML = article.title
+                ahref.href = article.URL // dees zal onze user moete navigate naar specifieke artikel
+                ahref.innerHTML = article.Title
 
                 //create div class="col-sm-4 col-md-4 col-lg-4 text-left
                 const textLeftDiv = document.createElement('div');

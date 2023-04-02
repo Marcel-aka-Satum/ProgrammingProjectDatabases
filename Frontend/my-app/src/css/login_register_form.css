@@ -4,10 +4,10 @@
 } */
 
 .container {
-  display: table;
-  justify-content: middle;
-  max-width: 1000px;
-  margin: 0 auto;
+    display: table;
+    justify-content: middle;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .btn-outline-secondary:hover {
@@ -15,18 +15,19 @@
     color: #000000 !important;
 }
 
-.profile-image-pic{
-  height: 200px;
-  width: 200px;
-  object-fit: cover;
+
+.profile-image-pic {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
 }
 
 
-
-.cardbody-color{
-  background-color: #ebf2fa;
+.cardbody-color {
+    background-color: #ebf2fa;
 }
 
-a{
-  text-decoration: none;
+a {
+    text-decoration: none;
 }
+

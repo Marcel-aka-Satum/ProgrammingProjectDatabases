@@ -12,10 +12,11 @@ export default function Dashboard() {
             <div className="row">
                 <div className="col-md-12">
                     <div className="text-center mt-3">
-                        {/*<button className="btn btn-primary m-2" onClick={() => window.location.href="/admin/articles"}>Articles</button>*/}
+                        <button className="btn btn-primary m-2" onClick={() => window.location.href="/admin/articles"}>Articles</button>
                         <button className="btn btn-primary m-2" onClick={() => window.location.href="/admin/users"}>Users</button>
                         <button className="btn btn-primary m-2" onClick={() => window.location.href="/admin/rss"}>RSS</button>
                         <button className="btn btn-primary m-2" onClick={() => window.location.href="/admin/settings"}>Settings</button>
+                        <button className="btn btn-primary m-2" onClick={() => window.location.href="/admin/statistics"}>Statistics</button>
                     </div>
                 </div>
             </div>

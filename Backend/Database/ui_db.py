@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 import psycopg2
 import json
-from .init_db import initialize_db
-from .populate_db import populate_db
-from . import query_db
+from . import init_db, populate_db, query_db
+
 
 
 """
@@ -41,7 +40,7 @@ class DBConnection:
         if not self.is_connected():
             print("database is not connected")
             return
-        initialize_db(self.cursor)
+        init_db.initialize_db(self.cursor)
 
     """
     populates the database with hardcoded data
@@ -51,7 +50,7 @@ class DBConnection:
         if not self.is_connected():
             print("database is not connected")
             return
-        populate_db(self.connection, self.cursor)
+        populate_db.populate_db(self.connection, self.cursor)
 
     """
     try to open the connection with the database
@@ -97,13 +96,16 @@ class DBConnection:
     add an article to the database
     """
 
-    def addArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str):
+    def addArticle(self, url: str, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
-            return -1, "database is not connected"
+            return False, "database is not connected"
 
-        self.cursor.execute(query_db.insert_newsarticle(url, title, summary, published, image, rss_url, topic))
-        return 0, "success"
+        try:
+            self.cursor.execute(*query_db.insert_newsarticle(url, title, summary, publisher, image, rss_url, topic))
+            return True, "success"
+        except Exception as e:
+            return False, str(e)
 
     """
     delete an article from the database
@@ -120,12 +122,12 @@ class DBConnection:
     update an article in the database
     """
 
-    def updateArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str):
+    def updateArticle(self, url: str, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str):
         if not self.is_connected():
             print("database is not connected")
             return -1, "database is not connected"
 
-        self.cursor.execute(query_db.update_newsarticle(url, title, summary, published, image, rss_url, topic))
+        self.cursor.execute(query_db.update_newsarticle(url, title, summary, publisher, image, rss_url, topic))
 
 
     """
@@ -162,7 +164,6 @@ class DBConnection:
         if user_data is None:
             return False, {}
 
-        print(user_data)
         # return True and dict with user data
         return True, {
             "UID": user_data[0],
@@ -176,35 +177,42 @@ class DBConnection:
     Add a user to the database
     """
 
-    def addUser(self, username: str, email: str, password: str, is_admin: bool):
+    def addUser(self, username: str, email: str, password: str, is_admin: bool) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
-            return -1, "database is not connected"
+            return False, "database is not connected"
 
-        query, params = query_db.insert_user(username, email, password, is_admin)
-        # self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
-        self.cursor.execute(query, params)
-        user = self.getUser(email)
+        try:
+            print('inserting user:', username, email, password, is_admin)
+            self.cursor.execute(query_db.insert_user(username, email, password, is_admin))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "users_email_key" in str(e):
+                return False, f"Email '{email}' is already in use"
+            elif "users_username_key" in str(e):
+                return False, f"Username '{username}' is already in use"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
-        return 1, {
-            "UID": user[1]["UID"],
-            "Username": user[1]["Username"],
-            "Email": user[1]["Email"],
-            "Password": user[1]["Password"],
-            "Is_Admin": user[1]["Is_Admin"]
-        }
 
     """
     Update a user in the database
     """
 
-    def updateUser(self, id:int, username: str, email: str, password: str, is_admin: bool):
+    def updateUser(self, id: int, username: str, email: str, password: str, is_admin: bool) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
-            return -1, "database is not connected"
-
-
-        self.cursor.execute(query_db.update_user(id, username, email, password, is_admin))
+            return False, "database is not connected"
+        try:
+            self.cursor.execute(query_db.update_user(id, username, email, password, is_admin))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "users_email_key" in str(e):
+                return False, f"Email '{email}' is already in use"
+            elif "users_username_key" in str(e):
+                return False, f"Username '{username}' is already in use"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
     """
     Delete a user from the database
@@ -233,27 +241,45 @@ class DBConnection:
             data.append(rss_info)
         return json.dumps(data)
 
-    def addRSSFeed(self, url: str, publisher: str, topic: str):
+    def addRSSFeed(self, url: str, publisher: str, topic: str) -> (bool, str):
+        if not self.is_connected():
+            print("database is not connected")
+            return False, "database is not connected"
+        try:
+            self.cursor.execute(query_db.insert_rssfeed(url, publisher, topic))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "rssfeeds_pkey" in str(e):
+                return False, f"URL '{url}' is already in use"
+            else:
+                return False, f"A unique constraint violation occurred: {e}"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
+
+    def deleteRSSFeed(self, url: str) -> (bool, str):
         if not self.is_connected():
             print("database is not connected")
             return -1, "database is not connected"
-
-        self.cursor.execute(query_db.insert_rssfeed(url, publisher, topic))
-
-    def deleteRSSFeed(self, url: str):
-        if not self.is_connected():
-            print("database is not connected")
-            return -1, "database is not connected"
-
-        self.cursor.execute(query_db.delete_rssfeed(url))
+        try:
+            self.cursor.execute(query_db.delete_rssfeed(url))
+            return True, "success"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
     def updateRSSFeed(self, url: str, publisher: str, topic: str):
         if not self.is_connected():
             print("database is not connected")
             return -1, "database is not connected"
-
-        self.cursor.execute(query_db.update_rssfeed(url, publisher, topic))
-
+        try:
+            self.cursor.execute(query_db.update_rssfeed(url, publisher, topic))
+            return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "rssfeeds_pkey" in str(e):
+                return False, f"URL '{url}' is already in use"
+            else:
+                return False, f"A unique constraint violation occurred: {e}"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
 
 # give terminal command for listing all the tables in the database in a specific schema
 # \dt newsaggregator.*
