@@ -18,10 +18,13 @@ function formatTitle(str) {
 function formatDate(dateStr) {
     const date = new Date(dateStr);
     const day = date.getDate();
-    const month = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
+    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
     const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day} ${month} ${year}, ${hours}:${minutes}`;
 }
+
 
 function formatSummary(text, url, limit = 200) {
     if (text.length <= limit) {
