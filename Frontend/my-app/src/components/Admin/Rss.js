@@ -216,7 +216,7 @@ export default function Rss() {
                     {filteredFeeds.map((feed) => (
                         <li className="list-group-item d-flex justify-content-between align-items-center"
                             key={feed.URL}>
-                            <p>{feed.URL} > <small>{feed.Topic}</small>
+                            <p>{feed.URL} <small>{feed.Topic}</small>
                                 <a href="/" onClick={(e) => {
                                     e.preventDefault();
                                     setSearchTerm(feed.Publisher);

@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react'
 import {useLocation} from 'react-router-dom'
-import Carousel from 'react-bootstrap/Carousel'
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -54,22 +53,6 @@ const Home = () => {
 
         if (location.pathname === '/') {
             createHomepage();
-        } else if (location.pathname === '/economics') {
-            createGenrePage("Economics");
-        } else if (location.pathname === '/sport') {
-            createGenrePage("Sport");
-        } else if (location.pathname === '/culture') {
-            createGenrePage("Culture");
-        } else if (location.pathname === '/politics') {
-            createGenrePage("Politics");
-        } else if (location.pathname === '/inland') {
-            createGenrePage("Inland");
-        } else if (location.pathname === '/international') {
-            createGenrePage("International");
-        } else if (location.pathname === '/science') {
-            createGenrePage("Science");
-        } else if (location.pathname === '/health') {
-            createGenrePage("Health");
         } else {
             createGenrePage(window.location.pathname.substring(1), true);
         }
@@ -80,7 +63,7 @@ const Home = () => {
     // krijg array van articles
     async function getArticles() {
         const response = await axios.get('http://localhost:4444/api/articles')
-        console.log('articles: ', response.data)
+        //console.log('articles: ', response.data)
         return response.data
     }
 
@@ -112,7 +95,7 @@ const Home = () => {
     }
 
     const latestArt = getLatestOfGenre()
-    console.log(latestArt)
+    //console.log(latestArt)
 
     async function getArticlesGenrenum(genre, number) {
         let num = 0
@@ -144,27 +127,6 @@ const Home = () => {
         return (articlesGenre)
     }
 
-    {/**
-
-     function carouselIt(index) {
-    const articles = getLatestOfGenre();
-
-    return articles.then(article => {
-      console.log("heya")
-      console.log(article['Health'])
-      return (
-        <Carousel.Item className='slide'>
-          <img className="d-block w-100" src={article['Health'].Image} alt="First slide" />
-          <Carousel.Caption className="text">
-            <NavLink to="/artikels">{article['Health'].Title}</NavLink>
-          </Carousel.Caption>
-        </Carousel.Item>
-      );
-    });
-  }
-     */
-    }
-
     const createGenrePage = async (genre, dynamic = false) => {
         if (dynamic) {
             genre = formatTitle(genre);
@@ -183,7 +145,7 @@ const Home = () => {
         ul.appendChild(li);
         document.getElementById("container").appendChild(ul);
 
-        console.log('genre:', genre)
+        //console.log('genre:', genre)
         const articles = await getArticlesGenre(genre);
 
         const rowDiv = document.createElement('div');
@@ -223,6 +185,7 @@ const Home = () => {
             ahref.className = "card-title";
             ahref.innerHTML = article.Title;
             ahref.target = "_blank";
+            ahref.style.fontWeight = 'bold'
             cardBody.appendChild(ahref);
 
             // Create the article description
@@ -255,72 +218,6 @@ const Home = () => {
     //Deze functie zal artikelen aan DOM van onze website toevoegen
     const createHomepage = async () => {
         const Genres = await getGenres()
-        {/** const carouselItems = await getLatestOfGenre()
-
-         //hier komt LatestArticles
-         let ul = document.createElement('ul')
-         ul.className = "list-inline mt-5 mb-0"
-
-         let li = document.createElement('li')
-         li.className = "list-inline-item"
-
-         let li2 = document.createElement('li')
-         li2.className = "list-inline-item"
-
-         let sectietitel = document.createElement('h2')
-         sectietitel.innerHTML = "Latest Articles"
-
-         let linkSect = document.createElement('a')
-         linkSect.href = '/artikels'
-         linkSect.innerHTML = "See More"
-
-         //create titleblock
-         li.appendChild(sectietitel)
-         li2.appendChild(linkSect)
-         ul.appendChild(li)
-         ul.appendChild(li2)
-
-         document.getElementById("container").appendChild(ul);
-
-
-
-         let carouselSection = document.createElement('section');
-         carouselSection.className = "slider container mb-3";
-
-         const carouselElement = document.createElement('div');
-         carouselElement.className = 'carousel slide';
-         carouselElement.setAttribute('data-ride', 'carousel');
-
-         for (let genre in carouselItems) {
-  let carouselItem = document.createElement('div');
-  carouselItem.className = 'carousel-item';
-
-  let img = document.createElement('img');
-  img.className = 'd-block w-100';
-  img.src = carouselItems[genre].Image;
-  img.alt = 'slideX';
-
-  let carouselCaption = document.createElement('div');
-  carouselCaption.className = 'carousel-caption';
-
-  let link = document.createElement('a');
-  link.href = `/artikels/${carouselItems[genre].Topic}`;
-  link.innerHTML = carouselItems[genre].Title;
-
-  carouselCaption.appendChild(link);
-  carouselItem.appendChild(img);
-  carouselItem.appendChild(carouselCaption);
-  carouselElement.appendChild(carouselItem);
-}
-
-         carouselSection.appendChild(carouselElement);
-
-         document.getElementById('container').appendChild(carouselSection);
-
-         const carousel = new bootstrap.Carousel(carouselElement);
-         */
-        }
-
 
         for (const genre of Genres) {
 
@@ -357,26 +254,72 @@ const Home = () => {
             rowDiv.className = "row p-2";
 
             //loop door elke article en maak de juiste DOM elements
-            for (const article of articles) {
+            // Loop through each article and create the DOM elements
+        for (const article of articles) {
+            // Create the card div
+            let cardDiv = document.createElement('div');
+            cardDiv.className = "col-4 mb-3";
 
-                // create image for div underneath
+            // Create the card element
+            let card = document.createElement('div');
+            card.className = "card article-card";
+
+            // check if it has an image
+            if (article.Image) {
+                         
+                // Create the image element
                 let img = document.createElement('img');
-                img.src = article.Image; //deze link moet normaal gezien onze api terug geve
-                img.className = "d-block w-100";
-                img.alt = "First slide"
+                img.src = article.Image;
+                img.className = "card-img-top";
+                img.alt = "Article";
+                img.style.height = "300px";
+                img.style.objectFit = "cover";
+                img.style.objectPosition = "center center";
 
-                //create link to artikel
-                let ahref = document.createElement('a');
-                ahref.href = article.URL // dees zal onze user moete navigate naar specifieke artikel
-                ahref.innerHTML = article.Title
+                let imgref = document.createElement('a')
+                imgref.href = article.URL;
+                imgref.target = "_blank"
+                imgref.rel = "noreferrer"
+                imgref.appendChild(img)
+                card.appendChild(imgref);
+            }
 
-                //create div class="col-sm-4 col-md-4 col-lg-4 text-left
-                const textLeftDiv = document.createElement('div');
-                textLeftDiv.className = "col-sm-4 col-md-4 col-lg-4 text-left";
-                textLeftDiv.appendChild(img);
-                textLeftDiv.appendChild(ahref)
-                //add to parent div "row p-2"
-                rowDiv.appendChild(textLeftDiv)
+
+            // Create the card body div
+            let cardBody = document.createElement('div');
+            cardBody.className = "card-body";
+
+            // Create the article title
+            let ahref = document.createElement('a');
+            ahref.href = article.URL;
+            ahref.className = "card-title";
+            ahref.innerHTML = article.Title;
+            ahref.target = "_blank";
+            ahref.style.fontWeight = 'bold'
+            cardBody.appendChild(ahref);
+
+            // Create the article description
+            let p = document.createElement('p');
+            p.className = "card-text";
+            const [text, hasMoreText] = formatSummary(article.Summary, article.URL, 200);
+            p.innerHTML = text;
+            cardBody.appendChild(p);
+
+            // Create the article date
+            let date = document.createElement('p');
+            date.className = "card-text float-end";
+            date.innerHTML = formatDate(article.Published);
+            cardBody.appendChild(date);
+
+            // Add card body to the card
+            card.appendChild(cardBody);
+
+            // Add the card to the cardDiv
+            cardDiv.appendChild(card);
+
+            // Add the cardDiv to the rowDiv
+            rowDiv.appendChild(cardDiv);
+
             }
             document.getElementById("container").appendChild(rowDiv);
 
@@ -385,19 +328,6 @@ const Home = () => {
 
     return (
         <div className="container" id="container">
-
-            {/**
-             * <section className="slider container mb-3">
-             <Carousel>
-             {console.log(carouselIt(0))}
-             {carouselIt(1)}
-             {carouselIt(2)}
-             {carouselIt(3)}
-             {carouselIt(4)}
-             </Carousel>
-             </section>
-             *
-             */}
 
         </div>
     );

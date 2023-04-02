@@ -10,8 +10,9 @@ import Settings from "./components/Admin/Settings";
 import Footer from './components/Footer/Footer'
 import Home from './pages/Home';
 import {Routes, Route} from 'react-router-dom'
-import React, {useState, createContext} from 'react'
+import React, {useState, createContext, useEffect} from 'react'
 import {User} from './components/User/User'
+import axios from 'axios'
 
 /////////////////// import css
 import "./components/Navbar/navbarStyle.css"
@@ -20,6 +21,7 @@ import {ToastContainer} from "react-toastify";
 ///////////////////
 
 let userSession = createContext();
+
 
 function App() {
     document.title = "PPDBT8"
@@ -30,7 +32,7 @@ function App() {
         <userSession.Provider value={{user, setUser}}>
             <div id="main-container">
                 <Navbar/>
-                <Routes>
+                <Routes id="routes">
                     <Route path="/" element={<Home/>}></Route>
                     {/*{['/login', '/admin'].map(path => <Route path={path} element={<Loginform/>}/>)}*/}
                     <Route path="/login" element={<Loginform/>}></Route>
@@ -63,23 +65,8 @@ function App() {
                     <Route path="/admin/settings" element={<Settings/>}/>
                     <Route path="/admin/statistics" element={<Statistics/>}/>
 
-
-                    <Route path="/" element={<Home/>}></Route>
-                    <Route path="/health" element={<Home/>}></Route>
-                    <Route path="/economics" element={<Home/>}></Route>
-                    <Route path="/culture" element={<Home/>}></Route>
-                    <Route path="/business" element={<Home/>}></Route>
-                    <Route path="/media" element={<Home/>}></Route>
-                    <Route path="/lifestyle" element={<Home/>}></Route>
-                    <Route path="/travel" element={<Home/>}></Route>
-                    <Route path="/entertainment" element={<Home/>}></Route>
-                    <Route path="/opinion" element={<Home/>}></Route>
-                    <Route path="/top-stories" element={<Home/>}></Route>
-                    <Route path="/sport" element={<Home/>}></Route>
-                    <Route path="/politics" element={<Home/>}></Route>
-                    <Route path="/inland" element={<Home/>}></Route>
-                    <Route path="/international" element={<Home/>}></Route>
-                    <Route path="/science-and-technology" element={<Home/>}></Route>
+                    
+                    <Route path="/:genre" element={<Home/>}></Route>
                 </Routes>
                 <Footer/>
             </div>
