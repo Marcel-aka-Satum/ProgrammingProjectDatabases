@@ -1,10 +1,12 @@
 # UI Backend API Documentation
 
-This code implements the backend for a User Interface (UI) that allows users to register and login, view, add, update, and delete users, RSS feeds, and news articles. The API supports JSON requests and responses.
+This code implements the backend for a User Interface (UI) that allows users to register and login, view, add, update,
+and delete users, RSS feeds, and news articles. The API supports JSON requests and responses.
 
 ## Endpoints
 
 ---
+
 # Authentication API Documentation
 
 ### Register User
@@ -14,6 +16,7 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Method:** `POST`
 
 **Parameters:**
+
 - `Email`: User's email address.
 - `Password`: User's password.
 - `Is_Admin`: Indicates if the user is an administrator. (default=False)
@@ -23,17 +26,30 @@ This code implements the backend for a User Interface (UI) that allows users to 
 
 ### Login User
 
-**Endpoint:** `/api/login`
+```http
+GET /api/login
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-- `Email`: User's email address.
-- `Password`: User's password.
+| Parameter  | Type     | Description                         |
+|:-----------|:---------|:------------------------------------|
+| `Email`    | `string` | **Required**. User's email address. |
+| `Password` | `string` | **Required**. User's password.      |
+
+**Response Body**
+
+| Parameter | Type     | Description       |
+|:----------|:---------|:------------------|
+| `UID`     | `int`    | User ID.          |
+| `Email`   | `string` | User's email.     |
+| `token`   | `string` | JWT access token. |
+
 
 **Description:** _Logs in an existing user and returns a JWT access token upon success._
 
 ---
+
 # User API Documentation
 
 ### Get Users
@@ -59,6 +75,7 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Method:** `POST`
 
 **Parameters:**
+
 - `Email`: User's email address.
 - `Password`: User's password.
 - `Is_Admin`: Indicates if the user is an administrator.
@@ -73,6 +90,7 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Method:** `POST`
 
 **Parameters:**
+
 - `Email`: User's email address.
 - `Password`: User's password.
 - `Is_Admin`: Indicates if the user is an administrator.
@@ -89,6 +107,7 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Description:** _Deletes an existing user._
 
 ---
+
 # RSS Feed API Documentation
 
 ### Get RSS Feeds
@@ -114,6 +133,7 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Method:** `POST`
 
 **Parameters:**
+
 - `URL`: RSS feed URL.
 - `Publisher`: Feed publisher name.
 - `Topic`: Feed topic.
@@ -127,6 +147,7 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Method:** `POST`
 
 **Parameters:**
+
 - `URL`: RSS feed URL.
 - `Publisher`: Feed publisher name.
 - `Topic`: Feed topic.
@@ -148,11 +169,13 @@ This code implements the backend for a User Interface (UI) that allows users to 
 **Method:** `POST`
 
 **Parameters:**
+
 - `URL`: RSS feed URL.
 
 **Description:** _Checks if an RSS feed is valid (still responsive, not deleted, xml format, etc.)._
 
 ---
+
 # News Article API Documentation
 
 ### Get Articles
