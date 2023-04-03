@@ -5,22 +5,30 @@ and delete users, RSS feeds, and news articles. The API supports JSON requests a
 
 ## Endpoints
 
+**Response Body**
+
+| Parameter | Type     | Description                       |
+|:----------|:---------|:----------------------------------|
+| `message` | `string` | Success message or error message. |
+|`status`   | `int`    | HTTP status code.                 |
 ---
 
 # Authentication API Documentation
 
 ### Register User
 
-**Endpoint:** `/api/register`
+```http
+POST /api/register
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-
-- `Email`: User's email address.
-- `Password`: User's password.
-- `Is_Admin`: Indicates if the user is an administrator. (default=False)
-- `Username`: User's desired username.
+| Parameter  | Type     | Description                                                |
+|:-----------|:---------|:-----------------------------------------------------------|
+| `Email`    | `string` | **Required**. User's email address.                        |
+| `Password` | `string` | **Required**. User's password.                             |
+| `Is_Admin` | `bool`   | Indicates if the user is an administrator. (default=False) |
+| `Username` | `string` | **Required**. User's desired username.                     |
 
 **Description:** _Registers a new user and returns a JWT access token upon success._
 
@@ -37,15 +45,6 @@ GET /api/login
 | `Email`    | `string` | **Required**. User's email address. |
 | `Password` | `string` | **Required**. User's password.      |
 
-**Response Body**
-
-| Parameter | Type     | Description       |
-|:----------|:---------|:------------------|
-| `UID`     | `int`    | User ID.          |
-| `Email`   | `string` | User's email.     |
-| `token`   | `string` | JWT access token. |
-
-
 **Description:** _Logs in an existing user and returns a JWT access token upon success._
 
 ---
@@ -54,55 +53,59 @@ GET /api/login
 
 ### Get Users
 
-**Endpoint:** `/api/users`
-
-**Method:** `GET`
+```http
+GET /api/users
+```
 
 **Description:** _Retrieves a list of all users._
 
 ### Get Total Users (quantity)
 
-**Endpoint:** `/api/users/totalusers`
-
-**Method:** `GET`
+```http
+GET /api/users/totalusers
+```
 
 **Description:** _Retrieves the total number of users._
 
 ### Add User
 
-**Endpoint:** `/api/add_user`
+```http
+POST /api/add_user
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-
-- `Email`: User's email address.
-- `Password`: User's password.
-- `Is_Admin`: Indicates if the user is an administrator.
-- `Username`: User's desired username.
+| Parameter  | Type     | Description                                                |
+|:-----------|:---------|:-----------------------------------------------------------|
+| `Email`    | `string` | **Required**. User's email address.                        |
+| `Password` | `string` | **Required**. User's password.                             |
+| `Is_Admin` | `bool`   | Indicates if the user is an administrator. (default=False) |
+| `Username` | `string` | **Required**. User's desired username.                     |
 
 **Description:** _Adds a new user._
 
 ### Update User
 
-**Endpoint:** `/api/update_user/<id>`
+```http
+POST /api/update_user/<id>
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-
-- `Email`: User's email address.
-- `Password`: User's password.
-- `Is_Admin`: Indicates if the user is an administrator.
-- `Username`: User's desired username.
+| Parameter  | Type     | Description                                                |
+|:-----------|:---------|:-----------------------------------------------------------|
+| `Email`    | `string` | **Required**. User's email address.                        |
+| `Password` | `string` | **Required**. User's password.                             |
+| `Is_Admin` | `bool`   | Indicates if the user is an administrator. (default=False) |
+| `Username` | `string` | **Required**. User's desired username.                     |
 
 **Description:** _Updates an existing user._
 
 ### Delete User
 
-**Endpoint:** `/api/delete_user/<id>`
-
-**Method:** `POST`
+```http
+POST /api/delete_user/<id>
+```
 
 **Description:** _Deletes an existing user._
 
@@ -112,65 +115,77 @@ GET /api/login
 
 ### Get RSS Feeds
 
-**Endpoint:** `/api/rssfeeds`
-
-**Method:** `GET`
+```http
+GET /api/rssfeeds
+```
 
 **Description:** _Retrieves a list of all RSS feeds._
 
 ### Get Total RSS Feeds (quantity)
 
-**Endpoint:** `/api/rssfeeds/totalrssfeeds`
-
-**Method:** `GET`
+```http
+GET /api/rssfeeds/totalrssfeeds
+```
 
 **Description:** _Retrieves the total number of RSS feeds._
 
 ### Add RSS Feed
 
-**Endpoint:** `/api/add_rssfeed`
+```http
+POST /api/add_rssfeed
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-
-- `URL`: RSS feed URL.
-- `Publisher`: Feed publisher name.
-- `Topic`: Feed topic.
+| Parameter  | Type     | Description                        |
+|:-----------|:---------|:-----------------------------------|
+| `URL`      | `string` | **Required**. RSS feed URL.        |
+| `Publisher`| `string` | **Required**. Feed publisher name. |
+| `Topic`    | `string` | **Required**. Feed topic.          |
 
 **Description:** _Adds a new RSS feed._
 
 ### Update RSS Feed
 
-**Endpoint:** `/api/update_rssfeed`
+```http
+POST /api/update_rssfeed
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-
-- `URL`: RSS feed URL.
-- `Publisher`: Feed publisher name.
-- `Topic`: Feed topic.
+| Parameter  | Type     | Description                        |
+|:-----------|:---------|:-----------------------------------|
+| `URL`      | `string` | **Required**. RSS feed URL.        |
+| `Publisher`| `string` | **Required**. Feed publisher name. |
+| `Topic`    | `string` | **Required**. Feed topic.          |
 
 **Description:** _Updates an existing RSS feed._
 
 ### Delete RSS Feed
 
-**Endpoint:** `/api/delete_rssfeed`
+```http
+POST /api/delete_rssfeed
+```
 
-**Method:** `POST`
+**Request Body**
+
+| Parameter  | Type     | Description                        |
+|:-----------|:---------|:-----------------------------------|
+| `URL`      | `string` | **Required**. RSS feed URL.        |
 
 **Description:** _Deletes an existing RSS feed._
 
 ### check RSS Feed
 
-**Endpoint:** `/api/check_rssfeed`
+```http
+POST /api/check_rssfeed
+```
 
-**Method:** `POST`
+**Request Body**
 
-**Parameters:**
-
-- `URL`: RSS feed URL.
+| Parameter  | Type     | Description                        |
+|:-----------|:---------|:-----------------------------------|
+| `URL`      | `string` | **Required**. RSS feed URL.        |
 
 **Description:** _Checks if an RSS feed is valid (still responsive, not deleted, xml format, etc.)._
 
@@ -180,16 +195,16 @@ GET /api/login
 
 ### Get Articles
 
-**Endpoint:** `/api/articles`
-
-**Method:** `GET`
+```http
+GET /api/articles
+```
 
 **Description:** _Retrieves a list of all news articles._
 
 ### Get Total Articles (quantity)
 
-**Endpoint:** `/api/articles/totalarticles`
-
-**Method:** `GET`
+```http
+GET /api/articles/totalarticles
+```
 
 **Description:** _Retrieves the total number of news articles._
