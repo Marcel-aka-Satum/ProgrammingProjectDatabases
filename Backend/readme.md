@@ -1,85 +1,172 @@
-# UI Backend Documentation
+# UI Backend API Documentation
 
-This code implements the backend for a User Interface (UI) that allows users to register and login, view, add, update and delete users, RSS feeds, and news articles. The API supports JSON requests and responses.
+This code implements the backend for a User Interface (UI) that allows users to register and login, view, add, update, and delete users, RSS feeds, and news articles. The API supports JSON requests and responses.
 
-## Functions
+## Endpoints
 
-### `index()`
+---
+# Authentication API Documentation
 
-Routing: `@app.route('/')`
+### Register User
 
-Renders the `index.html` template for the homepage.
+**Endpoint:** `/api/register`
 
-### `register_user()`
+**Method:** `POST`
 
-Routing: `@app.route("/api/register", methods=["POST"])`
+**Parameters:**
+- `Email`: User's email address.
+- `Password`: User's password.
+- `Is_Admin`: Indicates if the user is an administrator. (default=False)
+- `Username`: User's desired username.
 
-Endpoint to register a new user. Accepts a POST request with JSON data containing `Email`, `Password`, `Is_Admin`, and `Username`. The `Email` and `Username` must not be in use by another user. If successful, a new user is created, and a JWT access token is returned.
+**Description:** _Registers a new user and returns a JWT access token upon success._
 
-### `login_user()`
+### Login User
 
-Routing: `@app.route("/api/login", methods=["POST"])`
+**Endpoint:** `/api/login`
 
-Endpoint to login an existing user. Accepts a POST request with JSON data containing `Email` and `Password`. If successful, a JWT access token is returned.
+**Method:** `POST`
 
-### `getUsers()`
+**Parameters:**
+- `Email`: User's email address.
+- `Password`: User's password.
 
-Routing: `@app.route('/api/users', methods=['GET'])`
+**Description:** _Logs in an existing user and returns a JWT access token upon success._
 
-Endpoint to retrieve a list of all users.
+---
+# User API Documentation
 
-### `addUser()`
+### Get Users
 
-Routing: `@app.route('/api/add_user', methods=['POST'])`
+**Endpoint:** `/api/users`
 
-Endpoint to add a new user. Accepts a POST request with JSON data containing `Email`, `Password`, `Is_Admin`, and `Username`.
+**Method:** `GET`
 
-### `updateUser(id)`
+**Description:** _Retrieves a list of all users._
 
-Routing: `@app.route('/api/update_user/<id>', methods=['POST'])`
+### Get Total Users (quantity)
 
-Endpoint to update an existing user. Accepts a POST request with JSON data containing `Email`, `Password`, `Is_Admin`, and `Username`.
+**Endpoint:** `/api/users/totalusers`
 
-### `deleteUser(username)`
+**Method:** `GET`
 
-Routing: `@app.route('/api/delete_user/<username>', methods=['POST'])`
+**Description:** _Retrieves the total number of users._
 
-Endpoint to delete an existing user.
+### Add User
 
-### `getRSSFeeds()`
+**Endpoint:** `/api/add_user`
 
-Routing: `@app.route('/api/rssfeeds', methods=['GET'])`
+**Method:** `POST`
 
-Endpoint to retrieve a list of all RSS feeds.
+**Parameters:**
+- `Email`: User's email address.
+- `Password`: User's password.
+- `Is_Admin`: Indicates if the user is an administrator.
+- `Username`: User's desired username.
 
-### `addRSSFeed()`
+**Description:** _Adds a new user._
 
-Routing: `@app.route('/api/add_rssfeed', methods=['POST'])`
+### Update User
 
-Endpoint to add a new RSS feed. Accepts a POST request with JSON data containing `URL`, `Publisher`, and `Topic`.
+**Endpoint:** `/api/update_user/<id>`
 
-### `updateRSSFeed(url)`
+**Method:** `POST`
 
-Routing: `@app.route('/api/update_rssfeed/<url>', methods=['POST'])`
+**Parameters:**
+- `Email`: User's email address.
+- `Password`: User's password.
+- `Is_Admin`: Indicates if the user is an administrator.
+- `Username`: User's desired username.
 
-Endpoint to update an existing RSS feed. Accepts a POST request with JSON data containing `Publisher` and `Topic`.
+**Description:** _Updates an existing user._
 
-### `deleteRSSFeed(url)`
+### Delete User
 
-Routing: `@app.route('/api/delete_rssfeed/<url>', methods=['POST'])`
+**Endpoint:** `/api/delete_user/<id>`
 
-Endpoint to delete an existing RSS feed.
+**Method:** `POST`
 
-### `articles()`
+**Description:** _Deletes an existing user._
 
-Routing: `@app.route('/api/articles', strict_slashes=False, methods=['GET'])`
+---
+# RSS Feed API Documentation
 
-Endpoint to retrieve a list of all news articles.
+### Get RSS Feeds
 
-### `addArticle()`
+**Endpoint:** `/api/rssfeeds`
 
-Routing: `@app.route('/api/add_article', methods=['POST'])`
+**Method:** `GET`
 
-Endpoint to add a new news article.
+**Description:** _Retrieves a list of all RSS feeds._
 
+### Get Total RSS Feeds (quantity)
 
+**Endpoint:** `/api/rssfeeds/totalrssfeeds`
+
+**Method:** `GET`
+
+**Description:** _Retrieves the total number of RSS feeds._
+
+### Add RSS Feed
+
+**Endpoint:** `/api/add_rssfeed`
+
+**Method:** `POST`
+
+**Parameters:**
+- `URL`: RSS feed URL.
+- `Publisher`: Feed publisher name.
+- `Topic`: Feed topic.
+
+**Description:** _Adds a new RSS feed._
+
+### Update RSS Feed
+
+**Endpoint:** `/api/update_rssfeed`
+
+**Method:** `POST`
+
+**Parameters:**
+- `URL`: RSS feed URL.
+- `Publisher`: Feed publisher name.
+- `Topic`: Feed topic.
+
+**Description:** _Updates an existing RSS feed._
+
+### Delete RSS Feed
+
+**Endpoint:** `/api/delete_rssfeed`
+
+**Method:** `POST`
+
+**Description:** _Deletes an existing RSS feed._
+
+### check RSS Feed
+
+**Endpoint:** `/api/check_rssfeed`
+
+**Method:** `POST`
+
+**Parameters:**
+- `URL`: RSS feed URL.
+
+**Description:** _Checks if an RSS feed is valid (still responsive, not deleted, xml format, etc.)._
+
+---
+# News Article API Documentation
+
+### Get Articles
+
+**Endpoint:** `/api/articles`
+
+**Method:** `GET`
+
+**Description:** _Retrieves a list of all news articles._
+
+### Get Total Articles (quantity)
+
+**Endpoint:** `/api/articles/totalarticles`
+
+**Method:** `GET`
+
+**Description:** _Retrieves the total number of news articles._
