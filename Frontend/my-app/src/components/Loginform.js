@@ -31,8 +31,8 @@ export default function Loginform() {
                 }
             })
         } catch (err) {
-            console.log('response', err.response.data.error)
-            ERROR(err.response.data.error)
+            console.log('response', err.response.data.message)
+            ERROR(err.response.data.message)
         }
     }
 

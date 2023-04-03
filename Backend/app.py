@@ -40,28 +40,28 @@ def register_user():
     user_exists = db.getUser(email)
 
     if email == "" or password == "" or username == "":
-        return jsonify({"error": "please fill in all fields"}), 401
+        return jsonify({"message": "please fill in all fields"}), 401
 
     message_email_val, status_email_val = validate_email(email)
     message_pwd_val, status_pwd_val = validate_pwd(password)
 
     if status_email_val == 401:
-        return jsonify({"error": message_email_val}), 401
+        return jsonify({"message": message_email_val}), 401
 
     if user_exists[0]:
-        return jsonify({"error": "user exists already."}), 401
+        return jsonify({"message": "user exists already."}), 401
 
     if password != confirm_password:
-        return jsonify({"error": "passwords do not match"}), 401
+        return jsonify({"message": "passwords do not match"}), 401
 
     if status_pwd_val == 401:
-        return jsonify({"error": message_pwd_val}), 401
+        return jsonify({"message": message_pwd_val}), 401
 
     # salt = bcrypt.gensalt()
     # hashed_password = bcrypt.hashpw(password, salt)
     status_db, message_db = db.addUser(username, email, password, is_admin)
     if not status_db:
-        return jsonify({"error": message_db}), 401
+        return jsonify({"message": message_db}), 401
 
     access_token = create_access_token(identity=email)
 
@@ -76,13 +76,13 @@ def login_user():
     user_exists = db.getUser(email)
 
     if email == "" or password == "":
-        return jsonify({"error": "please fill in all fields"}), 401
+        return jsonify({"message": "please fill in all fields"}), 401
 
     if user_exists[0] in [None, False]:
-        return jsonify({"error": "user does not exist."}), 401
+        return jsonify({"message": "user does not exist."}), 401
 
     if password != user_exists[1]['Password']:
-        return jsonify({"error": "password is incorrect"}), 401
+        return jsonify({"message": "password is incorrect"}), 401
     else:
         return jsonify({"message": f"Authorized > Welcome Back"}), 200
     access_token = create_access_token(identity=email)

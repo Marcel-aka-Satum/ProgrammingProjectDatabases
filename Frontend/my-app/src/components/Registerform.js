@@ -37,7 +37,7 @@ export default function Registerform() {
                 }
             })
         } catch (err) {
-            ERROR(err.response.data.error)
+            ERROR(err.response.data.message)
         }
     }
 

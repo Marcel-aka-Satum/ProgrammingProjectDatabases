@@ -65,6 +65,12 @@ GET /api/users
 GET /api/users/totalusers
 ```
 
+**Response Body**
+
+| Parameter | Type     | Description                       |
+|:----------|:---------|:----------------------------------|
+|`totalUsers`| `int`| Total number of users.            |
+
 **Description:** _Retrieves the total number of users._
 
 ### Add User
@@ -126,6 +132,12 @@ GET /api/rssfeeds
 ```http
 GET /api/rssfeeds/totalrssfeeds
 ```
+
+**Response Body**
+
+| Parameter | Type     | Description                       |
+|:----------|:---------|:----------------------------------|
+|`totalRSSFeeds`| `int`| Total number of RSS feeds.        |
 
 **Description:** _Retrieves the total number of RSS feeds._
 
@@ -196,8 +208,15 @@ POST /api/check_rssfeed
 ### Get Articles
 
 ```http
-GET /api/articles
+GET /apiv2/articles
 ```
+
+**Response Body**
+
+| Parameter | Type     | Description                       |
+|:----------|:---------|:----------------------------------|
+|`articles` | `list`   | List of news articles.            |
+|`status`   | `int`    | HTTP status code.                 |
 
 **Description:** _Retrieves a list of all news articles._
 
@@ -206,5 +225,11 @@ GET /api/articles
 ```http
 GET /api/articles/totalarticles
 ```
+
+**Response Body**
+
+| Parameter | Type     | Description                       |
+|:----------|:---------|:----------------------------------|
+|`totalArticles`| `int`| Total number of news articles.|
 
 **Description:** _Retrieves the total number of news articles._
