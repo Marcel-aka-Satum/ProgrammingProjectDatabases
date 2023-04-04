@@ -13,43 +13,11 @@ app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
-db.connect()
-db.redefine()
-db.populate()
+print(db.loadBackup("230404_23_53.txt"))
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
 jwt = JWTManager(app)
-
-@app.route('/test/rssfeeds')
-def TestRssfeeds():
-    return db.getRSSFeeds()
-
-
-@app.route('/test/newsarticles')
-def TestNewsarticles():
-    return db.getNewsArticles()
-
-
-@app.route('/test/visitors')
-def TestVisitors():
-    return db.getVisitors()
-
-
-@app.route('/test/users')
-def TestUsers():
-    return db.getUsers()
-
-
-@app.route('/test/cookies')
-def TestCookies():
-    return db.getCookies()
-
-
-@app.route('/test/hasclicked')
-def TestHasClicked():
-    return db.getHasClicked()
-
 
 
 @app.route('/')
@@ -66,7 +34,7 @@ def register_user():
     password = request.json["Password"]
     is_admin = request.json["Is_Admin"]
     username = request.json["Username"]
-    user_exists = db.getUser(email)
+    user_exists = db.getUsers(email)
 
     if user_exists[0]:
         return jsonify({"error": "Unauthorized > user exists already."}), 401
@@ -170,14 +138,14 @@ def deleteUser(id):
 @app.route('/api/rssfeeds', methods=['GET'])
 @cross_origin()
 def getRSSFeeds():
-    rssfeeds = db.ParseRSSFeeds()
+    rssfeeds = json.dumps(db.ParseRSSFeeds()[1])
     return json.loads(rssfeeds)
 
 
 @app.route('/api/rssfeeds/totalrssfeeds', methods=['GET'])
 @cross_origin()
 def getTotalRSSFeeds():
-    rssfeeds = db.ParseRSSFeeds()
+    rssfeeds = json.dumps(db.ParseRSSFeeds()[1])
     return jsonify({"totalRSSFeeds": len(json.loads(rssfeeds))})
 
 
@@ -365,6 +333,43 @@ def getTotalArticles():
 def error_handler(error):
     return render_template('errors/404.html'), 404
 
+
+
+#################### DATABASE TABLES ####################
+
+@app.route('/db')
+def database():
+    return render_template('database.html')
+
+
+@app.route('/db/rssfeeds')
+def DBRssfeeds():
+    return jsonify(db.getRSSFeeds()[1])
+
+
+@app.route('/db/newsarticles')
+def DBNewsarticles():
+    return jsonify(db.getNewsArticles()[1])
+
+
+@app.route('/db/visitors')
+def DBVisitors():
+    return jsonify(db.getVisitors()[1])
+
+
+@app.route('/db/users')
+def DBUsers():
+    return jsonify(db.getUsers()[1])
+
+
+@app.route('/db/cookies')
+def DBCookies():
+    return jsonify(db.getCookies()[1])
+
+
+@app.route('/db/hasclicked')
+def DBHasClicked():
+    return jsonify(db.getHasClicked()[1])
 
 if __name__ == '__main__':
     app.run(port=4444)

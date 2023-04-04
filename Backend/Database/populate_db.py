@@ -13,33 +13,35 @@ def populate_db(conn, cur):
 
     for i in range(len(rss_url)):
         cur.execute(query.insert_rssfeeds
-                    (rss_url[i],
+                    ([rss_url[i],
                      rss_publisher[i],
-                     rss_topic[i]))
+                     rss_topic[i]]))
         conn.commit()
-
+    cur.execute(query.insert_rssfeeds(["6","2","3"]))
+    cur.execute(
+        f"""
+                INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+                VALUES ('url','title','sum',4,5,6,7);
+                """
+    )
+    cur.execute(
+        f"""
+                INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+                VALUES (2,2,3,4,5,6,7);
+                """
+    )
     print("Done inserting values")
 
     # populate users
-    users = [
-        {'UID':'1', 'username': 'admin', 'email': 'admin@gmail.com', 'password': 'admin', 'is_admin': True},
-        {'UID':'2', 'username': 'test', 'email': 'test@gmail.com', 'password': 'test', 'is_admin': False}
-    ]
+    users = [['1','admin','admin@gmail.com','admin',True],['2','test','test@gmail.com','test', False]]
     # make an insert query into the users table
 
 
     print("Starting to insert values")
 
     for user in users:
-        cur.execute(query.insert_visitors(
-            user["UID"]))
-
-        cur.execute(query.insert_users(
-                     user["UID"],
-                     user['username'],
-                     user['email'],
-                     user['password'],
-                     user['is_admin']))
+        cur.execute(query.insert_visitors([user[0]]))
+        cur.execute(query.insert_users(user))
         conn.commit()
 
     print("Done inserting values")

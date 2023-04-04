@@ -2,134 +2,51 @@ import psycopg2
 from typing import Tuple
 
 
-#################### INSERTERS ####################
-
-def insert_rssfeeds(URL: str, Publisher: str, Topic: str) -> tuple():
-    """
-        INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
-    """
+def get_maxUID() -> str:
     return f"""
-            INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
-            VALUES('{URL}', '{Publisher}', '{Topic}')
+            SELECT MAX(UID) FROM newsaggregator.visitors;
             """
 
 
-def insert_newsarticles(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, rss_url: str,
-                        Topic: str) -> str:
-    """
-        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
-    """
-    return f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
-            VALUES ('{URL}', '{Title}', '{Summary}', '{Published}', '{Image_URL}', '{rss_url}', '{Topic}');
-            """
-
-
-def insert_visitors(UID: str) -> str:
-    """
-        INSERT INTO newsaggregator.visitors (UID)
-    """
-    return f"""
-            INSERT INTO newsaggregator.visitors (UID)
-            VALUES('{UID}')
-            """
-
-
-def insert_users(UID: str, Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
-    """
-        INSERT INTO newsaggregator.users (Username, Email, Password, Is_Admin, UID)
-    """
-    return f"""
-            INSERT INTO newsaggregator.users (Username, Email, Password, Is_Admin, UID)
-            VALUES ('{Username}', '{Email}', '{Password}', {Is_Admin}, '{UID}');
-            """
-
-
-def insert_cookies(cookie: str, UID: str) -> str:
-    """
-        INSERT INTO newsaggregator.cookies (cookie, UID)
-    """
-    return f"""
-            INSERT INTO newsaggregator.cookies (cookie, UID)
-            VALUES ('{cookie}', '{UID}');
-            """
-
-
-def insert_hasclicked(UID: str, URL: str) -> str:
-    """
-        INSERT INTO newsaggregator.hasclicked (UID, URL)
-    """
-    return f"""
-            INSERT INTO newsaggregator.hasclicked (UID, URL)
-            VALUES ('{UID}', '{URL}');
-            """
-
-
-def insert_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, rss_url: str, Topic: str) -> \
-        Tuple[str, Tuple]:
-    query = f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
-            """
-    return query, (URL, Title, Summary, Published, Image_URL, rss_url, Topic)
-
-
-def insert_user(Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
-    return f"""
-            INSERT INTO newsaggregator.users (Username, Email, Password, Is_Admin)
-            VALUES ('{Username}', '{Email}', '{Password}', {Is_Admin});
-            """
-
-
-#################### DELETERS ####################
-def delete_rssfeed(URL: str) -> str:
-    return f"""
-            DELETE FROM newsaggregator.rssfeeds
-            WHERE URL = '{URL}';
-            """
-
-
-def delete_newsarticle(URL: str) -> str:
-    return f"""
-            DELETE FROM newsaggregator.newsarticles
-            WHERE URL = '{URL}';
-            """
-
-
-def delete_user(Uid: str) -> str:
-    return f"""
-            DELETE FROM newsaggregator.users
-            WHERE UID = '{Uid}';
-            """
-
-
-#################### UPDATERS ####################
-def update_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
-    return f"""
-            UPDATE newsaggregator.rssfeeds
-            SET Publisher = '{Publisher}', Topic = '{Topic}'
-            WHERE URL = '{URL}';
-            """
-
-
-def update_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str,
-                       Topic: str) -> str:
-    return f"""
-            UPDATE newsaggregator.newsarticles
-            SET Title = '{Title}', Summary = '{Summary}', Published = '{Published}', Image_URL = '{Image_URL}', RSS_URL = '{RSS_URL}', Topic = '{Topic}'
-            WHERE URL = '{URL}';
-            """
-
-
-def update_user(ID: int, Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
-    return f"""
-            UPDATE newsaggregator.users
-            SET Username = '{Username}', Email = '{Email}', Password = '{Password}', Is_Admin = '{Is_Admin}'
-            WHERE UID = {ID};
-            """
 
 
 #################### GETTERS ####################
+
+def get_visitor(UID: str) -> str:
+    return f"""
+            SELECT * FROM newsaggregator.visitors
+            WHERE UID = {UID};
+            """
+
+def get_user(email: str) -> str:
+    return f"""
+            SELECT * FROM newsaggregator.users
+            WHERE Email = '{email}';
+            """
+
+
+def get_rssfeed(URL: str) -> str:
+    """
+        SELECT * FROM newsaggregator.rssfeeds
+        WHERE URL = '{URL}';
+    """
+    return f"""
+            SELECT * FROM newsaggregator.rssfeeds
+            WHERE URL = '{URL}';
+            """
+
+
+def get_newsarticles(URL: str) -> str:
+    """
+        SELECT * FROM newsaggregator.newsarticles
+        WHERE URL = '{URL}';
+    """
+    return f"""
+            SELECT * FROM newsaggregator.newsarticles
+            WHERE URL = '{URL}';
+            """
+
+#################### TABLE GETTERS ####################
 
 def get_rssfeeds() -> str:
     """
@@ -173,8 +90,148 @@ def get_hasclicked() -> str:
     return "SELECT * FROM newsaggregator.hasclicked"
 
 
-def get_user(email: str) -> str:
+#################### INSERTERS ####################
+
+def insert_rssfeed(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
+    """
     return f"""
-            SELECT * FROM newsaggregator.users
-            WHERE Email = '{email}';
+            INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
+            VALUES ('{values[0]}', '{values[1]}', '{values[2]}')
+            """
+
+
+def insert_newsarticle(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+    """
+    return f"""
+            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+            VALUES ('{values[0]}', '{values[1]}', '{values[2]}', '{values[3]}', '{values[4]}', '{values[5]}',
+             '{values[6]}');
+            """
+
+
+def insert_visitor(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.visitors (UID)
+    """
+    return f"""
+            INSERT INTO newsaggregator.visitors (UID)
+            VALUES({values[0]})
+            """
+
+
+def insert_user(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.users (UID, Username, Email, Password, Is_Admin)
+    """
+    return f"""
+            INSERT INTO newsaggregator.users (UID, Username, Email, Password, Is_Admin)
+            VALUES ('{values[0]}', '{values[1]}', '{values[2]}', '{values[3]}', '{values[4]}');
+            """
+
+
+def insert_cookie(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.cookies (cookie, UID)
+    """
+    return f"""
+            INSERT INTO newsaggregator.cookies (cookie, UID)
+            VALUES ('{values[0]}', '{values[1]}');
+            """
+
+
+def insert_hasclicked(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.hasclicked (_User, Article)
+    """
+    return f"""
+            INSERT INTO newsaggregator.hasclicked (_User, Article)
+            VALUES ('{values[0]}', '{values[1]}');
+            """
+
+
+#################### DELETERS ####################
+def delete_rssfeed(URL: str) -> str:
+    """
+    DELETE FROM newsaggregator.rssfeeds
+    """
+    return f"""
+            DELETE FROM newsaggregator.rssfeeds
+            WHERE URL = '{URL}';
+            """
+
+
+def delete_newsarticle(URL: str) -> str:
+    """
+    DELETE FROM newsaggregator.newsarticles
+    """
+    return f"""
+            DELETE FROM newsaggregator.newsarticles
+            WHERE URL = '{URL}';
+            """
+
+def delete_visitor(UID: str) -> str:
+    """
+    DELETE FROM newsaggregator.visitor
+    """
+    return f"""
+            DELETE FROM newsaggregator.visitors
+            WHERE UID = '{UID}';
+            """
+
+def delete_user(UID: str) -> str:
+    """
+    DELETE FROM newsaggregator.users
+    """
+    return f"""
+            DELETE FROM newsaggregator.users
+            WHERE UID = '{UID}';
+            """
+
+def delete_cookie(cookie: str) -> str:
+    """
+    DELETE FROM newsaggregator.cookies
+    """
+    return f"""
+            DELETE FROM newsaggregator.cookies
+            WHERE cookie = '{cookie}';
+            """
+
+
+#################### UPDATERS ####################
+def update_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
+    """
+        UPDATE newsaggregator.rssfeeds
+    """
+    return f"""
+            UPDATE newsaggregator.rssfeeds
+            SET Publisher = '{Publisher}', Topic = '{Topic}'
+            WHERE URL = '{URL}';
+            """
+
+
+def update_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str,
+                       Topic: str) -> str:
+    """
+        UPDATE newsaggregator.newsarticles
+    """
+    return f"""
+            UPDATE newsaggregator.newsarticles
+            SET Title = '{Title}', Summary = '{Summary}', Published = '{Published}', Image_URL = '{Image_URL}',
+             Topic = '{Topic}', RSS_URL = '{RSS_URL}'
+            WHERE URL = '{URL}';
+            """
+
+
+def update_user(ID: int, Username: str, Email: str, Password: str, Is_Admin: bool) -> str:
+    """
+        UPDATE newsaggregator.users
+    """
+    return f"""
+            UPDATE newsaggregator.users
+            SET Username = '{Username}', Email = '{Email}', Password = '{Password}', Is_Admin = '{Is_Admin}'
+            WHERE UID = {ID};
             """
