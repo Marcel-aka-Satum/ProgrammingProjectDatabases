@@ -1,4 +1,6 @@
 import feedparser
+
+from Backend.Database.ui_db import is_connected
 from . import ui_db
 import json
 
@@ -8,10 +10,10 @@ def scraper():
     DB = ui_db.DBConnection()
     # Establish connection
     DB.connect()
-    if not DB.is_connected():
+    if not is_connected(DB):
         print("Scraper cannot connect to database")
 
-    rss_info = DB.ParseRSSFeeds()
+    rss_info = json.dumps(DB.getRSSFeeds()[1])
     rss_info = json.loads(rss_info)
 
     for rss in rss_info:
@@ -31,7 +33,7 @@ def scraper():
                     image = lnk['href']
 
             try:
-                status, message = DB.addArticle(link, title, summary, publisher, image, rss_url, topic)
+                status, message = DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
                 # print("Added article: ", link, 'from: ', rss_url)
             except Exception as e:
                 print('error:', e)

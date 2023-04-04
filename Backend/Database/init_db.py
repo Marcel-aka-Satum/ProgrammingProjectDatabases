@@ -40,21 +40,21 @@ def initialize_db(cur):
 
 
             CREATE TABLE newsaggregator.users (
-                UID serial REFERENCES newsaggregator.visitors(UID) PRIMARY KEY,
+                UID serial REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE ,
                 Username varchar UNIQUE, 
-                Email varchar UNIQUE,
+                Email varchar UNIQUE PRIMARY KEY,
                 Password varchar, 
                 Is_Admin boolean);
                 
                 
             CREATE TABLE newsaggregator.cookies (
                 cookie varchar PRIMARY KEY,
-                UID serial REFERENCES newsaggregator.visitors(UID) NOT NULL);
+                UID serial REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE );
 
 
             CREATE TABLE newsaggregator.hasclicked (
-                _User int REFERENCES newsaggregator.visitors(UID),
-                Article varchar REFERENCES newsaggregator.newsarticles(URL),
+                _User int REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE,
+                Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
                 PRIMARY KEY(_User, Article));
             ''')
 

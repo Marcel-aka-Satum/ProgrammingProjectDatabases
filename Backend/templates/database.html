@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}News Aggregator | Database{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<h1>News Aggregator
+    <li></li>
+    <li><a href="{{ url_for('DBRssfeeds') }}">rssfeeds</a></li>
+    <li><a href="{{ url_for('DBNewsarticles') }}">Newsarticles</a></li>
+    <li><a href="{{ url_for('DBVisitors') }}">Visitors</a></li>
+    <li><a href="{{ url_for('DBUsers') }}">Users</a></li>
+    <li><a href="{{ url_for('DBCookies') }}">Cookies</a></li>
+    <li><a href="{{ url_for('DBHasClicked') }}">HasClicked</a></li></h1>
+{% endblock %}
