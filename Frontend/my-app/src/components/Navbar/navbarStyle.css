@@ -21,6 +21,7 @@ body {
 
 .navbar {
     background-color: #fef7e5;
+    box-shadow: 0 1px 7px rgba(0,0,0,0.25);
 }
 
 ul.nav.navbar-nav {

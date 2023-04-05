@@ -152,13 +152,13 @@ const Home = () => {
         const articles = await getArticlesGenre(genre);
 
         const rowDiv = document.createElement('div');
-        rowDiv.className = "row";
+        rowDiv.className = "row p-2 row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center flex-wrap";
 
         // Loop through each article and create the DOM elements
         for (const article of articles) {
             // Create the card div
             let cardDiv = document.createElement('div');
-            cardDiv.className = "col-4 mb-3";
+            cardDiv.className = "col mb-4";
 
             // Create the card element
             let card = document.createElement('div');
@@ -254,14 +254,14 @@ const Home = () => {
 
             //create row div and assign classname to it
             const rowDiv = document.createElement('div');
-            rowDiv.className = "row p-2";
+            rowDiv.className = "row p-2 row-cols-1 row-cols-md-1 row-cols-lg-3 justify-content-center flex-wrap";
 
             //loop door elke article en maak de juiste DOM elements
             // Loop through each article and create the DOM elements
         for (const article of articles) {
             // Create the card div
             let cardDiv = document.createElement('div');
-            cardDiv.className = "col-4 mb-3";
+            cardDiv.className = "col mb-4";
 
             // Create the card element
             let card = document.createElement('div');
