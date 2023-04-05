@@ -15,7 +15,7 @@ db = DBConnection()
 db.connect()
 
 
-drop_db = False
+drop_db = True
 if drop_db == True:
     db.redefine()
     db.populate()
@@ -127,10 +127,11 @@ def login_user():
 @cross_origin()
 def getUsers():
     users = db.getUsers()
+    print('users: ', users)
     return json.loads(users)
 
 @app.route('/api/users/totalusers', methods=['GET'])
-@token_required
+# @token_required
 @cross_origin()
 def getTotalUsers():
     users = db.getUsers()

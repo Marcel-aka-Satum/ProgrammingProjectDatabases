@@ -1,7 +1,7 @@
 URL,Publisher,Topic
-https://www.nieuwsblad.be/rss/section/c0c3b215-10be-4f82-86d6-8b8584a5639d,nieuwsblad.be,Economie
-https://www.nieuwsblad.be/rss/section/55178e67-15a8-4ddd-a3d8-bfe5708f8932,nieuwsblad.be,Binnenland
-https://www.nieuwsblad.be/rss/section/7f1bc231-66e7-49f0-a126-b7346eb3e2fa,nieuwsblad.be,Buitenland
+https://www.nieuwsblad.be/rss/section/c0c3b215-10be-4f82-86d6-8b8584a5639d,nieuwsblad.be,Economics
+https://www.nieuwsblad.be/rss/section/55178e67-15a8-4ddd-a3d8-bfe5708f8932,nieuwsblad.be,Inland
+https://www.nieuwsblad.be/rss/section/7f1bc231-66e7-49f0-a126-b7346eb3e2fa,nieuwsblad.be,International
 https://www.nieuwsblad.be/rss/section/653ce610-8299-4111-a0a0-44bf8109e6ca,nieuwsblad.be,Sport
 https://www.nieuwsblad.be/rss/section/bc2f75e0-ec13-4abb-80d5-c51853bfc9d6,nieuwsblad.be,Sport
 https://www.nieuwsblad.be/rss/section/5faf0df7-ad4c-4627-8b2e-c764e8b96de1,nieuwsblad.be,Sport
@@ -16,13 +16,55 @@ https://www.nieuwsblad.be/rss/section/4496b52c-dfa4-4a57-87d4-a94b00f52fdc,nieuw
 https://www.nieuwsblad.be/rss/section/f96a834a-64e0-4028-934d-a94b00f827c3,nieuwsblad.be,Lifestyle
 https://www.nieuwsblad.be/rss/section/5a8b1337-42d7-442c-ac63-d5812ef5c810,nieuwsblad.be,Lifestyle
 https://www.nieuwsblad.be/rss/section/79936690-0fd0-479b-9a4d-08efcded7512,nieuwsblad.be,Lifestyle
+https://www.standaard.be/rss/section/1f2838d4-99ea-49f0-9102-138784c7ea7c,standaard.be,Inland
+https://www.standaard.be/rss/section/e70ccf13-a2f0-42b0-8bd3-e32d424a0aa0,standaard.be,International
+https://www.standaard.be/rss/section/451c8e1e-f9e4-450e-aa1f-341eab6742cc,standaard.be,Economics
+https://www.standaard.be/rss/section/8f693cea-dba8-46e4-8575-807d1dc2bcb7,standaard.be,Sport
+https://www.standaard.be/rss/section/ab8d3fd8-bf2f-487a-818b-9ea546e9a859,standaard.be,Culture
+https://www.standaard.be/rss/section/eb1a6433-ca3f-4a3b-ab48-a81a5fb8f6e2,standaard.be,Media
+https://www.standaard.be/rss/section/afa7bd44-db14-4fab-81c5-427b1ecb8b98,standaard.be,Lifestyle
+https://www.standaard.be/rss/section/a30afc42-3737-4301-8f8a-5b6833855457,standaard.be,Economics
+http://feeds.feedburner.com/dso-meningen-opinie,standaard.be,Opinion
+https://www.demorgen.be/politiek/rss.xml,demorgen.be,Politics
+https://www.demorgen.be/sport/rss.xml,demorgen.be,Sport
+https://www.demorgen.be/popular/rss.xml,demorgen.be,Top Stories
+https://www.demorgen.be/tv-cultuur/rss.xml,demorgen.be,Culture
+https://www.demorgen.be/meningen/rss.xml,demorgen.be,Opinion
+https://www.gva.be/rss/section/8B7011DF-CAD2-4474-AA90-A2AC00E31B55,gva.be,Economics
+https://www.gva.be/rss/section/5685D99C-D24E-4C8A-9A59-A2AC00E293B1,gva.be,Inland
+https://www.gva.be/rss/section/472C34EB-D1BC-4E10-BDE7-A2AC00E2D820,gva.be,International
+https://www.gva.be/rss/section/49478206-DE39-41C5-A04F-A2AC00E72CFF,gva.be,Culture
+https://www.gva.be/rss/section/4DFF3E33-6C32-4E60-803C-A2AC00EDE26C,gva.be,Sport
 https://www.tijd.be/rss/top_stories.xml,tijd.be,Top Stories
-https://www.tijd.be/rss/politiek_economie.xml,tijd.be,Economie
-https://www.tijd.be/rss/politiek_belgie.xml,tijd.be,Politiek
-https://www.tijd.be/rss/politiek_europa.xml,tijd.be,Politiek
-https://www.tijd.be/rss/politiek_internationaal.xml,tijd.be,Politiek
-https://www.tijd.be/rss/ondernemen_banken.xml,tijd.be,Ondernemen
-https://www.tijd.be/rss/ondernemen_consumentengoederen.xml,tijd.be,Ondernemen
-https://www.tijd.be/rss/ondernemen_entertainment.xml,tijd.be,Ondernemen
-https://www.tijd.be/rss/ondernemen_media_en_marketing.xml,tijd.be,Ondernemen
-https://www.tijd.be/rss/ondernemen_logistiek.xml,tijd.be,Ondernemen
+https://www.tijd.be/rss/politiek_economie.xml,tijd.be,Economics
+https://www.tijd.be/rss/politiek_belgie.xml,tijd.be,Politics
+https://www.tijd.be/rss/politiek_europa.xml,tijd.be,Politics
+https://www.tijd.be/rss/politiek_internationaal.xml,tijd.be,Politics
+https://www.tijd.be/rss/ondernemen_banken.xml,tijd.be,Business
+https://www.tijd.be/rss/ondernemen_consumentengoederen.xml,tijd.be,Business
+https://www.tijd.be/rss/ondernemen_entertainment.xml,tijd.be,Business
+https://www.tijd.be/rss/ondernemen_media_en_marketing.xml,tijd.be,Business
+https://www.tijd.be/rss/ondernemen_logistiek.xml,tijd.be,Business
+https://www.tijd.be/rss/cultuur.xml,tijd.be,Culture
+https://www.tijd.be/rss/opinie.xml,tijd.be,Opinion
+https://sporza.be/nl/categorie/voetbal.rss.xml,sporza.be,Sport
+https://sporza.be/nl/categorie/wielrennen.rss.xml,sporza.be,Sport
+https://sporza.be/nl/categorie/auto-motor.rss.xml,sporza.be,Sport
+https://sporza.be/nl/categorie/tennis.rss.xml,sporza.be,Sport
+https://sporza.be/nl/categorie/atletiek.rss.xml,sporza.be,Sport
+https://sporza.be/nl/categorie/zaalsporten.rss.xml,sporza.be,Sport
+https://www.nu.nl/rss/Economie,nu.nl,Economics
+https://www.nu.nl/rss/Sport,nu.nl,Sport
+https://www.nu.nl/rss/Wetenschap,nu.nl,Science And Technology
+https://www.nu.nl/rss/Tech,nu.nl,Science And Technology
+https://www.nu.nl/rss/Gezondheid,nu.nl,Health
+https://moxie.foxnews.com/google-publisher/politics.xml,foxnews.com,Politics
+https://moxie.foxnews.com/google-publisher/sports.xml,foxnews.com,Sport
+https://moxie.foxnews.com/google-publisher/opinion.xml,foxnews.com,Opinion
+https://moxie.foxnews.com/google-publisher/tech.xml,foxnews.com,Science And Technology
+https://moxie.foxnews.com/google-publisher/health.xml,foxnews.com,Health
+https://moxie.foxnews.com/google-publisher/entertainment.xml,foxnews.com,Entertainment
+https://rss.nytimes.com/services/xml/rss/nyt/Business.xml,nytimes.com,Economics
+https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml,nytimes.com,International
+https://www.theguardian.com/world/rss,theguardian.com,International
+https://www.theguardian.com/uk/sport/rss,theguardian.com,Sport

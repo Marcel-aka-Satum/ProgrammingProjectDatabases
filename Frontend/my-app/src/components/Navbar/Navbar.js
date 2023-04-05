@@ -27,15 +27,14 @@ const Navbar = () => {
                              aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4">
                                 <li><NavLink to={`/economics`}>Economics</NavLink></li>
-                                <li><NavLink to={`/culture`}>Culture</NavLink></li>
                                 <li><NavLink to={`/sport`}>Sport</NavLink></li>
                                 <li><NavLink to={`/politics`}>Politics</NavLink></li>
                                 <li><NavLink to={`/inland`}>Inland</NavLink></li>
                                 <li><NavLink to={`/international`}>International</NavLink></li>
-                                <li><NavLink to={`/science`}>Science</NavLink></li>
-                                <li><NavLink to={`/wellness`}>wellness</NavLink></li>
-                                <li><NavLink to={`/health`}>health</NavLink></li>
-                                <li><NavLink to={`/joy`}>joy</NavLink></li>
+                                <li><NavLink to={`/science-and-technology`}>Science And Technology</NavLink></li>
+                                <li><NavLink to={`/Lifestyle`}>LifeStyle</NavLink></li>
+                                <li><NavLink to={`/health`}>Health</NavLink></li>
+                                <li><NavLink to={`/entertainment`}>Entertainment</NavLink></li>
                             </ul>
                         </div>
                     </li>

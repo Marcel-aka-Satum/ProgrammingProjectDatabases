@@ -85,6 +85,9 @@ class BaseFeedScraper:
         except requests.exceptions.Timeout:
             print("Timed out while downloading RSS feed: ", rss_url)
             return
+        except Exception as e:
+            print("Error while scraping: ", rss_url, "Error: ", e)
+            return
 
     def get_scraper_for_url(self, url):
         if 'foxnews.com' in url:
