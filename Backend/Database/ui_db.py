@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 import psycopg2
 import json
-from . import init_db, populate_db, query_db
+try:
+    from . import init_db, populate_db, query_db
+except:
+    import init_db, populate_db, query_db
 
 
 
@@ -58,7 +61,7 @@ class DBConnection:
 
     def connect(self) -> bool:
         try:
-            self.connection = psycopg2.connect(user="postgres", password="test")
+            self.connection = psycopg2.connect(user="postgres")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
         except (Exception, psycopg2.DatabaseError) as err:

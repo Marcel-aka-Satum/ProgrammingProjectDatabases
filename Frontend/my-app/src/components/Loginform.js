@@ -46,7 +46,6 @@ export default function Loginform() {
         usersession.user.logout()
     }
 
-
     return (
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?

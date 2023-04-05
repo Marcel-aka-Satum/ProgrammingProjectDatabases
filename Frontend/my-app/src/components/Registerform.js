@@ -41,7 +41,6 @@ export default function Registerform() {
         }
     }
 
-
     return (
         <div class="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?

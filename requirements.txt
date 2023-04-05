@@ -10,3 +10,10 @@ flask-migrate
 psycopg2-binary
 feedparser
 pandas
+numpy
+nltk
+scikit-learn
+gensim
+beautifulsoup4
+plotly
+matplotlib
