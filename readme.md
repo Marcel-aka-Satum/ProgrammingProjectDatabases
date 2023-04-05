@@ -34,22 +34,32 @@ The articles are presented in a simple layout, such as a list with articles stac
 One of the main challenges is that multiple news sources often publish very similar (or sometimes identical) articles. Only one version of such similar articles can be displayed, with links to the different news sources. A simple classification algorithm can be used to determine if two articles are similar enough to be grouped together by counting the number of similar words in the title. **Extra: Think about which version should be displayed.**
 
 ### Technologies
-The following technologies can be used for the project:
-* Frontend: ...
-* Backend: ...
-* Framework: ...
-* Database: ...
+The following technologies are used for the project:
+* Frontend: React
+* Backend: Flask
+* Database: Postgresql
 
 ## Installation
 To install the project, clone the repository from Github and install the required dependencies.
+
+## Documentation
+*[Link to Backend README](./Backend/readme.md) In this documentation u can find more about our backend architecture.<br>
+*[Link to Backend Database README](./Backend/Database/readme.md) In this documentation u can find more about our database engineering.<br>
+*[Link to Frontend components README](./Frontend/my-app/src/components/readme.md) This documentation contains information abour our used component on the Frontend side.<br>
+*[Link to Frontend Admin README](./Frontend/my-app/src/components/Admin/readme.md) This documentation contains all the information about admin pages.<br>
+
 ```
 git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
+cd ProgrammingProjectDatabases/Frontend/my-app
+npm install
 cd ProgrammingProjectDatabases
-```
+pip install -r requirements.txt
+python run.py 
+
 
 ## Usage
-Soon to be added.
-
+* Database: Please find the extended documentation within the README at Backend/Database/
+* Frontend: Please find the extended documentation within the README at Frontend 
 ## Contributing
 Soon to be added.
 

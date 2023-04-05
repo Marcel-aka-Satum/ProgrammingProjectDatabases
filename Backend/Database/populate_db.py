@@ -1,51 +1,54 @@
-"""
-
-I need to extend this such that the csv files can be read and inserted into the database;
-this ensures that you're never stuck with an empty database if something goes wrong.
-
-You could merge this code with init_db.py at a later point so that you don't have to run these seperately
-
-It's 1:45 am so I'm gonna sleep
-
-sweet dreams
-
-"""
-
-
-
-
-
-
-
 import psycopg2
 import pandas as pd
+import bcrypt
 
-from ProgrammingProjectDatabases.Backend.Scraper.scraper_py.Scraper import RSSFeeds
+def populate_db(conn, cur):
+    RSSFeeds = pd.read_csv("Database/RSSFeeds.csv")
 
-# Connect to your postgres DB
-conn = psycopg2.connect(user="postgres",
-                        dbname="my_db")
-conn.autocommit = True
+    rss_url = list(RSSFeeds['URL'])
+    rss_publisher = list(RSSFeeds['Publisher'])
+    rss_topic = list(RSSFeeds['Topic'])
 
-# Open a cursor to perform database operations
-cur = conn.cursor()
+    rss_insert_query = '''
+                        INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
+                        VALUES (%s, %s, %s);
+                        '''
 
-RSSFeeds = pd.read_csv("RSSFeeds.csv")
-NewsArticles = pd.read_csv("NewsArticles.csv")
+    print("Starting to insert values")
 
+    for i in range(len(rss_url)):
+        cur.execute(rss_insert_query,
+                    (rss_url[i],
+                     rss_publisher[i],
+                     rss_topic[i]))
+        conn.commit()
 
+    print("Done inserting values")
 
-"""
+    passwordAdmin = "admin"
+    #create salt for hash
+    salt = bcrypt.gensalt()
+    #hashpsswd
+    bytes = passwordAdmin.encode('utf-8')
+    hashed_password = bcrypt.hashpw(bytes, salt)
+    # populate users
+    users = [
+        {'username': 'admin', 'email': 'admin@gmail.com', 'password': hashed_password.decode(), 'is_admin': True}
+    ]
+    # make an insert query into the users table
+    insert_query = '''
+                    INSERT INTO newsaggregator.users (username, email, password, is_admin)
+                    VALUES (%s, %s, %s, %s);
+                    '''
 
-cur.execute(""
-    INSERT INTO some_table (an_int, a_date, a_string)
-     VALUES (%s, %s, %s);
-     "",
-(10, datetime.date(2005, 11, 18), "O'Reilly"))
+    print("Starting to insert values")
 
-"""
+    for user in users:
+        cur.execute(insert_query,
+                    (user['username'],
+                     user['email'],
+                     user['password'],
+                     user['is_admin']))
+        conn.commit()
 
-
-
-#Closing the connection
-conn.close()
+    print("Done inserting values")
