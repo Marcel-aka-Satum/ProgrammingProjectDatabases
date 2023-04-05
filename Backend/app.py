@@ -14,8 +14,12 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 db.connect()
-db.redefine()
-db.populate()
+
+
+drop_db = False
+if drop_db == True:
+    db.redefine()
+    db.populate()
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
