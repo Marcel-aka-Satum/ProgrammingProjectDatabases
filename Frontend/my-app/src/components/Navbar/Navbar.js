@@ -1,9 +1,9 @@
 import React from "react";
 import {Link, NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
-import './navbarStyle.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import './navbarStyle.css'
 
 const Navbar = () => {
     return (
@@ -23,9 +23,9 @@ const Navbar = () => {
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div className="dropdown-menu dropdown-menu-left custom-bg"
+                        <div className="dropdown-menu dropdown-menu-left custom-bg m-0 fix-top"
                              aria-labelledby="articlesDropdown">
-                            <ul className="list-inline mx-4">
+                            <ul className="list-inline mx-4 p-0">
                                 <li><NavLink to={`/economics`}>Economics</NavLink></li>
                                 <li><NavLink to={`/sport`}>Sport</NavLink></li>
                                 <li><NavLink to={`/politics`}>Politics</NavLink></li>
