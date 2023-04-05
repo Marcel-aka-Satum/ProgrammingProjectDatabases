@@ -8,8 +8,6 @@ from Helpers.ErrorDetectionRoutes import *
 from functools import wraps
 import flask
 
-
-
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -43,7 +41,7 @@ def token_required(f):
         if not token:
             return jsonify({'message': 'Token is missing!'}), 401
         try:
-            data = jwt..dec
+            data = jwt.decode(token)
         except:
             return jsonify({'message':'Token is invalid!'}), 401
 

@@ -2,15 +2,10 @@ import React from "react";
 import {Link, NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
 import './navbarStyle.css'
-import { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const Navbar = () => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-
-    const handleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
-    };
-
     return (
         <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">
             <div className="container-fluid m-2">
