@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 import psycopg2
 import json
-from . import init_db, populate_db, query_db
+try:
+    from . import init_db, populate_db, query_db
+except:
+    import init_db, populate_db, query_db
 
 
 
