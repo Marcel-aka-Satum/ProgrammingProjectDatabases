@@ -69,21 +69,32 @@ function ArticleCard({article}) {
     );
 }
 
-function GenreSection({genre, articles}) {
+function GenreSection({genre, articles, filterText}) {
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
+    }
+
+    const filteredArticles = articles.filter((article) => {
+        const title = article.Title.toLowerCase();
+        const summary = article.Summary.toLowerCase();
+        const filter = filterText.toLowerCase();
+        return title.includes(filter) || summary.includes(filter);
+    });
+
+    if (filteredArticles.length === 0) {
+        return null; // return null to skip rendering this component
     }
 
     return (
         <div className="genre-section">
             <h2>
                 {genre}{' '}
-                <button className="btn btn-outline-secondary">
-                    <a href={`genre/${addDashes(genre)}`} target='_blank'>Show All</a>
-                </button>
+                <a href={`genre/${addDashes(genre)}`} target='_blank'>
+                    <button className="btn btn-outline-secondary">Show All</button>
+                </a>
             </h2>
             <ul className="articles-row">
-                {articles.slice(0, 3).map((article) => (
+                {filteredArticles.slice(0, 3).map((article) => (
                     <li key={article.URL} className="p-3">
                         <ArticleCard article={article}/>
                     </li>
@@ -94,60 +105,110 @@ function GenreSection({genre, articles}) {
 }
 
 const Home = () => {
-    const location = useLocation()
+        const location = useLocation()
 
-    const [articles, setArticles] = useState([])
-    const [genres, setGenres] = useState(new Set())
-    const [articlesGenre, setArticlesGenre] = useState([])
+        const [articles, setArticles] = useState([])
+        const [genres, setGenres] = useState(new Set())
+        const [articlesGenre, setArticlesGenre] = useState([])
 
-    useEffect(() => {
-        const fetchArticles = async () => {
-            const response = await axios.get('http://localhost:4444/api/articles');
-            // const limitedArticles = response.data.slice(0, 500);
+        const [filterText, setFilterText] = useState("");
+        const [sortOption, setSortOption] = useState("newest");
 
-            setArticles(response.data);
-        };
-        fetchArticles();
-    }, []);
 
-    useEffect(() => {
-        const fetchGenres = () => {
-            const uniqueGenres = new Set();
-            const grouped = {};
+        useEffect(() => {
+            const fetchArticles = async () => {
+                const response = await axios.get('http://localhost:4444/api/articles');
+                // const limitedArticles = response.data.slice(0, 500);
 
-            for (const article of articles) {
-                uniqueGenres.add(article.Topic);
+                setArticles(response.data);
+            };
+            fetchArticles();
+        }, []);
 
-                if (!grouped[article.Topic]) {
-                    grouped[article.Topic] = [];
+        useEffect(() => {
+            const fetchGenres = () => {
+                const uniqueGenres = new Set();
+                const grouped = {};
+
+                for (const article of articles) {
+                    uniqueGenres.add(article.Topic);
+
+                    if (!grouped[article.Topic]) {
+                        grouped[article.Topic] = [];
+                    }
+                    grouped[article.Topic].push(article);
                 }
-                grouped[article.Topic].push(article);
+
+                setGenres(uniqueGenres);
+                setArticlesGenre(grouped);
+            };
+
+            if (articles.length > 0) {
+                fetchGenres();
+            }
+        }, [articles]);
+
+        // articles.sort(compareDates);
+        useEffect(() => {
+            function compareDatesNewest(a, b) {
+                return new Date(b.Published) - new Date(a.Published);
             }
 
-            setGenres(uniqueGenres);
-            setArticlesGenre(grouped);
+            function compareDatesOldest(a, b) {
+                return new Date(a.Published) - new Date(b.Published);
+            }
+
+            if (sortOption === "newest") {
+                setArticles((prevArticles) => [...prevArticles].sort(compareDatesNewest));
+            } else if (sortOption === "oldest") {
+                setArticles((prevArticles) => [...prevArticles].sort(compareDatesOldest));
+            }
+        }, [sortOption]);
+
+        const handleSortChange = (e) => {
+            setSortOption(e.target.value);
         };
 
-        if (articles.length > 0) {
-            fetchGenres();
-        }
-    }, [articles]);
-
-    articles.sort(compareDates);
-
-    return (
-        <div className="container-lg pt-5">
-            <div className="row">
-                {Array.from(genres).map((genre) => (
-                    <GenreSection
-                        key={genre}
-                        genre={genre}
-                        articles={articlesGenre[genre]}
+        return (
+            <div className="container-lg pt-5">
+                <div className="form-group w-50 pb-3 d-flex justify-content-between">
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="filter"
+                        name="filter"
+                        placeholder="Search"
+                        value={filterText}
+                        onChange={(e) => {
+                            setFilterText(e.target.value);
+                        }}
                     />
-                ))}
+                    <button
+                        type="button"
+                        className={`btn w-auto ms-1 btn-outline-danger ${filterText === '' ? 'd-none' : ''}`}
+                        onClick={() => setFilterText('')}
+                    >
+                        X
+                    </button>
+                    <select
+                        className="form-select w-auto ms-1 "
+                        aria-label="Sort by"
+                        value={sortOption}
+                        onChange={handleSortChange}
+                    >
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
+
+                <div className="row">
+                    {Array.from(genres).map((genre) => (
+                        <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}/>
+                    ))}
+                </div>
             </div>
-        </div>
-    );
-};
+        );
+    }
+;
 
 export default Home;
