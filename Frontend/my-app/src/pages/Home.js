@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {useLocation} from 'react-router-dom'
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -26,22 +25,8 @@ function formatSummary(text, url, limit = 200) {
         return [text, false];
     } else {
         const truncatedText = text.slice(0, limit);
-        const remainingText = text.slice(limit);
         return [truncatedText.trim() + '...', true];
     }
-}
-
-function compareDates(a, b) {
-    const dateA = new Date(a.Published);
-    const dateB = new Date(b.Published);
-
-    if (dateA > dateB) {
-        return -1;
-    }
-    if (dateA < dateB) {
-        return 1;
-    }
-    return 0;
 }
 
 function ArticleCard({article}) {
@@ -89,7 +74,7 @@ function GenreSection({genre, articles, filterText}) {
         <div className="genre-section">
             <h2>
                 {genre}{' '}
-                <a href={`genre/${addDashes(genre)}`} target='_blank'>
+                <a href={`genre/${addDashes(genre)}`} target='_blank' rel='noreferrer'>
                     <button className="btn btn-outline-secondary">Show All</button>
                 </a>
             </h2>
@@ -105,14 +90,12 @@ function GenreSection({genre, articles, filterText}) {
 }
 
 const Home = () => {
-        const location = useLocation()
-
         const [articles, setArticles] = useState([])
         const [genres, setGenres] = useState(new Set())
         const [articlesGenre, setArticlesGenre] = useState([])
 
         const [filterText, setFilterText] = useState("");
-        const [sortOption, setSortOption] = useState("newest");
+        const [sortOption, setSortOption] = useState("Sort By");
 
 
         useEffect(() => {
@@ -148,7 +131,6 @@ const Home = () => {
             }
         }, [articles]);
 
-        // articles.sort(compareDates);
         useEffect(() => {
             function compareDatesNewest(a, b) {
                 return new Date(b.Published) - new Date(a.Published);
@@ -196,6 +178,7 @@ const Home = () => {
                         value={sortOption}
                         onChange={handleSortChange}
                     >
+                        <option value="">Sort By</option>
                         <option value="newest">Newest</option>
                         <option value="oldest">Oldest</option>
                     </select>
