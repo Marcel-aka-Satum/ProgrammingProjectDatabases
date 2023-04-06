@@ -6,7 +6,8 @@ from flask_cors import CORS, cross_origin
 from Database.ui_db import DBConnection
 from Helpers.ErrorDetectionRoutes import *
 from functools import wraps
-import flask
+import jwt
+import datetime
 
 
 
@@ -17,14 +18,14 @@ db = DBConnection()
 db.connect()
 
 
-drop_db = False
+drop_db = True
 if drop_db == True:
     db.redefine()
     db.populate()
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
-jwt = JWTManager(app)
+# jwt = JWTManager(app)
 
 
 @app.route('/')
@@ -39,11 +40,11 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = request.args.get('token')
-        jwt._decode_jwt_from_config
         if not token:
             return jsonify({'message': 'Token is missing!'}), 401
         try:
-            data = jwt..dec
+            data = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256', ])
+            print(data)
         except:
             return jsonify({'message':'Token is invalid!'}), 401
 
@@ -85,11 +86,15 @@ def register_user():
     status_db, message_db = db.addUser(username, email, hashed_password.decode(), is_admin)
     if not status_db:
         return jsonify({"message": message_db}), 401
+    
+    #jwt token
+    encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1][is_admin], "email":user_exists[1]["Email"], 'exp':
+                              datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
 
-    access_token = create_access_token(identity=email)
+    # access_token = create_access_token(identity=email)
 
     return jsonify({"message": f"Welcome {username}", 
-                    "token": access_token}), 200
+                    "token": encoded_jwt.decode('UTF-8')}), 200
 
 
 @app.route("/api/login", methods=["POST"])
@@ -111,14 +116,17 @@ def login_user():
     if not result:
         return jsonify({"message": "password is incorrect"}), 401
     else:
-          
-        access_token = create_access_token(identity=email)
+        print(user_exists[1])
+        #jwt token
+        encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1]['Is_Admin'], "email":user_exists[1]["Email"], 'exp':
+                              datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
+        # access_token = create_access_token(identity=email)
 
         return jsonify({
             "message": f"Authorized > Welcome Back",
             "UID": user_exists[1]['UID'],
             "Email": user_exists[1]['Email'],
-            "token": access_token,
+            "token": encoded_jwt,
             "Username":user_exists[1]['Username'],
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
