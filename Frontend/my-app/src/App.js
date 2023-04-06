@@ -9,6 +9,7 @@ import Articles from "./components/Admin/Articles";
 import Settings from "./components/Admin/Settings";
 import Footer from './components/Footer/Footer'
 import Home from './pages/Home';
+import Genre from './pages/Genre';
 import {Routes, Route} from 'react-router-dom'
 import React, {useState, createContext, useEffect} from 'react'
 import {User} from './components/User/User'
@@ -43,7 +44,7 @@ function App() {
                         <Route path="/admin/users" element={<Redirection/>}/>
                         <Route path="/admin/settings" element={<Redirection/>}/>
                         <Route path="/admin/statistics" element={<Redirection/>}/>
-                        <Route path="/:genre" element={<Home/>}></Route>
+                        <Route path="/genre/:genre" element={<Genre/>}></Route>
                 </Routes>
                 <Footer/>
             </div>
@@ -66,7 +67,7 @@ function App() {
                         <Route path="/admin/users" element={<Users/>}/>
                         <Route path="/admin/settings" element={<Settings/>}/>
                         <Route path="/admin/statistics" element={<Statistics/>}/>
-                        <Route path="/:genre" element={<Home/>}></Route>
+                        <Route path="genre/:genre" element={<Home/>}></Route>
                     </Routes>
                     <Footer/>
                 </div>

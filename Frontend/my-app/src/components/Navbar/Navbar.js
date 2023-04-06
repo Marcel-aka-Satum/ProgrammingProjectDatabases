@@ -1,8 +1,6 @@
 import React from "react";
 import {Link, NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
 import './navbarStyle.css'
 
 const Navbar = () => {
@@ -26,15 +24,15 @@ const Navbar = () => {
                         <div className="dropdown-menu dropdown-menu-left custom-bg m-0 fix-top"
                              aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4 p-0">
-                                <li><NavLink to={`/economics`}>Economics</NavLink></li>
-                                <li><NavLink to={`/sport`}>Sport</NavLink></li>
-                                <li><NavLink to={`/politics`}>Politics</NavLink></li>
-                                <li><NavLink to={`/inland`}>Inland</NavLink></li>
-                                <li><NavLink to={`/international`}>International</NavLink></li>
-                                <li><NavLink to={`/science-and-technology`}>Science And Technology</NavLink></li>
-                                <li><NavLink to={`/Lifestyle`}>LifeStyle</NavLink></li>
-                                <li><NavLink to={`/health`}>Health</NavLink></li>
-                                <li><NavLink to={`/entertainment`}>Entertainment</NavLink></li>
+                                <li><NavLink to={`genre/economics`} target='_blank'>Economics</NavLink></li>
+                                <li><NavLink to={`genre/sport`} target='_blank'>Sport</NavLink></li>
+                                <li><NavLink to={`genre/politics`}target='_blank'>Politics</NavLink></li>
+                                <li><NavLink to={`genre/inland`} target='_blank'>Inland</NavLink></li>
+                                <li><NavLink to={`genre/international`} target='_blank'>International</NavLink></li>
+                                <li><NavLink to={`genre/science-and-technology`} target='_blank'>Science And Technology</NavLink></li>
+                                <li><NavLink to={`genre/Lifestyle`} target='_blank'>LifeStyle</NavLink></li>
+                                <li><NavLink to={`genre/health`} target='_blank'>Health</NavLink></li>
+                                <li><NavLink to={`genre/entertainment`} target='_blank'>Entertainment</NavLink></li>
                             </ul>
                         </div>
                     </li>
