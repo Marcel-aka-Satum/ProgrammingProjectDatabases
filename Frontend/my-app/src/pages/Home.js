@@ -32,8 +32,8 @@ function formatSummary(text, url, limit = 200) {
 function ArticleCard({article}) {
     return (
         <div className="article-card">
-            <img src={article.Image} alt='' className="img-fluid pb-3"/>
 
+            <img src={article.Image} alt='' className="img-fluid rounded pb-3"/>
             <div className="article-card-body pe-3 ps-3">
                 <a href={article.URL} target="_blank" rel="noreferrer">
                     <h4 className="article-card-title">{formatTitle(article.Title)}</h4>
