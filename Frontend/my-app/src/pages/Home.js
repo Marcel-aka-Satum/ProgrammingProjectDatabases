@@ -25,17 +25,23 @@ function formatSummary(text, url, limit = 200) {
     if (text.length <= limit) {
         return [text, false];
     } else {
-        const id = urlToSelector(url);
         const truncatedText = text.slice(0, limit);
         const remainingText = text.slice(limit);
         return [truncatedText.trim() + '...', true];
     }
 }
 
-function urlToSelector(url) {
-    const base64Url = btoa(url);
-    const sanitizedUrl = base64Url.replace(/=/g, ''); // remove padding characters
-    return sanitizedUrl;
+function compareDates(a, b) {
+    const dateA = new Date(a.Published);
+    const dateB = new Date(b.Published);
+
+    if (dateA > dateB) {
+        return -1;
+    }
+    if (dateA < dateB) {
+        return 1;
+    }
+    return 0;
 }
 
 function ArticleCard({article}) {
@@ -98,6 +104,7 @@ const Home = () => {
         const fetchArticles = async () => {
             const response = await axios.get('http://localhost:4444/api/articles');
             // const limitedArticles = response.data.slice(0, 500);
+
             setArticles(response.data);
         };
         fetchArticles();
@@ -126,14 +133,7 @@ const Home = () => {
         }
     }, [articles]);
 
-    async function getArticlesGenre(genre) {
-        for (const article of articles) {
-            if (article.Topic === genre) {
-                articlesGenre.push(article)
-            }
-        }
-        return (articlesGenre)
-    }
+    articles.sort(compareDates);
 
     return (
         <div className="container-lg pt-5">

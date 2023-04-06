@@ -25,17 +25,23 @@ function formatSummary(text, url, limit = 200) {
     if (text.length <= limit) {
         return [text, false];
     } else {
-        const id = urlToSelector(url);
         const truncatedText = text.slice(0, limit);
         const remainingText = text.slice(limit);
         return [truncatedText.trim() + '...', true];
     }
 }
 
-function urlToSelector(url) {
-    const base64Url = btoa(url);
-    const sanitizedUrl = base64Url.replace(/=/g, ''); // remove padding characters
-    return sanitizedUrl;
+function compareDates(a, b) {
+    const dateA = new Date(a.Published);
+    const dateB = new Date(b.Published);
+
+    if (dateA > dateB) {
+        return -1;
+    }
+    if (dateA < dateB) {
+        return 1;
+    }
+    return 0;
 }
 
 function ArticleCard({article}) {
@@ -76,6 +82,7 @@ const Home = () => {
         fetchArticles();
     }, []);
 
+    articles.sort(compareDates);
     return (
         <div className="row">
             <h2 className="text-center text-dark mt-5">Articles for {formatTitle(genre)}</h2>
