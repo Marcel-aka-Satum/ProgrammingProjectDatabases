@@ -6,8 +6,6 @@ import {userSession} from "../App"
 import {SUCCESS, ERROR} from "./Helpers/custom_alert";
 
 
-
-
 export default function Loginform() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -76,9 +74,13 @@ export default function Loginform() {
                                                     d="M15.834 12.244c0 1.168-.577 2.025-1.587 2.025-.503 0-1.002-.228-1.12-.648h-.043c-.118.416-.543.643-1.015.643-.77 0-1.259-.542-1.259-1.434v-.529c0-.844.481-1.4 1.26-1.4.585 0 .87.333.953.63h.03v-.568h.905v2.19c0 .272.18.42.411.42.315 0 .639-.415.639-1.39v-.118c0-1.277-.95-2.326-2.484-2.326h-.04c-1.582 0-2.64 1.067-2.64 2.724v.157c0 1.867 1.237 2.654 2.57 2.654h.045c.507 0 .935-.07 1.18-.18v.731c-.219.1-.643.175-1.237.175h-.044C10.438 16 9 14.82 9 12.646v-.214C9 10.36 10.421 9 12.485 9h.035c2.12 0 3.314 1.43 3.314 3.034v.21Zm-4.04.21v.227c0 .586.227.8.581.8.31 0 .564-.17.564-.743v-.367c0-.516-.275-.708-.572-.708-.346 0-.573.245-.573.791Z"/>
                                             </svg>
                                         </div>
-                                        <input type="text" className="form-control" value={email} id="Username"
-                                               aria-describedby="emailHelp"
-                                               placeholder="Email" onChange={(e) => setEmail(e.target.value)}/>
+                                        <div className="form-floating">
+                                            <input type="email" className="form-control" value={email}
+                                                   id="floatingInput" placeholder="Email"
+                                                   onChange={(e) => setEmail(e.target.value)}/>
+                                            <label htmlFor="floatingInput">Email</label>
+                                        </div>
+
                                     </div>
 
                                     <div className="input-group mb-3">
@@ -89,8 +91,14 @@ export default function Loginform() {
                                                     d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                             </svg>
                                         </div>
-                                        <input type="Password" className="form-control" value={password} id="password"
-                                               placeholder="password" onChange={(e) => setPassword(e.target.value)}/>
+
+                                        <div className="form-floating">
+                                            <input type="Password" className="form-control" value={password}
+                                                   id="floatingPassword"
+                                                   placeholder="password"
+                                                   onChange={(e) => setPassword(e.target.value)}/>
+                                            <label htmlFor="floatingPassword">Password</label>
+                                        </div>
                                     </div>
                                     <div className="text-center">
                                         <button type="submit" onClick={handleLogIn}
