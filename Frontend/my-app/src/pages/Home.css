@@ -50,5 +50,44 @@ a:hover {
     transform: scale(1.02);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background-color: RGBA(0, 0, 0, 0.10);
+    border-color: RGBA(0, 0, 0, 0.10);
+}
+ 
+
+.form-control:focus{
+    border-color: RGBA(0, 0, 0, 0.10);
+    box-shadow: 0 0 0 0.2rem #fef7e5;
 }
 
+.danger {
+    border-color: #fa6f65;
+    color: #fa6f65
+  }
+  
+.danger:hover {
+border-color: #fa6f65;
+background: #fa6f65;
+color: white;
+}
+
+button.dropdown-item:hover{
+background: #fef7e5;
+}
+
+.btn-outline-secondary{
+    background-color: white;
+    border-color: RGBA(0, 0, 0, 0.10);
+}
+
+.btn-outline-secondary:focus{
+    background-color: #fef7e5;
+    color: black;
+    border-color: RGBA(0, 0, 0, 0.10);
+    box-shadow: 0 0 0 0.2rem #fef7e5;
+}
+
+.btn-outline-secondary:not(:focus) {
+    background-color: white;
+    border-color: RGBA(0, 0, 0, 0.10);
+    color: #6c757d;
+  }

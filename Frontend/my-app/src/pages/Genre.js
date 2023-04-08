@@ -104,7 +104,7 @@ const Home = () => {
     const articlesToDisplay = filteredArticles.slice(0, numDisplayedArticles);
 
     const handleLoadMore = () => {
-        setNumDisplayedArticles(numDisplayedArticles + 5);
+        setNumDisplayedArticles(numDisplayedArticles + 20);
     };
 
     return (
@@ -130,16 +130,15 @@ const Home = () => {
                     >
                         X
                     </button>
-                    <select
-                        className="form-select w-auto ms-1"
-                        aria-label="Sort by"
-                        value={sortOption}
-                        onChange={handleSortChange}
-                    >
-                        <option value="">Sort By</option>
-                        <option value="newest">Newest</option>
-                        <option value="oldest">Oldest</option>
-                    </select>
+                    <div className="dropdown">
+                    <button className="btn btn-outline-secondary dropdown-toggle m-2" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {sortOption ? sortOption : 'Sort By'}
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><button className="dropdown-item" type="button" value="newest" onClick={handleSortChange}>newest</button></li>
+                        <li><button className="dropdown-item" type="button" value="oldest" onClick={handleSortChange}>oldest</button></li>
+                    </ul>
+                    </div>
                 </div>
             </div>
 
