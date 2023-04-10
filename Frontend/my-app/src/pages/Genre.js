@@ -130,8 +130,8 @@ const Home = () => {
                     >
                         X
                     </button>
-                    <div className="dropdown">
-                    <button className="btn btn-outline-secondary dropdown-toggle m-2" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div className="dropdown ps-2">
+                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {sortOption ? sortOption : 'Sort By'}
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
