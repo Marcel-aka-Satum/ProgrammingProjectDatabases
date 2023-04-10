@@ -8,6 +8,7 @@ from Helpers.ErrorDetectionRoutes import *
 from functools import wraps
 import jwt
 import datetime
+from Database.scraper import scraper
 
 
 
@@ -22,6 +23,7 @@ drop_db = True
 if drop_db == True:
     db.redefine()
     db.populate()
+    scraper()
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
@@ -44,7 +46,8 @@ def token_required(f):
             return jsonify({'message': 'Token is missing!'}), 401
         try:
             data = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256', ])
-            print(data)
+            if(data):
+                return({'message': 'Valid token yay'}), 200
         except:
             return jsonify({'message':'Token is invalid!'}), 401
 
@@ -86,15 +89,15 @@ def register_user():
     status_db, message_db = db.addUser(username, email, hashed_password.decode(), is_admin)
     if not status_db:
         return jsonify({"message": message_db}), 401
-    
+    user_exists = db.getUser(email)
     #jwt token
-    encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1][is_admin], "email":user_exists[1]["Email"], 'exp':
+    encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1]["Is_Admin"], "email":user_exists[1]["Email"], 'exp':
                               datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
 
     # access_token = create_access_token(identity=email)
 
     return jsonify({"message": f"Welcome {username}", 
-                    "token": encoded_jwt.decode('UTF-8')}), 200
+                    "token": encoded_jwt}), 200
 
 
 @app.route("/api/login", methods=["POST"])
@@ -116,7 +119,6 @@ def login_user():
     if not result:
         return jsonify({"message": "password is incorrect"}), 401
     else:
-        print(user_exists[1])
         #jwt token
         encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1]['Is_Admin'], "email":user_exists[1]["Email"], 'exp':
                               datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
@@ -138,6 +140,11 @@ def login_user():
 def getUsers():
     users = db.getUsers()
     return json.loads(users)
+
+@app.route('/api/auth')
+@token_required
+def auth():
+    return 'JWT IS GUT GUT!'
 
 @app.route('/api/users/totalusers', methods=['GET'])
 @token_required

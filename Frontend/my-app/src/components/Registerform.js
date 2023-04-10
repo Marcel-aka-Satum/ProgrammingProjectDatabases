@@ -41,11 +41,15 @@ export default function Registerform() {
         }
     }
 
+    function redirectToProfile(){
+        window.location.href = "/profile"
+    }
+
     return (
         <div class="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
                 <div>
-                    <p>hi u are already logged in u can't create account! </p>
+                    {redirectToProfile()}
                 </div>
                 : (
                     <div class="row">

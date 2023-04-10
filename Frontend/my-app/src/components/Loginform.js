@@ -39,21 +39,15 @@ export default function Loginform() {
         }
     }
 
-    const handleLogOut = async (e) => {
-        e.preventDefault();
-        usersession.user.logout()
+    function redirectToProfile(){
+        window.location.href = "/profile"
     }
-
+    
     return (
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
                 <div>
-                    <p>hi u are logged in as user </p>
-
-                    <p> if u want to log out press this button</p>
-                    <button type="submit" onClick={handleLogOut}
-                            className="text-center text-dark mt-5 login-register-title">Logout
-                    </button>
+                    {redirectToProfile()}
                 </div>
                 :
                 (

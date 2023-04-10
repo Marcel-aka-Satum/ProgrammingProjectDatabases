@@ -2,11 +2,7 @@ import React, {useEffect, useState} from 'react'
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {Modal} from "bootstrap";
 
-function addDashes(str) {
-    return str.replace(/\s+/g, '-');
-}
 
 function formatTitle(str) {
     const words = str.split('-');
@@ -17,13 +13,12 @@ function formatTitle(str) {
 function formatDate(dateStr) {
     const date = new Date(dateStr);
     const day = date.getDate();
-    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
+    const month = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
     const year = date.getFullYear();
     const hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${day} ${month} ${year}, ${hours}:${minutes}`;
 }
-
 
 function formatSummary(text, url, limit = 200) {
     if (text.length <= limit) {
@@ -49,6 +44,9 @@ function ArticleCard({article}) {
                 />
 
                 <div className="article-card-footer pb-3 float-end">
+                    <button id="addToFav">
+                        Add to favorite
+                    </button>
                     <span className="article-card-date">
                         <i>{formatDate(article.Published)}</i>
                     </span>
@@ -177,16 +175,15 @@ const Home = () => {
                     >
                         X
                     </button>
-                    <select
-                        className="form-select w-auto ms-1 "
-                        aria-label="Sort by"
-                        value={sortOption}
-                        onChange={handleSortChange}
-                    >
-                        <option value="">Sort By</option>
-                        <option value="newest">Newest</option>
-                        <option value="oldest">Oldest</option>
-                    </select>
+                    <div className="dropdown">
+                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {sortOption ? sortOption : 'Sort By'}
+                    </button>
+                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><button className="dropdown-item" type="button" value="newest" onClick={handleSortChange}>newest</button></li>
+                        <li><button className="dropdown-item" type="button" value="oldest" onClick={handleSortChange}>oldest</button></li>
+                    </ul>
+                    </div>
                 </div>
 
                 <div className="row">
@@ -200,3 +197,4 @@ const Home = () => {
 ;
 
 export default Home;
+

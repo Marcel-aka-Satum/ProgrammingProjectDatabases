@@ -39,7 +39,7 @@ export class User {
         this.token = false
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("user")
-        window.location.reload()
+        window.location.href = "/"
     }
 
     register(iL, t, iA, e, u){

@@ -61,7 +61,7 @@ class DBConnection:
 
     def connect(self) -> bool:
         try:
-            self.connection = psycopg2.connect(user="postgres")
+            self.connection = psycopg2.connect(user="postgres", password="test")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
         except (Exception, psycopg2.DatabaseError) as err:
