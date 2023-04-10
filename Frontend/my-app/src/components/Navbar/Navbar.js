@@ -55,9 +55,7 @@ const Navbar = () => {
                     }
                     <li>
                         {(usersession.user.isLogged && usersession.user.token !== false) ? 
-                            <button type="submit" onClick={handleLogOut}
-                            className="text-center text-dark login-register-title">Logout
-                        </button>
+                            <NavLink to="/login" onClick={handleLogOut}>Logout</NavLink>
                         : (    
                             <NavLink to="/login">Login</NavLink>
                             )

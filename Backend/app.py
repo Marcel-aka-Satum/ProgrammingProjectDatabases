@@ -147,7 +147,6 @@ def auth():
     return 'JWT IS GUT GUT!'
 
 @app.route('/api/users/totalusers', methods=['GET'])
-@token_required
 @cross_origin()
 def getTotalUsers():
     users = db.getUsers()
