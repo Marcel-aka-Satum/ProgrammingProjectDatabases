@@ -3,17 +3,60 @@ import {Link, NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
 import './navbarStyle.css'
 import {userSession} from '../../App'
+import axios from 'axios'
 
 
+function GenreF({genre}) {
 
+    return (
+        <li><NavLink to={`genre/${genre}`} target='_blank'>{genre}</NavLink></li>
+    );
+}
 
 
 const Navbar = () => {
+
+    const [articles, setArticles] = useState([])
+    const [genres, setGenres] = useState(new Set())
+
+    useEffect(() => {
+        const fetchArticles = async () => {
+            const response = await axios.get('http://localhost:4444/api/articles');
+            // const limitedArticles = response.data.slice(0, 500);
+
+            setArticles(response.data);
+        };
+        fetchArticles();
+    }, []);
+
     let usersession = useContext(userSession);
     const handleLogOut = async (e) => {
         e.preventDefault();
         usersession.user.logout()
     }
+
+    useEffect(() => {
+        const fetchGenres = () => {
+            const uniqueGenres = new Set();
+            const grouped = {};
+
+            for (const article of articles) {
+                uniqueGenres.add(article.Topic);
+
+                if (!grouped[article.Topic]) {
+                    grouped[article.Topic] = [];
+                }
+                grouped[article.Topic].push(article);
+            }
+
+            setGenres(uniqueGenres);
+            console.log(genres)
+        };
+
+        if (articles.length > 0) {
+            fetchGenres();
+        }
+    }, [articles]);
 
     return (
         <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">
@@ -35,15 +78,9 @@ const Navbar = () => {
                         <div className="dropdown-menu dropdown-menu-left custom-bg m-0 fix-top"
                              aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4 p-0">
-                                <li><NavLink to={`genre/economics`} target='_blank'>Economics</NavLink></li>
-                                <li><NavLink to={`genre/sport`} target='_blank'>Sport</NavLink></li>
-                                <li><NavLink to={`genre/politics`}target='_blank'>Politics</NavLink></li>
-                                <li><NavLink to={`genre/inland`} target='_blank'>Inland</NavLink></li>
-                                <li><NavLink to={`genre/international`} target='_blank'>International</NavLink></li>
-                                <li><NavLink to={`genre/science-and-technology`} target='_blank'>Science And Technology</NavLink></li>
-                                <li><NavLink to={`genre/Lifestyle`} target='_blank'>LifeStyle</NavLink></li>
-                                <li><NavLink to={`genre/health`} target='_blank'>Health</NavLink></li>
-                                <li><NavLink to={`genre/entertainment`} target='_blank'>Entertainment</NavLink></li>
+                            {Array.from(genres).map((genre) => (
+                                <GenreF key={genre} genre={genre}/>
+                            ))}
                             </ul>
                         </div>
                     </li>
