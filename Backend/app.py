@@ -29,15 +29,6 @@ if drop_db == True:
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
 # jwt = JWTManager(app)
 
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-################# AUTHENTICATION ROUTES #################
-
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -52,6 +43,16 @@ def token_required(f):
             return jsonify({'message':'Token is invalid!'}), 401
 
     return decorated
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+################# AUTHENTICATION ROUTES #################
+@app.route('/api/auth')
+@token_required
+def auth():
+    return 'JWT IS GUT GUT!'
 
 @app.route("/api/register", methods=["POST"])
 @cross_origin()
@@ -141,10 +142,6 @@ def getUsers():
     users = db.getUsers()
     return json.loads(users)
 
-@app.route('/api/auth')
-@token_required
-def auth():
-    return 'JWT IS GUT GUT!'
 
 @app.route('/api/users/totalusers', methods=['GET'])
 @cross_origin()

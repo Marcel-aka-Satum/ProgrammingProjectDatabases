@@ -53,6 +53,13 @@ const Navbar = () => {
                         </li>
                         : (<p></p>)
                     }
+                    {(usersession.user.isLogged && usersession.user.token !== false && usersession.user.isAdmin) ?
+                        <li>
+                        <NavLink to="/admin/dashboard">Dashboard</NavLink>
+                        </li>
+                        : (<p></p>)
+                    }
+
                     <li>
                         {(usersession.user.isLogged && usersession.user.token !== false) ? 
                             <NavLink to="/login" onClick={handleLogOut}>Logout</NavLink>
