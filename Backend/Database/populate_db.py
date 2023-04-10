@@ -26,15 +26,24 @@ def populate_db(conn, cur):
     print("Done inserting values")
 
     passwordAdmin = "admin"
+    passwordTest = "test"
+
     #create salt for hash
     salt = bcrypt.gensalt()
+
     #hashpsswd
-    bytes = passwordAdmin.encode('utf-8')
-    hashed_password = bcrypt.hashpw(bytes, salt)
+    bytesAdmin = passwordAdmin.encode('utf-8')
+    bytesTest = passwordTest.encode('utf-8')
+
+    hashed_password_admin = bcrypt.hashpw(bytesAdmin, salt)
+    hashed_password_test = bcrypt.hashpw(bytesTest, salt)
+
     # populate users
     users = [
-        {'username': 'admin', 'email': 'admin@gmail.com', 'password': hashed_password.decode(), 'is_admin': True}
+        {'username': 'admin', 'email': 'admin@gmail.com', 'password': hashed_password_admin.decode(), 'is_admin': True},
+        {'username': 'test', 'email': 'test@gmail.com', 'password': hashed_password_test.decode(), 'is_admin': False}
     ]
+
     # make an insert query into the users table
     insert_query = '''
                     INSERT INTO newsaggregator.users (username, email, password, is_admin)

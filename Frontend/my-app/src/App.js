@@ -29,20 +29,20 @@ function App() {
     let [user, setUser] = useState(new User());
 
     //if user is not an admin he should not be able to see pages with admin perms
-    if(!user.getIsAdmin()){
-        return(
-            <userSession.Provider value = {{user, setUser}}>
+    if (!user.getIsAdmin()) {
+        return (
+            <userSession.Provider value={{user, setUser}}>
                 <div id="main-container">
-                <Navbar/>
-                <Routes id="routes">
-                <Route path="/" element={<Home/>}></Route>
+                    <Navbar/>
+                    <Routes id="routes">
+                        <Route path="/" element={<Home/>}></Route>
                         <Route path="/login" element={<Loginform/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>
                         {(user.getIsLogged()) ?
-                        <Route path="/profile" element={<Profile/>}></Route>
-                        :(
-                        <Route path="/profile" element={<Redirection/>}></Route>
-                        )}
+                            <Route path="/profile" element={<Profile/>}></Route>
+                            : (
+                                <Route path="/profile" element={<Redirection/>}></Route>
+                            )}
                         <Route path="/register" element={<Registerform/>}></Route>
                         <Route path="/admin/dashboard" element={<Redirection/>}/>
                         <Route path="/admin/articles" element={<Redirection/>}/>
@@ -51,13 +51,13 @@ function App() {
                         <Route path="/admin/settings" element={<Redirection/>}/>
                         <Route path="/admin/statistics" element={<Redirection/>}/>
                         <Route path="/genre/:genre" element={<Genre/>}></Route>
-                </Routes>
-                <Footer/>
-            </div>
-            <ToastContainer limit={3}/>
+                    </Routes>
+                    <Footer/>
+                </div>
+                <ToastContainer limit={3}/>
             </userSession.Provider>
         )
-    } else{
+    } else {
         return (
             <userSession.Provider value={{user, setUser}}>
                 <div id="main-container">
