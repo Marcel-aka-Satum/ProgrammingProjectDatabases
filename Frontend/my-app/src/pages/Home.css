@@ -53,6 +53,13 @@ a:hover {
     border-color: RGBA(0, 0, 0, 0.10);
 }
  
+.hide-btn-group .hide-btn {
+  display: none;
+}
+
+.hide-btn-group:hover .hide-btn {
+  display: inline-block;
+}
 
 .form-control:focus{
     border-color: RGBA(0, 0, 0, 0.10);
