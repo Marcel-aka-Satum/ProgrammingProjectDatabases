@@ -130,7 +130,7 @@ function GenreSection({genre, articles, filterText}) {
         <div className="genre-section">
             <h2>
                 {genre}{' '}
-                <a href={`genre/${addDashes(genre)}`} target='_blank' rel='noreferrer'>
+                <a href={`genre/${addDashes(genre)}`} rel='noreferrer'>
                     <button className="btn btn-outline-secondary">Show All</button>
                 </a>
             </h2>
