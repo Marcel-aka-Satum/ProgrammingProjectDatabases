@@ -52,16 +52,16 @@ a:hover {
     background-color: RGBA(0, 0, 0, 0.10);
     border-color: RGBA(0, 0, 0, 0.10);
 }
- 
+
 .hide-btn-group .hide-btn {
-  display: none;
+    display: none;
 }
 
 .hide-btn-group:hover .hide-btn {
-  display: inline-block;
+    display: inline-block;
 }
 
-.form-control:focus{
+.form-control:focus {
     border-color: RGBA(0, 0, 0, 0.10);
     box-shadow: 0 0 0 0.2rem #fef7e5;
 }
@@ -69,24 +69,24 @@ a:hover {
 .danger {
     border-color: #fa6f65;
     color: #fa6f65
-  }
-  
+}
+
 .danger:hover {
-border-color: #fa6f65;
-background: #fa6f65;
-color: white;
+    border-color: #fa6f65;
+    background: #fa6f65;
+    color: white;
 }
 
-button.dropdown-item:hover{
-background: #fef7e5;
+button.dropdown-item:hover {
+    background: #fef7e5;
 }
 
-.btn-outline-secondary{
+.btn-outline-secondary {
     background-color: white;
     border-color: RGBA(0, 0, 0, 0.10);
 }
 
-.btn-outline-secondary:focus{
+.btn-outline-secondary:focus {
     background-color: #fef7e5;
     color: black;
     border-color: RGBA(0, 0, 0, 0.10);
@@ -97,5 +97,8 @@ background: #fef7e5;
     background-color: white;
     border-color: RGBA(0, 0, 0, 0.10);
     color: #6c757d;
-  }
-  
+}
+
+
+
+

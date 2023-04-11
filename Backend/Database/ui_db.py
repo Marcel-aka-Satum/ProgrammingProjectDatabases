@@ -84,15 +84,18 @@ class DBConnection:
         self.cursor.execute(query_db.get_newsarticles())
         data = []
         for i in self.cursor.fetchall():
-            Article = {}
-            Article["URL"] = i[0]
-            Article["Title"] = i[1]
-            Article["Summary"] = i[2]
-            Article["Published"] = i[3]
-            Article["Image"] = i[4]
-            Article["RSS_URL"] = i[5]
-            Article["Topic"] = i[6]
-            data.append(Article)
+            try:
+                Article = {}
+                Article["URL"] = i[0]
+                Article["Title"] = i[1]
+                Article["Summary"] = i[2]
+                Article["Published"] = i[3]
+                Article["Image"] = i[4]
+                Article["RSS_URL"] = i[5]
+                Article["Topic"] = i[6]
+                data.append(Article)
+            except Exception as e:
+                pass
         return json.dumps(data)
 
     """

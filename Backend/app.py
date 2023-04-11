@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token, JWTManager, get_jwt, jwt_req
 from flask_cors import CORS, cross_origin
 from Database.ui_db import DBConnection
 from Helpers.ErrorDetectionRoutes import *
+from Helpers import helpers as h
 from functools import wraps
 import jwt
 import datetime
@@ -82,12 +83,7 @@ def register_user():
     if status_pwd_val == 401:
         return jsonify({"message": message_pwd_val}), 401
 
-    #create salt for hash
-    salt = bcrypt.gensalt()
-    #hashpsswd
-    bytes = password.encode('utf-8')
-    hashed_password = bcrypt.hashpw(bytes, salt)
-    status_db, message_db = db.addUser(username, email, hashed_password.decode(), is_admin)
+    status_db, message_db = db.addUser(username, email, h.create_hash(password), is_admin)
     if not status_db:
         return jsonify({"message": message_db}), 401
     user_exists = db.getUser(email)
@@ -107,15 +103,15 @@ def login_user():
     email = request.json["Email"]
     password = request.json["Password"]
     user_exists = db.getUser(email)
-    #check is psswd is == hash in our database
-    result = bcrypt.checkpw(password.encode('utf-8'), user_exists[1]["Password"].encode('utf-8'))
-    
 
     if email == "" or password == "":
         return jsonify({"message": "please fill in all fields"}), 401
 
     if user_exists[0] in [None, False]:
         return jsonify({"message": "user does not exist."}), 401
+
+    # check if password is correct compared to hashed password in db
+    result = bcrypt.checkpw(password.encode('utf-8'), user_exists[1]["Password"].encode('utf-8'))
 
     if not result:
         return jsonify({"message": "password is incorrect"}), 401
@@ -162,7 +158,7 @@ def addUser():
     if status_pwd_val == 401:
         return jsonify({"message": message_pwd_val, "status": status_pwd_val})
     elif status_pwd_val == 200:
-        status_db, message_db = db.addUser(username, email, password, is_admin)
+        status_db, message_db = db.addUser(username, email, h.create_hash(password), is_admin)
         if status_db:
             return jsonify({"message": "User added successfully", "status": 200})
         else:

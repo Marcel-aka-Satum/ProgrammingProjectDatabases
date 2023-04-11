@@ -59,19 +59,21 @@ function ArticleCard({article}) {
 
     const handleShareArticle = () => {
         SUCCESS('Not implemented yet.');
-    }
+    };
 
+
+    const text = formatSummary(article.Summary);
     return (
         <div className="article-card hide-btn-group">
             <img src={article.Image} alt='' className="img-fluid rounded"/>
             <div className="article-card-body pe-3 ps-3">
+
                 <a href={article.URL} target="_blank" rel="noreferrer">
-                    <h4 className="article-card-title">{formatTitle(article.Title)}</h4>
+                    <h3 className="card-title">{formatTitle(article.Title)}</h3>
                 </a>
 
                 <div className="article-card-content"
-                     dangerouslySetInnerHTML={{__html: formatSummary(article.Summary)[0]}}
-                />
+                     dangerouslySetInnerHTML={{__html: text[0]}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
                     <button
@@ -107,7 +109,8 @@ function ArticleCard({article}) {
                 </div>
             </div>
         </div>
-    );
+    )
+        ;
 }
 
 function GenreSection({genre, articles, filterText}) {
