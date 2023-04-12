@@ -15,6 +15,8 @@ import React, {useState, createContext, useEffect} from 'react'
 import {User} from './components/User/User'
 import Redirection from './components/redirect/Redirection';
 import Profile from './Profile/Profile';
+import ScrollToTop from "react-scroll-to-top";
+
 
 /////////////////// import css
 import "./components/Navbar/navbarStyle.css"
@@ -25,6 +27,7 @@ import {ToastContainer} from "react-toastify";
 let userSession = createContext();
 
 function App() {
+
     document.title = "PPDBT8"
     let [user, setUser] = useState(new User());
 
@@ -52,7 +55,7 @@ function App() {
                         <Route path="/admin/statistics" element={<Redirection/>}/>
                         <Route path="/genre/:genre" element={<Genre/>}></Route>
                     </Routes>
-                    <Footer/>
+                    <ScrollToTop smooth/>
                 </div>
                 <ToastContainer limit={3}/>
             </userSession.Provider>
@@ -76,6 +79,7 @@ function App() {
                         <Route path="/admin/statistics" element={<Statistics/>}/>
                         <Route path="genre/:genre" element={<Home/>}></Route>
                     </Routes>
+                    <ScrollToTop smooth/>
                     <Footer/>
                 </div>
                 <ToastContainer limit={3}/>

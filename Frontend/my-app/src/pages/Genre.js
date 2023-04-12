@@ -3,6 +3,7 @@ import {useLocation} from 'react-router-dom'
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import {SUCCESS} from "../components/Helpers/custom_alert";
 
 
 function formatTitle(str) {
@@ -32,27 +33,94 @@ function formatSummary(text, url, limit = 200) {
 
 
 function ArticleCard({article}) {
+    const handleAddToFavorites = (event) => {
+        const button = event.currentTarget;
+
+        const likeBtn = "fa fa-heart"
+        const dislikeBtn = "far fa-heart"
+
+        const whenLiked = 'btn-danger';
+        const isToggled = button.classList.contains(whenLiked);
+
+        if (isToggled) {
+            button.classList.add('btn-outline-danger')
+            button.classList.remove(whenLiked);
+            button.innerHTML = `<i class="${dislikeBtn}"></i>`;
+            button.setAttribute('title', 'Add to favorites');
+        } else {
+            button.classList.remove('btn-outline-danger');
+            button.classList.add(whenLiked);
+            button.innerHTML = `<i class="${likeBtn}"></i>`;
+            button.setAttribute('title', 'Remove from favorites');
+        }
+    };
+
+    const handleHideArticle = () => {
+        SUCCESS('Not implemented yet.');
+    };
+
+    const handleShareArticle = () => {
+        SUCCESS('Not implemented yet.');
+    };
+
+
+    const text = formatSummary(article.Summary);
     return (
-        <div className="article-card">
-
-            <img src={article.Image} alt='' className="img-fluid pb-3"/>
-
+        <div className="article-card hide-btn-group">
+            <a href={article.URL} target="_blank" rel="noreferrer">
+            <img
+                src={article.Image}
+                onError={(e) => e.target.style.display = 'none'}
+                alt=''
+                className="img-fluid rounded-top"
+                style={{ display: article.Image ? 'block' : 'none' }}
+            />
+            </a>
             <div className="article-card-body pe-3 ps-3">
+
                 <a href={article.URL} target="_blank" rel="noreferrer">
-                    <h4 className="article-card-title">{formatTitle(article.Title)}</h4>
+                    <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
                 <div className="article-card-content"
-                     dangerouslySetInnerHTML={{__html: formatSummary(article.Summary)[0]}}
-                />
+                     dangerouslySetInnerHTML={{__html: text[0]}}/>
 
-                <div className="article-card-date pb-3 pt-3 float-end">
-                    <i>{formatDate(article.Published)}</i>
+                <div className="article-card-footer pb-3 mt-3">
+                    <button
+                        className="btn btn-outline-primary me-2 ms-2 hide-btn"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Share it!"
+                        onClick={handleShareArticle}
+                    >
+                        <i className="far fa-share-square"></i>
+                    </button>
+                    <button
+                        className="btn btn-outline-warning me-2 hide-btn"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="I don't like this"
+                        onClick={handleHideArticle}
+                    >
+                        <i className="far fa-thumbs-down"></i>
+                    </button>
+                    <button
+                        className="btn btn-outline-danger me-2 hide-btn"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Add to favorites"
+                        onClick={handleAddToFavorites}
+                    >
+                        <i className="far fa-heart"></i>
+                    </button>
+                    <span className="article-card-date float-end p-2 pb-4">
+                        <i>{formatDate(article.Published)}</i>
+                    </span>
                 </div>
-
             </div>
         </div>
-    );
+    )
+        ;
 }
 
 

@@ -1,15 +1,20 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext, useEffect, useRef} from "react";
 import {Link, NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
 import './navbarStyle.css'
 import {userSession} from '../../App'
 import axios from 'axios'
+import { Squash as Hamburger } from 'hamburger-react'
 
 
 function GenreF({genre}) {
 
+    const formattedGenre = genre.replace(/\s+/g, '-');
+
+    console.log(formattedGenre)
+
     return (
-        <li><NavLink to={`genre/${genre}`} target='_blank'>{genre}</NavLink></li>
+        <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
     );
 }
 
@@ -58,14 +63,49 @@ const Navbar = () => {
         }
     }, [articles]);
 
+    
+    const [Open, setOpen] = useState(false)
+    const refIn = useRef(null)
+
+function colConCollapse(){
+    const colCon = document.querySelector(".container-fluid");
+        setOpen(!Open)
+        colCon.classList.toggle("collapse")
+    }
+    const handleClickOutside = (e) => {
+        if(Open){
+            if(!refIn.current.contains(e.target)){
+            const colCon = document.querySelector(".container-fluid");
+            colCon.classList.toggle("collapse")
+            setOpen(!Open)
+        }
+        }
+    }
+
+    useEffect(()=>{
+        document.addEventListener("click", handleClickOutside)
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    },[Open])
+
+
+    
+      console.log(genres)
+
     return (
         <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">
-            <div className="container-fluid m-2">
+            <div className="container-fluid m-2" ref={refIn}>
                 <div className="navbar-header">
-                    <Link className="navbar-brand" to="/">
+                    <NavLink className="navbar-brand" to="/">
                         <span className="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
                         Newsagregator
-                    </Link>
+                    </NavLink>
+                </div>
+                <div className="toggle-collapse">
+                    <div className="toggle-icon">
+                        <span><Hamburger toggled={Open} onToggle={colConCollapse}/></span>
+                    </div>
                 </div>
                 <ul className="nav navbar-nav allign-items-center mr-4">
                     <li>
@@ -75,8 +115,8 @@ const Navbar = () => {
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div className="dropdown-menu dropdown-menu-left custom-bg m-0 fix-top"
-                             aria-labelledby="articlesDropdown">
+                        <div className="dropdown-menu m-0 fix-top"
+                             aria-labelledby="articlesDropdown" >
                             <ul className="list-inline mx-4 p-0">
                             {Array.from(genres).map((genre) => (
                                 <GenreF key={genre} genre={genre}/>
@@ -106,6 +146,7 @@ const Navbar = () => {
                         }
                     </li>
                 </ul>
+                
             </div>
         </nav>
     );

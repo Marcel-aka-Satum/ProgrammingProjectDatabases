@@ -25,7 +25,7 @@
 }
 
 a:hover {
-    color: #FFC300;
+    color: rgba(255, 195, 0, 1);
 }
 
 .article-card {
@@ -53,12 +53,10 @@ a:hover {
     border-color: RGBA(0, 0, 0, 0.10);
 }
 
-.hide-btn-group .hide-btn {
-    display: none;
-}
-
-.hide-btn-group:hover .hide-btn {
-    display: inline-block;
+.img-fluid {
+    width: 100%;
+    aspect-ratio: 13/9;
+    object-fit: cover;
 }
 
 .form-control:focus {
@@ -66,12 +64,23 @@ a:hover {
     box-shadow: 0 0 0 0.2rem #fef7e5;
 }
 
-.danger {
+.btn-danger {
+    border-color: #fa6f65;
+    color: white;
+    
+}
+
+.btn-danger:hover {
+    border-color: #fa6f65;
+    color: white;
+}
+
+.btn-outline-danger {
     border-color: #fa6f65;
     color: #fa6f65
 }
 
-.danger:hover {
+.btn-outline-danger:hover {
     border-color: #fa6f65;
     background: #fa6f65;
     color: white;
@@ -98,7 +107,3 @@ button.dropdown-item:hover {
     border-color: RGBA(0, 0, 0, 0.10);
     color: #6c757d;
 }
-
-
-
-

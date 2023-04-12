@@ -65,11 +65,19 @@ function ArticleCard({article}) {
     const text = formatSummary(article.Summary);
     return (
         <div className="article-card hide-btn-group">
-            <img src={article.Image} alt='' className="img-fluid rounded"/>
+            <a href={article.URL} target="_blank" rel="noreferrer">
+            <img
+                src={article.Image}
+                onError={(e) => e.target.style.display = 'none'}
+                alt=''
+                className="img-fluid rounded-top"
+                style={{ display: article.Image ? 'block' : 'none' }}
+            />
+            </a>
             <div className="article-card-body pe-3 ps-3">
 
                 <a href={article.URL} target="_blank" rel="noreferrer">
-                    <h3 className="card-title">{formatTitle(article.Title)}</h3>
+                    <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
                 <div className="article-card-content"
@@ -103,7 +111,7 @@ function ArticleCard({article}) {
                     >
                         <i className="far fa-heart"></i>
                     </button>
-                    <span className="article-card-date float-end">
+                    <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
                     </span>
                 </div>
