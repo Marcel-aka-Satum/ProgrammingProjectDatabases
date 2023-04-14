@@ -96,19 +96,37 @@ function ArticleCard({article, onFilterTextChange}) {
         return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
     }
 
+
+    const [isLoading, setIsLoading] = useState(true);
+    const handleImageLoad = () => {
+        setIsLoading(false);
+    };
+
+    console.log('image', article.Image)
+
     return (
+
         <div className="article-card hide-btn-group">
             <div className='boxi'>
                 <a href={article.URL} target="_blank" rel="noreferrer">
-                    <img
-                        src={article.Image}
-                        onError={(e) => e.target.style.display = 'none'}
-                        alt=''
-                        className="img-fluid rounded-top"
-                        style={{display: article.Image ? 'block' : 'none'}}
-                    />
+                    {article.Image ? (
+                        <>
+                            {isLoading && (
+                                <div className="loading-animation"></div>
+                            )}
+                            <img
+                                src={article.Image}
+                                onError={(e) => e.target.style.display = 'none'}
+                                alt=''
+                                className="img-fluid rounded-top"
+                                onLoad={handleImageLoad}
+                            />
+                        </>
+                    ) : (
+                        <div className="no-image"></div>
+                    )}
                 </a>
-                <div class="bottom-0">
+                <div className="bottom-0">
                     <button
                         className='background-newspaper text-decoration-none'
                         onClick={() => {
