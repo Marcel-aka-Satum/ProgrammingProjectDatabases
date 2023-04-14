@@ -67,7 +67,7 @@ a:hover {
 .btn-danger {
     border-color: #fa6f65;
     color: white;
-    
+
 }
 
 .btn-danger:hover {
@@ -110,25 +110,29 @@ button.dropdown-item:hover {
 
 .modal {
     font-size: 12px;
-  }
-  .modal > .header {
+}
+
+.modal > .header {
     width: 100%;
     border-bottom: 1px solid gray;
     font-size: 18px;
     text-align: center;
     padding: 5px;
-  }
-  .modal > .content {
+}
+
+.modal > .content {
     width: 100%;
     padding: 10px 5px;
-  }
-  .modal > .actions {
+}
+
+.modal > .actions {
     width: 100%;
     padding: 10px 5px;
     margin: auto;
     text-align: center;
-  }
-  .modal > .close {
+}
+
+.modal > .close {
     cursor: pointer;
     position: absolute;
     display: block;
@@ -140,9 +144,9 @@ button.dropdown-item:hover {
     background: #ffffff;
     border-radius: 18px;
     border: 1px solid #cfcece;
-  }
+}
 
-  button {
+button {
     border: none;
     margin: 5px;
     cursor: pointer;
@@ -164,11 +168,11 @@ button.dropdown-item:hover {
     }
 }
 
-p{
+p {
     font-size: 14px;
 }
 
-.boxi{
+.boxi {
     position: relative;
     text-align: center;
 }
@@ -180,13 +184,13 @@ p{
     color: black;
     padding: 3px;
     background-color: #F5F5F5;
-  }
+}
 
-.card{
+.card {
     background-color: #F5F5F5;
 }
 
-.clipboard-link{
+.clipboard-link {
     padding-bottom: 20px;
 }
 
@@ -194,4 +198,14 @@ p{
     display: flex;
     justify-content: center;
     margin-bottom: 20px; /* adjust the value as needed */
-  }
+}
+
+.background-newspaper{
+    background-color: transparent;
+    decoration: none;
+}
+
+.background-newspaper:hover{
+    scale: 1.03;
+    transition: 0.1s;
+}

@@ -19,8 +19,8 @@ import {
     TwitterShareButton,
     TwitterIcon
 
-  } from "react-share";
-  import {CopyToClipboard} from 'react-copy-to-clipboard';
+} from "react-share";
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 
 
@@ -50,7 +50,7 @@ function formatSummary(text, url, limit = 200) {
 }
 
 
-function ArticleCard({article}) {
+function ArticleCard({article, onFilterTextChange}) {
     const handleAddToFavorites = (event) => {
         const button = event.currentTarget;
 
@@ -77,7 +77,7 @@ function ArticleCard({article}) {
         SUCCESS('Not implemented yet.');
     };
 
-    const handleClipboard= () => {
+    const handleClipboard = () => {
         SUCCESS('Link is successfully copied to your clipboard');
     };
 
@@ -89,7 +89,7 @@ function ArticleCard({article}) {
 
     const text = formatSummary(article.Summary);
 
-    function PrintNewspaper(url){
+    function PrintNewspaper(url) {
         const URL = url.url;
 
         const matches = URL.match(/^https?:\/\/(www\.)?([^/?#]+)/);
@@ -98,19 +98,30 @@ function ArticleCard({article}) {
 
         return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
     }
+
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
-            <a href={article.URL} target="_blank" rel="noreferrer">
-            <img
-                src={article.Image}
-                onError={(e) => e.target.style.display = 'none'}
-                alt=''
-                className="img-fluid rounded-top"
-                style={{ display: article.Image ? 'block' : 'none' }}
-            />
-            </a>
-            <div class="bottom-right"><PrintNewspaper url={article.URL}/></div>
+                <a href={article.URL} target="_blank" rel="noreferrer">
+                    <img
+                        src={article.Image}
+                        onError={(e) => e.target.style.display = 'none'}
+                        alt=''
+                        className="img-fluid rounded-top"
+                        style={{display: article.Image ? 'block' : 'none'}}
+                    />
+                </a>
+                <div class="bottom-0">
+                    <button
+                        className='background-newspaper text-decoration-none'
+                        onClick={() => {
+                            onFilterTextChange(PrintNewspaper({url: article.URL}))
+                        }
+                        }
+                    >
+                        <PrintNewspaper url={article.URL}/>
+                    </button>
+                </div>
             </div>
             <div className="article-card-body pe-3 ps-3">
                 <a href={article.URL} target="_blank" rel="noreferrer">
@@ -122,117 +133,131 @@ function ArticleCard({article}) {
 
                 <div className="article-card-footer pb-3 mt-3">
 
-                <div class="container mt-3">
+                    <div class="container mt-3">
 
-                <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow} data-toggle="tooltip"
-                        data-placement="top"
-                        title="Share">
-                    <i className="far fa-share-square"></i>
-                </button>
-                <Modal
-                    show={show}
-                    onHide={handleClose}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Header closeButton>
-                    <Modal.Title>Share this article!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body style={{margin: '20px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <div className="card">
-                            <img
-                                src={article.Image}
-                                onError={(e) => e.target.style.display = 'none'}
-                                alt=''
-                                className="card-img-top"
-                                style={{ display: article.Image ? 'block' : 'none' }}
-                            />
-                            <div className="card-body">
-                                <p>{<PrintNewspaper url={article.URL}/>}</p>
-                                <h5 className="card-title">{article.Title}</h5>
-                            </div>
-                        </div>
-                        <div className="mt-3">
-
-                        <div className="d-flex justify-content-between align-items-center bg-light p-3 rounded" style={{ position: "relative" }}>
-                        <div className="me-auto" style={{ paddingRight: "40px" }}>
-                            {article.URL}
-                        </div>
-                        <CopyToClipboard text={article.URL}>
-                            <button
-                                className="btn "
-                                style={{ position: "absolute", right: "0" }}
-                                title="Copy link"
-                                onClick={handleClipboard}
-                            >
-                                <i class="far fa-clipboard" aria-hidden="true"></i>
-                            </button>
-                        </CopyToClipboard>
-                    </div>
-                    
-                    <div className="mt-3" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <FacebookShareButton url={article.URL} hashtag='#Newsaggregator' className="mr-3">
-                            <FacebookIcon size={70} round={true}/>
-                            <FacebookShareCount url={article.URL}>
-                                {count => <div className="share-count">{count}</div>}
-                            </FacebookShareCount>
-                        </FacebookShareButton>
-                        <WhatsappShareButton url={article.URL} className="mr-3">
-                            <WhatsappIcon size={70} round={true}/>
-                        </WhatsappShareButton>
-                        <TwitterShareButton
-                            url={article.URL}
-                            title="Look which article I found at Newsaggregator"
-                            hashtags={['Newsaggregator']}
+                        <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow}
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Share">
+                            <i className="far fa-share-square"></i>
+                        </button>
+                        <Modal
+                            show={show}
+                            onHide={handleClose}
+                            backdrop={true}
+                            keyboard={true}
                         >
-                            <TwitterIcon size={70} round />
-                        </TwitterShareButton>
-                        <RedditShareButton url={article.URL} title="Look which article I found at Newsaggregator" className="mr-3">
-                            <RedditIcon size={70} round={true}/>
-                            <RedditShareCount url={article.URL}>
-                                {count => <div className="share-count">{count}</div>}
-                            </RedditShareCount>
-                        </RedditShareButton>
-                        <TumblrShareButton url={article.URL} title="Look which article I found at Newsaggregator" className="mr-3">
-                            <TumblrIcon size={70} round={true} style={{ marginTop: '18px' }}/>
-                            <TumblrShareCount url={article.URL}>
-                                {count => <div className="share-count">{count}</div>}
-                            </TumblrShareCount>
-                        </TumblrShareButton>
-                    </div>
-                    </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                    <button className='btn btn-danger' onClick={handleClose}>
-                        Close
-                    </button>
-                    </Modal.Footer>
-                </Modal>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Share this article!</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{
+                                margin: '20px',
+                                padding: '20px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center'
+                            }}>
+                                <div className="card">
+                                    <img
+                                        src={article.Image}
+                                        onError={(e) => e.target.style.display = 'none'}
+                                        alt=''
+                                        className="card-img-top"
+                                        style={{display: article.Image ? 'block' : 'none'}}
+                                    />
+                                    <div className="card-body">
+                                        <p>{<PrintNewspaper url={article.URL}/>}</p>
+                                        <h5 className="card-title">{article.Title}</h5>
+                                    </div>
+                                </div>
+                                <div className="mt-3">
 
-                    <button
-                        className="btn btn-outline-warning me-2 hide-btn"
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        title="I don't like this"
-                        onClick={handleHideArticle}
-                    >
-                        <i className="far fa-thumbs-down"></i>
-                    </button>
-                    <button
-                        className="btn btn-outline-danger me-2 hide-btn"
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        title="Add to favorites"
-                        onClick={handleAddToFavorites}
-                    >
-                        <i className="far fa-heart"></i>
-                    </button>
-                    <span className="article-card-date float-end p-2 pb-4">
+                                    <div
+                                        className="d-flex justify-content-between align-items-center bg-light p-3 rounded"
+                                        style={{position: "relative"}}>
+                                        <div className="me-auto" style={{paddingRight: "40px"}}>
+                                            {article.URL}
+                                        </div>
+                                        <CopyToClipboard text={article.URL}>
+                                            <button
+                                                className="btn "
+                                                style={{position: "absolute", right: "0"}}
+                                                title="Copy link"
+                                                onClick={handleClipboard}
+                                            >
+                                                <i class="far fa-clipboard" aria-hidden="true"></i>
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+
+                                    <div className="mt-3" style={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <FacebookShareButton url={article.URL} hashtag='#Newsaggregator'
+                                                             className="mr-3">
+                                            <FacebookIcon size={70} round={true}/>
+                                            <FacebookShareCount url={article.URL}>
+                                                {count => <div className="share-count">{count}</div>}
+                                            </FacebookShareCount>
+                                        </FacebookShareButton>
+                                        <WhatsappShareButton url={article.URL} className="mr-3">
+                                            <WhatsappIcon size={70} round={true}/>
+                                        </WhatsappShareButton>
+                                        <TwitterShareButton
+                                            url={article.URL}
+                                            title="Look which article I found at Newsaggregator"
+                                            hashtags={['Newsaggregator']}
+                                        >
+                                            <TwitterIcon size={70} round/>
+                                        </TwitterShareButton>
+                                        <RedditShareButton url={article.URL}
+                                                           title="Look which article I found at Newsaggregator"
+                                                           className="mr-3">
+                                            <RedditIcon size={70} round={true}/>
+                                            <RedditShareCount url={article.URL}>
+                                                {count => <div className="share-count">{count}</div>}
+                                            </RedditShareCount>
+                                        </RedditShareButton>
+                                        <TumblrShareButton url={article.URL}
+                                                           title="Look which article I found at Newsaggregator"
+                                                           className="mr-3">
+                                            <TumblrIcon size={70} round={true} style={{marginTop: '18px'}}/>
+                                            <TumblrShareCount url={article.URL}>
+                                                {count => <div className="share-count">{count}</div>}
+                                            </TumblrShareCount>
+                                        </TumblrShareButton>
+                                    </div>
+                                </div>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <button className='btn btn-danger' onClick={handleClose}>
+                                    Close
+                                </button>
+                            </Modal.Footer>
+                        </Modal>
+
+                        <button
+                            className="btn btn-outline-warning me-2 hide-btn"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="I don't like this"
+                            onClick={handleHideArticle}
+                        >
+                            <i className="far fa-thumbs-down"></i>
+                        </button>
+                        <button
+                            className="btn btn-outline-danger me-2 hide-btn"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="Add to favorites"
+                            onClick={handleAddToFavorites}
+                        >
+                            <i className="far fa-heart"></i>
+                        </button>
+                        <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
                     </span>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     )
         ;
@@ -276,11 +301,20 @@ const Home = () => {
         setSortOption(e.target.value);
     };
 
+    function extractBaseUrl(url) {
+        const matches = url.match(/^https?:\/\/(www\.)?([^/?#]+)/);
+
+        const hostname = matches[2];
+
+        return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
+    }
+
     const filteredArticles = articles.filter((article) => {
         const title = article.Title.toLowerCase();
         const summary = article.Summary.toLowerCase();
+        const url = extractBaseUrl(article.URL);
         const filter = filterText.toLowerCase();
-        return title.includes(filter) || summary.includes(filter);
+        return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
 
     // slice the array to get the first 10 articles
@@ -289,6 +323,11 @@ const Home = () => {
     const handleLoadMore = () => {
         setNumDisplayedArticles(numDisplayedArticles + 20);
     };
+
+    const handleFilterTextChange = (newText) => {
+        setFilterText(newText);
+    };
+
 
     return (
         <div className="row">
@@ -300,7 +339,7 @@ const Home = () => {
                         className="form-control"
                         id="filter"
                         name="filter"
-                        placeholder="Search"
+                        placeholder="Filter by title, summary or source"
                         value={filterText}
                         onChange={(e) => {
                             setFilterText(e.target.value);
@@ -314,13 +353,23 @@ const Home = () => {
                         X
                     </button>
                     <div className="dropdown ps-2">
-                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {sortOption ? sortOption : 'Sort By'}
-                    </button>
-                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><button className="dropdown-item" type="button" value="newest" onClick={handleSortChange}>newest</button></li>
-                        <li><button className="dropdown-item" type="button" value="oldest" onClick={handleSortChange}>oldest</button></li>
-                    </ul>
+                        <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                            {sortOption ? sortOption : 'Sort By'}
+                        </button>
+                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li>
+                                <button className="dropdown-item" type="button" value="newest"
+                                        onClick={handleSortChange}>newest
+                                </button>
+                            </li>
+                            <li>
+                                <button className="dropdown-item" type="button" value="oldest"
+                                        onClick={handleSortChange}>oldest
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -328,7 +377,7 @@ const Home = () => {
             <ul className="articles-row">
                 {articlesToDisplay.map((article) => (
                     <li key={article.URL} className="p-3">
-                        <ArticleCard article={article}/>
+                        <ArticleCard article={article} onFilterTextChange={handleFilterTextChange}/>
                     </li>
                 ))}
             </ul>
