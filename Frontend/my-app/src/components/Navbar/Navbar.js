@@ -11,8 +11,6 @@ function GenreF({genre}) {
 
     const formattedGenre = genre.replace(/\s+/g, '-');
 
-    console.log(formattedGenre)
-
     return (
         <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
     );
@@ -55,7 +53,6 @@ const Navbar = () => {
             }
 
             setGenres(uniqueGenres);
-            console.log(genres)
         };
 
         if (articles.length > 0) {
@@ -88,10 +85,6 @@ function colConCollapse(){
             document.removeEventListener("click", handleClickOutside);
         };
     },[Open])
-
-
-    
-      console.log(genres)
 
     return (
         <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">

@@ -107,3 +107,91 @@ button.dropdown-item:hover {
     border-color: RGBA(0, 0, 0, 0.10);
     color: #6c757d;
 }
+
+.modal {
+    font-size: 12px;
+  }
+  .modal > .header {
+    width: 100%;
+    border-bottom: 1px solid gray;
+    font-size: 18px;
+    text-align: center;
+    padding: 5px;
+  }
+  .modal > .content {
+    width: 100%;
+    padding: 10px 5px;
+  }
+  .modal > .actions {
+    width: 100%;
+    padding: 10px 5px;
+    margin: auto;
+    text-align: center;
+  }
+  .modal > .close {
+    cursor: pointer;
+    position: absolute;
+    display: block;
+    padding: 2px 5px;
+    line-height: 20px;
+    right: -10px;
+    top: -10px;
+    font-size: 24px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #cfcece;
+  }
+
+  button {
+    border: none;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.icon {
+    animation: pulse 1s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+p{
+    font-size: 14px;
+}
+
+.boxi{
+    position: relative;
+    text-align: center;
+}
+
+.bottom-right {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    color: black;
+    padding: 3px;
+    background-color: #F5F5F5;
+  }
+
+.card{
+    background-color: #F5F5F5;
+}
+
+.clipboard-link{
+    padding-bottom: 20px;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* adjust the value as needed */
+  }

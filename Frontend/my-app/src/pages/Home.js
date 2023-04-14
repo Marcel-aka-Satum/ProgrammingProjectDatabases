@@ -3,7 +3,24 @@ import {SUCCESS} from "../components/Helpers/custom_alert";
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import {
+    FacebookShareButton,
+    FacebookShareCount,
+    FacebookIcon,
+    WhatsappShareButton,
+    WhatsappIcon,
+    RedditShareButton,
+    RedditShareCount,
+    RedditIcon,
+    TumblrShareButton,
+    TumblrShareCount,
+    TumblrIcon,
+    TwitterShareButton,
+    TwitterIcon
 
+  } from "react-share";
+  import {CopyToClipboard} from 'react-copy-to-clipboard';
+import Modal from 'react-bootstrap/Modal';
 
 function formatTitle(str) {
     const words = str.split('-');
@@ -57,14 +74,30 @@ function ArticleCard({article}) {
         SUCCESS('Not implemented yet.');
     };
 
-    const handleShareArticle = () => {
-        SUCCESS('Not implemented yet.');
+    const handleClipboard= () => {
+        SUCCESS('Link is successfully copied to your clipboard');
     };
 
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     const text = formatSummary(article.Summary);
+
+    function PrintNewspaper(url){
+        const URL = url.url;
+
+        const matches = URL.match(/^https?:\/\/(www\.)?([^/?#]+)/);
+
+        const hostname = matches[2];
+
+        return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
+    }
     return (
         <div className="article-card hide-btn-group">
+            <div className='boxi'>
             <a href={article.URL} target="_blank" rel="noreferrer">
             <img
                 src={article.Image}
@@ -74,8 +107,9 @@ function ArticleCard({article}) {
                 style={{ display: article.Image ? 'block' : 'none' }}
             />
             </a>
+            <div class="bottom-right"><PrintNewspaper url={article.URL}/></div>
+            </div>
             <div className="article-card-body pe-3 ps-3">
-
                 <a href={article.URL} target="_blank" rel="noreferrer">
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
@@ -84,15 +118,94 @@ function ArticleCard({article}) {
                      dangerouslySetInnerHTML={{__html: text[0]}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
-                    <button
-                        className="btn btn-outline-primary me-2 ms-2 hide-btn"
-                        data-toggle="tooltip"
+
+                <div class="container mt-3">
+
+                <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow} data-toggle="tooltip"
                         data-placement="top"
-                        title="Share it!"
-                        onClick={handleShareArticle}
-                    >
-                        <i className="far fa-share-square"></i>
+                        title="Share">
+                    <i className="far fa-share-square"></i>
+                </button>
+                <Modal
+                    show={show}
+                    onHide={handleClose}
+                    backdrop="static"
+                    keyboard={false}
+                >
+                    <Modal.Header closeButton>
+                    <Modal.Title>Share this article!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{margin: '20px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <div className="card">
+                            <img
+                                src={article.Image}
+                                onError={(e) => e.target.style.display = 'none'}
+                                alt=''
+                                className="card-img-top"
+                                style={{ display: article.Image ? 'block' : 'none' }}
+                            />
+                            <div className="card-body">
+                                <p>{<PrintNewspaper url={article.URL}/>}</p>
+                                <h5 className="card-title">{article.Title}</h5>
+                            </div>
+                        </div>
+                        <div className="mt-3">
+
+                        <div className="d-flex justify-content-between align-items-center bg-light p-3 rounded" style={{ position: "relative" }}>
+                        <div className="me-auto" style={{ paddingRight: "40px" }}>
+                            {article.URL}
+                        </div>
+                        <CopyToClipboard text={article.URL}>
+                            <button
+                                className="btn "
+                                style={{ position: "absolute", right: "0" }}
+                                title="Copy link"
+                                onClick={handleClipboard}
+                            >
+                                <i class="far fa-clipboard" aria-hidden="true"></i>
+                            </button>
+                        </CopyToClipboard>
+                    </div>
+                    
+                    <div className="mt-3" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <FacebookShareButton url={article.URL} hashtag='#Newsaggregator' className="mr-3">
+                            <FacebookIcon size={70} round={true}/>
+                            <FacebookShareCount url={article.URL}>
+                                {count => <div className="share-count">{count}</div>}
+                            </FacebookShareCount>
+                        </FacebookShareButton>
+                        <WhatsappShareButton url={article.URL} className="mr-3">
+                            <WhatsappIcon size={70} round={true}/>
+                        </WhatsappShareButton>
+                        <TwitterShareButton
+                            url={article.URL}
+                            title="Look which article I found at Newsaggregator"
+                            hashtags={['Newsaggregator']}
+                        >
+                            <TwitterIcon size={70} round />
+                        </TwitterShareButton>
+                        <RedditShareButton url={article.URL} title="Look which article I found at Newsaggregator" className="mr-3">
+                            <RedditIcon size={70} round={true}/>
+                            <RedditShareCount url={article.URL}>
+                                {count => <div className="share-count">{count}</div>}
+                            </RedditShareCount>
+                        </RedditShareButton>
+                        <TumblrShareButton url={article.URL} title="Look which article I found at Newsaggregator" className="mr-3">
+                            <TumblrIcon size={70} round={true} style={{ marginTop: '18px' }}/>
+                            <TumblrShareCount url={article.URL}>
+                                {count => <div className="share-count">{count}</div>}
+                            </TumblrShareCount>
+                        </TumblrShareButton>
+                    </div>
+                    </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <button className='btn btn-danger' onClick={handleClose}>
+                        Close
                     </button>
+                    </Modal.Footer>
+                </Modal>
+
                     <button
                         className="btn btn-outline-warning me-2 hide-btn"
                         data-toggle="tooltip"
@@ -116,6 +229,7 @@ function ArticleCard({article}) {
                     </span>
                 </div>
             </div>
+        </div>
         </div>
     )
         ;
