@@ -23,8 +23,7 @@ backend_thread.start()
 
 frontend_thread = threading.Thread(target=start_frontend)
 frontend_thread.start()
-"""
+
 time.sleep(5)
 scraper_thread = threading.Thread(target=start_scraper)
 scraper_thread.start()
-"""
