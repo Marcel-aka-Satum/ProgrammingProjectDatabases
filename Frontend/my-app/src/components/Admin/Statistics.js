@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useEffect} from "react";
-import {SUCCESS, ERROR, INFO} from "../Helpers/custom_alert";
+import {SUCCESS, INFO} from "../Helpers/custom_alert";
 
 
 export default function Statistics() {
@@ -26,6 +26,7 @@ export default function Statistics() {
             fetchData();
         }
         , []);
+
 
 
     const refreshStats = async () => {

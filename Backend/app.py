@@ -1,31 +1,33 @@
-from flask import Flask, render_template, request, jsonify, make_response
-import os,json
-import bcrypt
-from flask_jwt_extended import create_access_token, JWTManager, get_jwt, jwt_required
-from flask_cors import CORS, cross_origin
-from Database.ui_db import DBConnection
-from Helpers.ErrorDetectionRoutes import *
-from Helpers import helpers as h
-from functools import wraps
-import jwt
 import datetime
-from Database.scraper import scraper
+import json
+import os
+from functools import wraps
 
+import bcrypt
+import jwt
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS, cross_origin
+
+from Database.ui_db import DBConnection
+from Helpers import helpers as h
+from Helpers.ErrorDetectionRoutes import *
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 
-drop_db = True
+drop_db = False
 if drop_db:
     db.redefine()
     db.populate()
     # db.loadBackup("230417_19_36.txt")
     # scraper()
 
-# Setup the Flask-JWT-Extended extension
+# Set up the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
+
+
 # jwt = JWTManager(app)
 
 def token_required(f):
@@ -36,22 +38,27 @@ def token_required(f):
             return jsonify({'message': 'Token is missing!'}), 401
         try:
             data = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256', ])
-            if(data):
-                return({'message': 'Valid token yay'}), 200
-        except:
-            return jsonify({'message':'Token is invalid!'}), 401
+            if data:
+                return ({'message': 'Valid token yay'}), 200
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token is expired!'}), 401
+        except Exception as e:
+            return jsonify({'message': str(e)}), 401
 
     return decorated
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 ################# AUTHENTICATION ROUTES #################
 @app.route('/api/auth')
 @token_required
 def auth():
     return 'JWT IS GUT GUT!'
+
 
 @app.route("/api/register", methods=["POST"])
 @cross_origin()
@@ -80,18 +87,20 @@ def register_user():
 
     if status_pwd_val == 401:
         return jsonify({"message": message_pwd_val}), 401
-    UID = db.generateUID()[1]
-    status_db, message_db = db.addUser(UID, username, email, h.create_hash(password), is_admin)[1]
+    uid = db.generateUID()[1]
+    status_db, message_db = db.addUser(uid, username, email, h.create_hash(password), is_admin)[1]
     if not status_db:
         return jsonify({"message": message_db}), 401
     user_exists = db.getUser(email)[1]
-    #jwt token
-    encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1]["Is_Admin"], "email":user_exists[1]["Email"], 'exp':
-                              datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
+    # jwt token
+    encoded_jwt = jwt.encode(
+        {"user": user_exists[1]["Username"], "isAdmin": user_exists[1]["Is_Admin"], "email": user_exists[1]["Email"],
+         'exp':
+             datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
 
     # access_token = create_access_token(identity=email)
 
-    return jsonify({"message": f"Welcome {username}", 
+    return jsonify({"message": f"Welcome {username}",
                     "token": encoded_jwt}), 200
 
 
@@ -114,9 +123,11 @@ def login_user():
     if not result:
         return jsonify({"message": "password is incorrect"}), 401
     else:
-        #jwt token
-        encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1]['Is_Admin'], "email":user_exists[1]["Email"], 'exp':
-                              datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
+        # jwt token
+        encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin": user_exists[1]['Is_Admin'],
+                                  "email": user_exists[1]["Email"], 'exp':
+                                      datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
+                                 app.config["JWT_SECRET_KEY"])
         # access_token = create_access_token(identity=email)
 
         return jsonify({
@@ -124,7 +135,7 @@ def login_user():
             "UID": user_exists[1]['UID'],
             "Email": user_exists[1]['Email'],
             "token": encoded_jwt,
-            "Username":user_exists[1]['Username'],
+            "Username": user_exists[1]['Username'],
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
@@ -143,20 +154,21 @@ def getTotalUsers():
     users = json.dumps(db.getUsers()[1])
     return jsonify({"totalUsers": len(json.loads(users))})
 
+
 @app.route('/api/add_Visitor')
 def addVisitor():
-    UID = db.generateUID()[1]
+    uid = db.generateUID()[1]
     cookie = db.generateCookie()[1]
-    db.addVisitor(UID)
-    db.addCookie(cookie, UID)
+    db.addVisitor(uid)
+    db.addCookie(cookie, uid)
     return jsonify(cookie)
+
 
 @app.route('/api/add_user', methods=['POST'])
 @cross_origin()
 def addUser():
     data = request.get_json()
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
-    forbidden = [' ', '`', '~', '[', ']', '{', '}', '(', ')', '|', ';', ':', '"', "'", ',', '<', '>', '.', '?', '/']
 
     message_pwd_val, status_pwd_val = validate_pwd(password)
 
@@ -171,6 +183,7 @@ def addUser():
     else:
         return jsonify({"message": "Something went wrong", "status": 500})
 
+
 @app.route('/api/update_user/<id>', methods=['POST'])
 @cross_origin()
 def updateUser(id):
@@ -182,6 +195,7 @@ def updateUser(id):
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
     else:
         return jsonify({"message": message, "status": 401})
+
 
 @app.route('/api/delete_user/<id>', methods=['POST'])
 @cross_origin()
@@ -201,11 +215,13 @@ def getRSSFeeds():
     rssfeeds = json.dumps(db.getRSSFeeds()[1])
     return json.loads(rssfeeds)
 
+
 @app.route('/api/rssfeeds/totalrssfeeds', methods=['GET'])
 @cross_origin()
 def getTotalRSSFeeds():
     rssfeeds = json.dumps(db.getRSSFeeds()[1])
     return jsonify({"totalRSSFeeds": len(json.loads(rssfeeds))})
+
 
 @app.route('/api/add_rssfeed', methods=['POST'])
 @cross_origin()
@@ -239,6 +255,7 @@ def updateRSSFeed():
     else:
         return jsonify({"message": message_db, "status": 401})
 
+
 @app.route('/api/delete_rssfeed', methods=['POST'])
 @cross_origin()
 def deleteRSSFeed():
@@ -249,9 +266,10 @@ def deleteRSSFeed():
     else:
         return jsonify({"message": message_db, "status": 401})
 
+
 @app.route('/api/check_rssfeed', methods=['POST'])
 @cross_origin()
-def checkRSSFeed(url=None):
+def checkRSSFeed():
     data = request.get_json()
     feed_url = data['URL']
     message_rss_val, status_rss_val = validate_rssFeed(feed_url)
@@ -261,6 +279,7 @@ def checkRSSFeed(url=None):
         return jsonify({"message": "RSS Feed is valid", "status": 200})
     else:
         return jsonify({"message": "Something went wrong", "status": 500})
+
 
 ################# NEWS ARTICLE ROUTES #################
 @app.route('/apiv2/articles', methods=['GET'])
@@ -276,15 +295,17 @@ def articles():
     articles_list = db.getNewsArticles()[1]
     return jsonify(articles_list)
 
+
 @app.route('/api/articles/totalarticles', methods=['GET'])
 @cross_origin()
 def getTotalArticles():
-    totalarticles = db.getNewsArticles()
+    totalarticles = db.getNewsArticles()[1]
     return jsonify({'totalArticles': len(totalarticles)})
+
 
 @app.errorhandler(404)
 @app.errorhandler(500)
-def error_handler(error):
+def error_handler():
     return render_template('errors/404.html'), 404
 
 
@@ -324,13 +345,16 @@ def DBCookies():
 def DBHasClicked():
     return jsonify(db.getHasClicked()[1])
 
+
 @app.route('/db/favored')
 def DBFavored():
     return jsonify(db.getFavored())
 
+
 @app.route('/db/backup')
 def Backup():
     return db.createBackup()[1]
+
 
 if __name__ == '__main__':
     app.run(port=4444)
