@@ -21,6 +21,7 @@ import {
 } from "react-share";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
+import {userSession} from '../App'
 
 function formatTitle(str) {
     const words = str.split('-');
@@ -47,7 +48,7 @@ function formatSummary(text, limit = 200) {
     }
 }
 
-function ArticleCard({article, onFilterTextChange}) {
+function ArticleCard({article, onFilterTextChange, logged}) {
     const handleAddToFavorites = (event) => {
         const button = event.currentTarget;
 
@@ -244,7 +245,9 @@ function ArticleCard({article, onFilterTextChange}) {
                             </Modal.Footer>
                         </Modal>
 
-                         <button
+                        {(logged)?
+                        <>
+                        <button
                             className="btn btn-outline-warning me-2 hide-btn"
                             data-toggle="tooltip"
                             data-placement="top"
@@ -263,6 +266,11 @@ function ArticleCard({article, onFilterTextChange}) {
                         >
                             <i className="far fa-heart"></i>
                         </button>
+                    </>
+                    :<></>
+                    }
+
+                         
                        
                         <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
@@ -275,7 +283,7 @@ function ArticleCard({article, onFilterTextChange}) {
         ;
 }
 
-function GenreSection({genre, articles, filterText, onFilterTextChange}) {
+function GenreSection({genre, articles, filterText, onFilterTextChange, logged}) {
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
     }
@@ -311,7 +319,7 @@ function GenreSection({genre, articles, filterText, onFilterTextChange}) {
             <ul className="articles-row">
                 {filteredArticles.slice(0, 3).map((article) => (
                     <li key={article.URL} className="p-3">
-                        <ArticleCard article={article} onFilterTextChange={onFilterTextChange}/>
+                        <ArticleCard article={article} onFilterTextChange={onFilterTextChange} logged={logged}/>
                     </li>
                 ))}
             </ul>
@@ -327,6 +335,7 @@ const Home = () => {
         const [filterText, setFilterText] = useState("");
         const [sortOption, setSortOption] = useState("Sort By");
 
+        let usersession = useContext(userSession);
 
         useEffect(() => {
             const fetchArticles = async () => {
@@ -430,10 +439,11 @@ const Home = () => {
                 <div className="row">
                     {Array.from(genres).map((genre) => (
                         <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
-                                      onFilterTextChange={handleFilterTextChange}/>
+                                      onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}/>
                     ))}
                 </div>
             </div>
+            
         );
     }
 ;
