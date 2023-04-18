@@ -5,10 +5,10 @@ project is to create a news aggregator app that collects and displays news from 
 
 ## Table of Contents
 1. [Introduction ](#introduction)
-2. [Project Requirements](#project-requirements)
-   3. [Client Background](#client-background)
-   4. [Application Requirements](#application-requirements)
-   5. [Technologies](#technologies)
+2. [Project Requirements](#project-requirements)<br>
+   * [Client Background](#client-background)<br>
+   * [Application Requirements](#application-requirements)<br>
+   * [Technologies](#technologies)<br>
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [Contributing](#contributing)
