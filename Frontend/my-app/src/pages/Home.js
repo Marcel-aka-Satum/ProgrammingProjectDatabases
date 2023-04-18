@@ -103,7 +103,6 @@ function ArticleCard({article, onFilterTextChange}) {
     };
 
     return (
-
         <div className="article-card hide-btn-group">
             <div className='boxi'>
                 <a href={article.URL} target="_blank" rel="noreferrer">

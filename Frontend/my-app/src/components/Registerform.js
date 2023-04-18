@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {userSession} from '../App'
 import {SUCCESS, ERROR} from "./Helpers/custom_alert"
 import axios from 'axios'
+import zxcvbn from 'zxcvbn';
 
 
 export default function Registerform() {
@@ -41,24 +42,79 @@ export default function Registerform() {
         }
     }
 
-    function redirectToProfile(){
+    function redirectToProfile() {
         window.location.href = "/profile"
     }
 
+    const checkPasswordStrength = (password) => {
+        const forbidden = ['"', "'", ';', ':', ',', '\\', '/', '[', ']', '{', '}', '|', '<', '>', '?', '`', '~'];
+
+        if (password.length < 8) {
+            return {
+                score: 0,
+                feedback: 'Password must be at least 8 characters'
+            };
+        }
+
+        if (!/\d/.test(password)) {
+            return {
+                score: 0,
+                feedback: 'Password must contain at least one number'
+            };
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            return {
+                score: 0,
+                feedback: 'Password must contain at least one uppercase letter'
+            };
+        }
+
+        if (!/[a-z]/.test(password)) {
+            return {
+                score: 0,
+                feedback: 'Password must contain at least one lowercase letter'
+            };
+        }
+
+        if (!/[!@#$%^&*()\-_=+{}[\]|\\;:'",.<>/?]/.test(password)) {
+            return {
+                score: 0,
+                feedback: 'Password must contain at least one special character'
+            };
+        }
+
+        for (const char of password) {
+            if (forbidden.includes(char)) {
+                return {
+                    score: 0,
+                    feedback: `Password must not contain any of the following characters: ${forbidden.join(', ')}`
+                };
+            }
+        }
+
+        const result = zxcvbn(password);
+        return {
+            score: result.score,
+            feedback: result.feedback.warning || result.feedback.suggestions.join(' ')
+        };
+    };
+
+
     return (
-        <div class="container">
+        <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
                 <div>
                     {redirectToProfile()}
                 </div>
                 : (
-                    <div class="row">
-                        <div class="col-md-6 offset-md-3">
-                            <h2 class="text-center text-dark mt-5">Registration Form</h2>
-                            <div class="card my-5">
-                                <form class="card-body cardbody-color p-lg-5">
+                    <div className="row">
+                        <div className="col-md-6 offset-md-3">
+                            <h2 className="text-center text-dark mt-5">Registration Form</h2>
+                            <div className="card my-5">
+                                <form className="card-body cardbody-color p-lg-5">
 
-                                    <div class="input-group mb-3">
+                                    <div className="input-group mb-3">
                                         <div className="input-group-text">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-person-fill" viewBox="0 0 16 16">
@@ -68,14 +124,15 @@ export default function Registerform() {
                                         </div>
                                         <div className="form-floating">
                                             <input type="text" value={username}
-                                                   onChange={(e) => setUsername(e.target.value)} class="form-control"
+                                                   onChange={(e) => setUsername(e.target.value)}
+                                                   className="form-control"
                                                    id="floatingInput"
                                                    placeholder="Username"/>
                                             <label htmlFor="floatingInput">Username</label>
                                         </div>
                                     </div>
 
-                                    <div class="input-group mb-3">
+                                    <div className="input-group mb-3">
                                         <div className="input-group-text">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-envelope-at-fill"
@@ -88,13 +145,14 @@ export default function Registerform() {
                                         </div>
                                         <div className="form-floating">
                                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                                   class="form-control" id="floatingInput"
+                                                   className="form-control" id="floatingInput"
                                                    placeholder="Email"/>
                                             <label htmlFor="floatingInput">Email</label>
                                         </div>
                                     </div>
 
-                                    <div class="input-group mb-3">
+                                    <div
+                                        className={`input-group mb-3 ${password && checkPasswordStrength(password).score <= 2 ? 'pb-3' : ''}`}>
                                         <div className="input-group-text">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
@@ -103,15 +161,21 @@ export default function Registerform() {
                                             </svg>
                                         </div>
 
-                                        <div className="form-floating">
-                                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                                                   class="form-control" id="floatingPassword"
-                                                   placeholder="Password"/>
-                                        <label htmlFor="floatingPassword">Password</label>
+                                        <div className="form-floating flex-column-reverse position-relative">
+                                            <input type="password" value={password}
+                                                   onChange={(e) => setPassword(e.target.value)}
+                                                   className={`form-control ${password && checkPasswordStrength(password).score > 2 ? 'is-valid' : password && checkPasswordStrength(password).score >= 2 ? 'is-warning' : password ? 'is-invalid' : ''}`}
+                                                   id="floatingPassword" placeholder="Password"/>
+                                            <label htmlFor="floatingPassword">Password</label>
+
+                                            {password && (
+                                                <div
+                                                    className={`invalid-feedback ps-2 position-absolute w-100 ${checkPasswordStrength(password).score > 2 ? 'd-none' : ''}`}>{checkPasswordStrength(password).feedback}</div>
+                                            )}
                                         </div>
                                     </div>
 
-                                    <div className="input-group mb-3">
+                                    <div className={`input-group mb-3 ${ confirmPassword && checkPasswordStrength(password).score <= 2 ? 'pb-3' : '' }`}>
                                         <div className="input-group-text">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
@@ -119,17 +183,22 @@ export default function Registerform() {
                                                     d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                             </svg>
                                         </div>
-                                        <div className="form-floating">
-                                        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                                               className="form-control" id="confirmPassword"
-                                               placeholder="Confirm Password"/>
+                                        <div className="form-floating flex-column-reverse position-relative">
+                                            <input type="password" value={confirmPassword}
+                                                   onChange={(e) => setConfirmPassword(e.target.value)}
+                                                   className={`form-control ${confirmPassword && confirmPassword !== password ? 'is-invalid' : confirmPassword && confirmPassword === password ? 'is-valid' : ''}`}
+                                                   id="confirmPassword" placeholder="Confirm Password"/>
                                             <label htmlFor="confirmPassword">Confirm Password</label>
+                                            {confirmPassword && confirmPassword !== password && (
+                                                <div className="invalid-feedback ps-2 position-absolute w-100">Passwords do not match</div>
+                                            )}
                                         </div>
                                     </div>
 
-                                    <div class="text-center">
+
+                                    <div className="text-center">
                                         <button type="submit" onClick={handleRegister}
-                                                class="btn btn-outline-secondary px-5 mb-5 w-100">Register
+                                                className="btn btn-outline-secondary px-5 mb-5 w-100">Register
                                         </button>
                                     </div>
                                     <div id="emailHelp" className="form-text text-center mb-5 text-dark">Already have an
