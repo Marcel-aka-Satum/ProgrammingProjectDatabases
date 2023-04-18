@@ -97,24 +97,19 @@ function ArticleCard({article, onFilterTextChange}) {
     }
 
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const handleImageLoad = () => {
         setIsLoading(false);
     };
-
-    console.log('image', article.Image)
 
     return (
 
         <div className="article-card hide-btn-group">
             <div className='boxi'>
                 <a href={article.URL} target="_blank" rel="noreferrer">
-                    {console.log(article)}
                     {article.Image ? (
                         <>
-                            {isLoading && (
-                                <div className="loading-animation"></div>
-                            )}
+                            {isLoading && <div className="loading-animation"></div>}
                             <img
                                 src={article.Image}
                                 onError={(e) => e.target.style.display = 'none'}
