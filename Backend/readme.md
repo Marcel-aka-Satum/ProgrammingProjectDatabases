@@ -236,7 +236,7 @@ POST /api/check_rssfeed
 ### Get Articles
 
 ```http
-GET /apiv2/articles
+GET /api/articles
 ```
 
 **Response Body**
@@ -244,7 +244,6 @@ GET /apiv2/articles
 | Parameter | Type     | Description                       |
 |:----------|:---------|:----------------------------------|
 |`articles` | `list`   | List of news articles.            |
-|`status`   | `int`    | HTTP status code.                 |
 
 **Description:** _Retrieves a list of all news articles._
 
