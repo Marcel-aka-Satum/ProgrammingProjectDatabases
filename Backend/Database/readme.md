@@ -304,10 +304,10 @@ The `NewsClusterer` class clusters news articles based on their titles and summa
 `preprocess_text()` 
 The first step in the pipeline is to preprocess the text data. This process includes:
 
-HTML tag removal: HTML tags are removed using the BeautifulSoup library.
-Tokenization: The text is split into individual words (tokens) using the NLTK library.
-Stop word removal: Common words (e.g., "the", "and") are removed to reduce noise and improve computational efficiency.
-Lemmatization: Words are converted to their base form (e.g., "running" -> "run") to reduce dimensionality and improve similarity calculations.
+- HTML tag removal: HTML tags are removed using the BeautifulSoup library.
+- Tokenization: The text is split into individual words (tokens) using the NLTK library.
+- Stop word removal: Common words (e.g., "the", "and") are removed to reduce noise and improve computational efficiency.
+- Lemmatization: Words are converted to their base form (e.g., "running" -> "run") to reduce dimensionality and improve similarity calculations.
 
 This results in a cleaner and more compact representation of the text, making it easier for subsequent algorithms to process.
 
@@ -358,6 +358,6 @@ $$
 \text{t-SNE}(X_{reduced}, d)
 $$
 
-In summary, the `NewsClusterer` class provides a concise pipeline for clustering news articles based on their titles and summaries, with dimensionality reduction and 3D visualization of the resulting clusters. The DBSCAN parameters can be adjusted to optimize the clustering performance for the specific use case.
+In summary, the `NewsClusterer` class provides a concise pipeline for clustering news articles based on their titles and summaries, with dimensionality reduction and 3D visualization of the resulting clusters. The DBSCAN parameters can be adjusted to optimize the clustering performance.
 
 
