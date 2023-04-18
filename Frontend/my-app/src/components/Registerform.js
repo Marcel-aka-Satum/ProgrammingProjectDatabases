@@ -12,6 +12,8 @@ export default function Registerform() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [username, setUsername] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     let usersession = useContext(userSession);
 
     const handleRegister = async (e) => {
@@ -101,6 +103,8 @@ export default function Registerform() {
     };
 
 
+
+
     return (
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
@@ -153,7 +157,7 @@ export default function Registerform() {
 
                                     <div
                                         className={`input-group mb-3 ${password && checkPasswordStrength(password).score <= 2 ? 'pb-3' : ''}`}>
-                                        <div className="input-group-text">
+                                        <div className="input-group-text clickable" onClick={() => setShowPassword(!showPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
                                                 <path
@@ -162,7 +166,8 @@ export default function Registerform() {
                                         </div>
 
                                         <div className="form-floating flex-column-reverse position-relative">
-                                            <input type="password" value={password}
+                                            <input type={showPassword ? 'text' : 'password'}
+                                                   value={password}
                                                    onChange={(e) => setPassword(e.target.value)}
                                                    className={`form-control ${password && checkPasswordStrength(password).score > 2 ? 'is-valid' : password && checkPasswordStrength(password).score >= 2 ? 'is-warning' : password ? 'is-invalid' : ''}`}
                                                    id="floatingPassword" placeholder="Password"/>
@@ -176,7 +181,7 @@ export default function Registerform() {
                                     </div>
 
                                     <div className={`input-group mb-3 ${ confirmPassword && checkPasswordStrength(password).score <= 2 ? 'pb-3' : '' }`}>
-                                        <div className="input-group-text">
+                                        <div className="input-group-text clickable" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
                                                 <path
@@ -184,7 +189,8 @@ export default function Registerform() {
                                             </svg>
                                         </div>
                                         <div className="form-floating flex-column-reverse position-relative">
-                                            <input type="password" value={confirmPassword}
+                                            <input type={showConfirmPassword ? 'text' : 'password'}
+                                                   value={confirmPassword}
                                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                                    className={`form-control ${confirmPassword && confirmPassword !== password ? 'is-invalid' : confirmPassword && confirmPassword === password ? 'is-valid' : ''}`}
                                                    id="confirmPassword" placeholder="Confirm Password"/>
