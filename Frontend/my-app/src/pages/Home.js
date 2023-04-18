@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import {SUCCESS} from "../components/Helpers/custom_alert";
 import "./Home.css"
 import axios from 'axios'
@@ -231,7 +231,7 @@ function ArticleCard({article, onFilterTextChange}) {
                             </Modal.Footer>
                         </Modal>
 
-                        <button
+                         <button
                             className="btn btn-outline-warning me-2 hide-btn"
                             data-toggle="tooltip"
                             data-placement="top"
@@ -240,6 +240,7 @@ function ArticleCard({article, onFilterTextChange}) {
                         >
                             <i className="far fa-thumbs-down"></i>
                         </button>
+
                         <button
                             className="btn btn-outline-danger me-2 hide-btn"
                             data-toggle="tooltip"
@@ -249,6 +250,7 @@ function ArticleCard({article, onFilterTextChange}) {
                         >
                             <i className="far fa-heart"></i>
                         </button>
+                       
                         <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
                     </span>
