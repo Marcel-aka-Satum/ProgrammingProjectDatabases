@@ -1,5 +1,5 @@
-import psycopg2
 import pandas as pd
+from . import query_db as query
 import bcrypt
 
 def create_hash(password):
@@ -8,49 +8,29 @@ def create_hash(password):
     hashed_password = bcrypt.hashpw(bytesPassword, salt)
     return hashed_password.decode()
 
-def populate_db(conn, cur):
-    RSSFeeds = pd.read_csv("Database/RSSFeeds.csv")
+def populate_db(conn, cur, cwd):
+    RSSFeeds = pd.read_csv(f"{cwd}/Backend/Database/RSSFeeds.csv")
 
     rss_url = list(RSSFeeds['URL'])
     rss_publisher = list(RSSFeeds['Publisher'])
     rss_topic = list(RSSFeeds['Topic'])
 
-    rss_insert_query = '''
-                        INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
-                        VALUES (%s, %s, %s);
-                        '''
-
     print("Starting to insert values")
 
     for i in range(len(rss_url)):
-        cur.execute(rss_insert_query,
-                    (rss_url[i],
+        cur.execute(query.insert_rssfeed
+                    ([rss_url[i],
                      rss_publisher[i],
-                     rss_topic[i]))
+                     rss_topic[i]]))
         conn.commit()
 
-    print("Done inserting values")
-
     # populate users
-    users = [
-        {'username': 'admin', 'email': 'admin@gmail.com', 'password': create_hash("admin"), 'is_admin': True},
-        {'username': 'test', 'email': 'test@gmail.com', 'password': create_hash("test"), 'is_admin': False}
-    ]
-
+    users = [['1','admin','admin@gmail.com',create_hash('admin'),True],['2','test','test@gmail.com',create_hash('test'), False]]
     # make an insert query into the users table
-    insert_query = '''
-                    INSERT INTO newsaggregator.users (username, email, password, is_admin)
-                    VALUES (%s, %s, %s, %s);
-                    '''
-
-    print("Starting to insert values")
 
     for user in users:
-        cur.execute(insert_query,
-                    (user['username'],
-                     user['email'],
-                     user['password'],
-                     user['is_admin']))
+        cur.execute(query.insert_visitor([user[0]]))
+        cur.execute(query.insert_user(user))
         conn.commit()
 
     print("Done inserting values")

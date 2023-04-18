@@ -1,25 +1,30 @@
-import psycopg2
-
-
 def initialize_db(cur):
     # SQL to initialize db
-    sql1 = '''
+    cur.execute('''
             DROP SCHEMA IF EXISTS newsaggregator CASCADE;
             DROP TABLE IF EXISTS rssfeeds CASCADE;
             DROP TABLE IF EXISTS newsarticles CASCADE;
+            DROP TABLE IF EXISTS visitors CASCADE;
             DROP TABLE IF EXISTS users CASCADE;
+            DROP TABLE IF EXISTS cookies CASCADE;
             DROP TABLE IF EXISTS hasclicked CASCADE;
-            '''
+            DROP TABLE IF EXISTS favored CASCADE;
+            ''')
 
-    sql2 = '''
+    print("schema and tables dropped........")
+
+    cur.execute('''
             CREATE SCHEMA newsaggregator;
-           '''
+           ''')
 
-    sql3 = '''
+    print("schema made........")
+
+    cur.execute('''
             CREATE TABLE newsaggregator.rssfeeds (
                 URL varchar PRIMARY KEY, 
                 Publisher varchar, 
                 Topic varchar);
+
 
             CREATE TABLE newsaggregator.newsarticles (
                 URL varchar PRIMARY KEY, 
@@ -27,28 +32,36 @@ def initialize_db(cur):
                 Summary varchar,
                 Published varchar,
                 Image_URL varchar,
-                RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE,
-                Topic varchar);
+                Topic varchar,
+                RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE);
+
+
+            CREATE TABLE newsaggregator.visitors (
+                UID serial PRIMARY KEY);
+
 
             CREATE TABLE newsaggregator.users (
-                UID serial PRIMARY KEY,
+                UID serial REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE ,
                 Username varchar UNIQUE, 
-                Email varchar UNIQUE,
-                Password varchar(60), 
+                Email varchar UNIQUE PRIMARY KEY,
+                Password varchar, 
                 Is_Admin boolean);
 
+
+            CREATE TABLE newsaggregator.cookies (
+                cookie varchar PRIMARY KEY,
+                UID serial REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE );
+
+
             CREATE TABLE newsaggregator.hasclicked (
-                _User int REFERENCES newsaggregator.users(UID),
-                Article varchar REFERENCES newsaggregator.newsarticles(URL),
+                _User int REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE,
+                Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
                 PRIMARY KEY(_User, Article));
+                
+            CREATE TABLE newsaggregator.favored (
+                _User int REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE,
+                Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
+                PRIMARY KEY(_User, Article));
+            ''')
 
-            '''
-
-    # Executing SQL statements
-
-    cur.execute(sql1)
-    print("schema and tables dropped........")
-    cur.execute(sql2)
-    print("schema made........")
-    cur.execute(sql3)
     print("tables added......")

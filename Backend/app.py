@@ -12,18 +12,14 @@ import datetime
 from Database.scraper import scraper
 
 
-
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
-db.connect()
-
 
 drop_db = True
-if drop_db == True:
-    db.redefine()
-    db.populate()
+if drop_db:
+    db.loadBackup("230417_19_36.txt")
     # scraper()
 
 # Setup the Flask-JWT-Extended extension
@@ -63,7 +59,7 @@ def register_user():
     confirm_password = request.json["ConfirmPassword"]
     is_admin = request.json["Is_Admin"]
     username = request.json["Username"]
-    user_exists = db.getUser(email)
+    user_exists = db.getUser(email)[1]
 
     if email == "" or password == "" or username == "":
         return jsonify({"message": "please fill in all fields"}), 401
@@ -82,11 +78,11 @@ def register_user():
 
     if status_pwd_val == 401:
         return jsonify({"message": message_pwd_val}), 401
-
-    status_db, message_db = db.addUser(username, email, h.create_hash(password), is_admin)
+    UID = db.generateUID()[1]
+    status_db, message_db = db.addUser(UID, username, email, h.create_hash(password), is_admin)[1]
     if not status_db:
         return jsonify({"message": message_db}), 401
-    user_exists = db.getUser(email)
+    user_exists = db.getUser(email)[1]
     #jwt token
     encoded_jwt = jwt.encode({"user": user_exists[1]["Username"], "isAdmin":user_exists[1]["Is_Admin"], "email":user_exists[1]["Email"], 'exp':
                               datetime.datetime.utcnow() + datetime.timedelta(minutes=600)}, app.config["JWT_SECRET_KEY"])
@@ -102,7 +98,7 @@ def register_user():
 def login_user():
     email = request.json["Email"]
     password = request.json["Password"]
-    user_exists = db.getUser(email)
+    user_exists = db.getUser(email)[1]
 
     if email == "" or password == "":
         return jsonify({"message": "please fill in all fields"}), 401
@@ -135,16 +131,23 @@ def login_user():
 @app.route('/api/users', methods=['GET'])
 @cross_origin()
 def getUsers():
-    users = db.getUsers()
+    users = json.dumps(db.getUsers()[1])
     return json.loads(users)
 
 
 @app.route('/api/users/totalusers', methods=['GET'])
 @cross_origin()
 def getTotalUsers():
-    users = db.getUsers()
+    users = json.dumps(db.getUsers()[1])
     return jsonify({"totalUsers": len(json.loads(users))})
 
+@app.route('/api/add_Visitor')
+def addVisitor():
+    UID = db.generateUID()[1]
+    cookie = db.generateCookie()[1]
+    db.addVisitor(UID)
+    db.addCookie(cookie, UID)
+    return jsonify(cookie)
 
 @app.route('/api/add_user', methods=['POST'])
 @cross_origin()
@@ -158,7 +161,7 @@ def addUser():
     if status_pwd_val == 401:
         return jsonify({"message": message_pwd_val, "status": status_pwd_val})
     elif status_pwd_val == 200:
-        status_db, message_db = db.addUser(username, email, h.create_hash(password), is_admin)
+        status_db, message_db = db.addUser(db.generateUID()[1], username, email, h.create_hash(password), is_admin)[1]
         if status_db:
             return jsonify({"message": "User added successfully", "status": 200})
         else:
@@ -172,7 +175,7 @@ def updateUser(id):
     data = request.get_json()
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
 
-    status, message = db.updateUser(id, username, email, password, is_admin)
+    status, message = db.updateUser(id, username, email, password, is_admin)[1]
     if status:
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
     else:
@@ -181,7 +184,7 @@ def updateUser(id):
 @app.route('/api/delete_user/<id>', methods=['POST'])
 @cross_origin()
 def deleteUser(id):
-    user = db.getUser(id)
+    user = db.getUser(id)[1]
     if user[0]:
         return jsonify({"message": f"USER ({id}) Not Found", "status": 404})
     else:
@@ -193,13 +196,13 @@ def deleteUser(id):
 @app.route('/api/rssfeeds', methods=['GET'])
 @cross_origin()
 def getRSSFeeds():
-    rssfeeds = db.ParseRSSFeeds()
+    rssfeeds = json.dumps(db.getRSSFeeds()[1])
     return json.loads(rssfeeds)
 
 @app.route('/api/rssfeeds/totalrssfeeds', methods=['GET'])
 @cross_origin()
 def getTotalRSSFeeds():
-    rssfeeds = db.ParseRSSFeeds()
+    rssfeeds = json.dumps(db.getRSSFeeds()[1])
     return jsonify({"totalRSSFeeds": len(json.loads(rssfeeds))})
 
 @app.route('/api/add_rssfeed', methods=['POST'])
@@ -213,7 +216,7 @@ def addRSSFeed():
     if status_rss_val == 401:
         return jsonify({"message": message_rss_val, "status": status_rss_val})
     elif status_rss_val == 200:
-        status_db, message_db = db.addRSSFeed(url, publisher, topic)
+        status_db, message_db = db.addRSSFeed(url, publisher, topic)[1]
         if status_db:
             return jsonify({"message": "RSS Feed added successfully", "status": 200})
         else:
@@ -228,7 +231,7 @@ def updateRSSFeed():
     data = request.get_json()
     url, publisher, topic = data['URL'], data['Publisher'], data['Topic']
 
-    status_db, message_db = db.updateRSSFeed(url, publisher, topic)
+    status_db, message_db = db.updateRSSFeed(url, publisher, topic)[1]
     if status_db:
         return jsonify({"message": "RSS Feed updated successfully", "status": 200})
     else:
@@ -238,7 +241,7 @@ def updateRSSFeed():
 @cross_origin()
 def deleteRSSFeed():
     data = request.get_json()
-    status_db, message_db = db.deleteRSSFeed(data['URL'])
+    status_db, message_db = db.deleteRSSFeed(data['URL'])[1]
     if status_db:
         return jsonify({"message": "RSS Feed deleted successfully", "status": 200})
     else:
@@ -261,20 +264,20 @@ def checkRSSFeed(url=None):
 @app.route('/apiv2/articles', methods=['GET'])
 @cross_origin()
 def getArticles():
-    articles_list = json.loads(db.getArticles())
+    articles_list = db.getNewsArticles()[1]
     return jsonify({"articles": articles_list, "status": 200})
 
 
 @app.route('/api/articles', methods=['GET'])
 @cross_origin()
 def articles():
-    articles_list = json.loads(db.getArticles())
-    return articles_list
+    articles_list = db.getNewsArticles()[1]
+    return jsonify(articles_list)
 
 @app.route('/api/articles/totalarticles', methods=['GET'])
 @cross_origin()
 def getTotalArticles():
-    totalarticles = json.loads(db.getArticles())
+    totalarticles = db.getNewsArticles()
     return jsonify({'totalArticles': len(totalarticles)})
 
 @app.errorhandler(404)
@@ -282,6 +285,50 @@ def getTotalArticles():
 def error_handler(error):
     return render_template('errors/404.html'), 404
 
+
+#################### DATABASE TABLES ####################
+
+@app.route('/db')
+def database():
+    return render_template('database.html')
+
+
+@app.route('/db/rssfeeds')
+def DBRssfeeds():
+    return jsonify(db.getRSSFeeds()[1])
+
+
+@app.route('/db/newsarticles')
+def DBNewsarticles():
+    return jsonify(db.getNewsArticles()[1])
+
+
+@app.route('/db/visitors')
+def DBVisitors():
+    return jsonify(db.getVisitors()[1])
+
+
+@app.route('/db/users')
+def DBUsers():
+    return jsonify(db.getUsers()[1])
+
+
+@app.route('/db/cookies')
+def DBCookies():
+    return jsonify(db.getCookies()[1])
+
+
+@app.route('/db/hasclicked')
+def DBHasClicked():
+    return jsonify(db.getHasClicked()[1])
+
+@app.route('/db/favored')
+def DBFavored():
+    return jsonify(db.getFavored())
+
+@app.route('/db/backup')
+def Backup():
+    return db.createBackup()[1]
 
 if __name__ == '__main__':
     app.run(port=4444)

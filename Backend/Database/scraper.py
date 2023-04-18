@@ -33,7 +33,7 @@ import requests
 #                     image = lnk['href']
 #
 #             try:
-#                 status, message = DB.addArticle(link, title, summary, publisher, image, rss_url, topic)
+#                 status, message = DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
 #                 # print("Added article: ", link, 'from: ', rss_url)
 #             except Exception as e:
 #                 print('error:', e)
@@ -44,13 +44,14 @@ class BaseFeedScraper:
         self.DB = ui_db.DBConnection()
 
     def connect_to_database(self):
-        self.DB.connect()
-        if not self.DB.is_connected():
+        if not self.DB.connect():
             print("Scraper cannot connect to database")
 
     def parse_rss_feeds(self):
-        rss_info = self.DB.ParseRSSFeeds()
-        return json.loads(rss_info)
+        state, rss_info = self.DB.getRSSFeeds()
+        if not state:
+            return
+        return json.loads(json.dumps(rss_info))
 
     def get_image(self, entry):
         try:
@@ -71,7 +72,7 @@ class BaseFeedScraper:
         image = self.get_image(entry)
 
         try:
-            status, message = self.DB.addArticle(link, title, summary, publisher, image, rss_url, topic)
+            status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
         except Exception as e:
             print('error:', e, 'link:', link)
 
@@ -89,8 +90,10 @@ class BaseFeedScraper:
     def get_scraper_for_url(self, url):
         if 'foxnews.com' in url:
             return FoxNewsScraper(self.DB)
+            """
         elif 'cnn.com' in url:
             return CNNNewsScraper(self.DB)
+            """
         elif 'nytimes.com' in url:
             return NYTimesNewsScraper(self.DB)
         else:
@@ -113,7 +116,7 @@ class FoxNewsScraper(BaseFeedScraper):
             summary = self.get_summary(entry)
             publisher = entry['published']
             image = self.get_image(entry)
-            status, message = self.DB.addArticle(link, title, summary, publisher, image, rss_url, topic)
+            status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
         except Exception as e:
             print('error:', e, 'link:', link)
 
@@ -143,7 +146,7 @@ class NYTimesNewsScraper(BaseFeedScraper):
             summary = self.get_summary(entry)
             publisher = entry['published']
             image = self.get_image(entry)
-            status, message = self.DB.addArticle(link, title, summary, publisher, image, rss_url, topic)
+            status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
 
         except Exception as e:
             print('error:', e)
@@ -168,6 +171,7 @@ def scraper():
     _scraper = BaseFeedScraper()
     _scraper.connect_to_database()
     _scraper.scrape_all_feeds()
+    print("scraping done")
 
 
 if __name__ == '__main__':
