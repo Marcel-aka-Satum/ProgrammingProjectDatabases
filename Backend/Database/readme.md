@@ -343,7 +343,7 @@ $$
 By selecting the first $k$ columns of $U$ and the first $k$ singular values in $S$, we can obtain a reduced feature matrix $X_{reduced}$ of shape $(n, k)$, where $n$ is the number of documents and $k$ is the desired number of components.
 
 $$
-X_{reduced} = U[:, :k] \times S[:k, :k]
+X_{reduced} = U(:, :k)\times S(:k, ;k)
 $$
 
 ## 4. Clustering the Articles
