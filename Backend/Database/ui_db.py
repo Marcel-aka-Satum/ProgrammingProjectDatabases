@@ -147,7 +147,7 @@ class DBConnection:
     ########################### GET ############################
 
     @func.is_connected
-    def getVisitor(self, UID: str) -> tuple[bool, str]:
+    def getVisitor(self, UID: str) -> tuple:
         """
         @brief: get the UID of the Visitor if it exists.
         """
@@ -160,7 +160,7 @@ class DBConnection:
     """
 
     @func.is_connected
-    def getUser(self, email: str) -> tuple[bool, any]:
+    def getUser(self, email: str) -> tuple:
         self.cursor.execute(query_db.get_user(email))
         user_data = self.cursor.fetchone()
         if user_data is None:
@@ -185,7 +185,7 @@ class DBConnection:
         self.cursor.execute(query_db.update_newsarticle(url, title, summary, publisher, image, rss_url, topic))
 
     @func.is_connected
-    def updateUser(self, id: int, username: str, email: str, password: str, is_admin: bool) -> (bool, str):
+    def updateUser(self, id: int, username: str, email: str, password: str, is_admin: bool) -> tuple:
         """
         @brief: update a user in the database.
         """
@@ -201,7 +201,7 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def updateRSSFeed(self, url: str, publisher: str, topic: str) -> (bool, str):
+    def updateRSSFeed(self, url: str, publisher: str, topic: str) -> tuple:
         """
         @brief: update a RSSFeed in the database.
         """
@@ -219,7 +219,7 @@ class DBConnection:
     ########################## DELETE ##########################
 
     @func.is_connected
-    def deleteRSSFeed(self, URL: str) -> (bool, str):
+    def deleteRSSFeed(self, URL: str) -> tuple:
         try:
             self.cursor.execute(query_db.delete_rssfeed(URL))
             return True, "success"
@@ -227,7 +227,7 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def deleteNewsArticle(self, URL: str) -> (bool, str):
+    def deleteNewsArticle(self, URL: str) -> tuple:
         try:
             self.cursor.execute(query_db.delete_newsarticle(URL))
             return True, "success"
@@ -235,7 +235,7 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def deleteVisitor(self, UID: str) -> (bool, str):
+    def deleteVisitor(self, UID: str) -> tuple:
         try:
             self.cursor.execute(query_db.delete_visitor(UID))
             return True, "success"
@@ -243,7 +243,7 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def deleteUser(self, UID: str) -> (bool, str):
+    def deleteUser(self, UID: str) -> tuple:
         try:
             self.cursor.execute(query_db.delete_user(UID))
             return True, "success"
@@ -251,14 +251,14 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def deleteCookie(self, UID: str) -> (bool, str):
+    def deleteCookie(self, UID: str) -> tuple:
         try:
             self.cursor.execute(query_db.delete_cookie(UID))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
     @func.is_connected
-    def deleteFavored(self, UID: str) -> (bool, str):
+    def deleteFavored(self, UID: str) -> tuple:
         try:
             self.cursor.execute(query_db.delete_favored(UID))
             return True, "success"
@@ -268,7 +268,7 @@ class DBConnection:
     ############################ Add ###########################
 
     @func.is_connected
-    def addRSSFeed(self, URL: str, Publisher: str, Topic: str) -> (bool, str):
+    def addRSSFeed(self, URL: str, Publisher: str, Topic: str) -> tuple:
         """
         @brief: add a RSSFeed to the database.
         """
@@ -284,8 +284,7 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def addNewsArticle(self, url, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str) -> (
-            bool, str):
+    def addNewsArticle(self, url, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str) -> tuple:
         """
         @brief: add a NewsArticle to the database.
         """
@@ -296,7 +295,7 @@ class DBConnection:
             return False, str(e)
 
     @func.is_connected
-    def addVisitor(self, UID: str) -> (bool, str):
+    def addVisitor(self, UID: str) -> tuple:
         """
         @brief: add a Visitor to the database.
         """
@@ -307,7 +306,7 @@ class DBConnection:
             return False, str(e)
 
     @func.is_connected
-    def addUser(self, UID: int, Username: str, Email: str, Password: str, Is_admin: bool = False) -> (bool, str):
+    def addUser(self, UID: int, Username: str, Email: str, Password: str, Is_admin: bool = False) -> tuple:
         """
         @brief: add a User to the database.
         """
@@ -325,7 +324,7 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def addCookie(self, cookie: str, UID: str) -> (bool, str):
+    def addCookie(self, cookie: str, UID: str) -> tuple:
         """
         @brief: add a Cookie to the database.
         """
@@ -336,7 +335,7 @@ class DBConnection:
             return False, str(e)
 
     @func.is_connected
-    def addHasClicked(self, UID: str, URL: str) -> (bool, str):
+    def addHasClicked(self, UID: str, URL: str) -> tuple:
         """
         @brief: add a user interaction to the database.
         """
@@ -347,7 +346,7 @@ class DBConnection:
             return False, str(e)
 
     @func.is_connected
-    def addFavored(self, UID: str, URL: str) -> (bool, str):
+    def addFavored(self, UID: str, URL: str) -> tuple:
         """
         @brief: add a favored article of a user to the database.
         """
@@ -360,7 +359,7 @@ class DBConnection:
     ######################### GetTables ########################
 
     @func.is_connected
-    def getRSSFeeds(self) -> list[dict[str, str]]:
+    def getRSSFeeds(self) -> list:
         """
         @brief: get the table RSSFeed.
         """
@@ -371,7 +370,7 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getNewsArticles(self) -> list[dict[str, str]]:
+    def getNewsArticles(self) -> list:
         """
         @brief: get the table NewsArticles.
         """
@@ -384,7 +383,7 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getVisitors(self) -> list[dict[str, str]]:
+    def getVisitors(self) -> list:
         """
         @brief: get the table Visitors.
         """
@@ -395,7 +394,7 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getUsers(self) -> list[dict[str, str]]:
+    def getUsers(self) -> list:
         """
         @brief: get the table Users.
         """
@@ -406,7 +405,7 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getCookies(self) -> list[dict[str, str]]:
+    def getCookies(self) -> list:
         """
         @brief: get the table Cookies.
         """
@@ -417,7 +416,7 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getHasClicked(self) -> list[dict[str, str]]:
+    def getHasClicked(self) -> list:
         """
         @brief: get the table HasClicked.
         """
@@ -428,7 +427,7 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getFavored(self) -> list[dict[str, str]]:
+    def getFavored(self) -> list:
         """
         @brief: get the table favored.
         """
