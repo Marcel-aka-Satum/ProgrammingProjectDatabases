@@ -289,5 +289,75 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 
 The SQL statements are not executed in this code. Instead, they are returned as strings and can be executed using the `execute()` method of a cursor object.
 
+---
+
+# NewsClusterer Technical Documentation
+
+The `NewsClusterer` class clusters news articles based on their titles and summaries. The clustering process consists of:
+
+1. Text preprocessing with `preprocess_text()`
+2. Vectorizing text and applying dimensionality reduction using TF-IDF and SVD within `process_data()`
+3. Clustering using DBSCAN in `cluster_data()`
+
+## 1. Text Preprocessing
+
+`preprocess_text()` 
+The first step in the pipeline is to preprocess the text data. This process includes:
+
+- HTML tag removal: HTML tags are removed using the BeautifulSoup library.
+- Tokenization: The text is split into individual words (tokens) using the NLTK library.
+- Stop word removal: Common words (e.g., "the", "and") are removed to reduce noise and improve computational efficiency.
+- Lemmatization: Words are converted to their base form (e.g., "running" -> "run") to reduce dimensionality and improve similarity calculations.
+
+This results in a cleaner and more compact representation of the text, making it easier for subsequent algorithms to process.
+
+
+## 2. Vectorizing Text and Dimensionality Reduction
+
+`process_data()` converts preprocessed text into numerical vectors using the Term Frequency-Inverse Document Frequency (TF-IDF) technique. TF-IDF is chosen as it captures the importance of each word in the document, while taking into account the overall frequency of the word in the dataset.
+
+$$
+\text{tfidf}(t, d, D) = \text{tf}(t, d) \times \text{idf}(t, D)
+$$
+
+where $\text{tf}(t, d)$ is the term frequency of term $t$ in document $d$, $\text{idf}(t, D)$ is the inverse document frequency of term $t$ in the set of documents $D$, and $D$ is the total number of documents. The inverse document frequency is calculated as:
+
+$$
+\text{idf}(t, D) = \log{\frac{N}{\text{df}(t)}}
+$$
+
+where $N$ is the total number of documents, and $\text{df}(t)$ is the number of documents containing term $t$.
+
+
+Next, `process_data()` applies Singular Value Decomposition (SVD) to the TF-IDF matrix to reduce the feature space. SVD is used because it can efficiently compress information while maintaining the relationships among the documents.
+
+$$
+X_{reduced} = U \times \Sigma \times V^{T}
+$$
+
+where $X_{reduced}$ is the reduced feature matrix, $U$ contains the left singular vectors, $\Sigma$ is a diagonal matrix with singular values, and $V^{T}$ contains the right singular vectors.
+
+## 3. Clustering Articles
+
+`cluster_data()` uses the DBSCAN algorithm to cluster articles based on the reduced feature matrix. DBSCAN is chosen as it can automatically determine the number of clusters and is robust to noise, which helps reduce the impact of irrelevant articles or outliers.
+
+```math
+\text{DBSCAN}(P, \epsilon, \text{min\_samples})
+```
+
+DBSCAN has two main parameters that can be tweaked to improve performance:
+
+- $\epsilon$: The maximum distance between two points for them to be considered as part of the same cluster. A smaller value will result in more clusters, while a larger value will result in fewer clusters.
+- min\_samples: The minimum number of points required to form a dense region. A higher value will make the algorithm more conservative in forming clusters, while a lower value will create more clusters.
+
+## Visualizing Clusters
+
+`visualize_clusters()` uses the t-SNE algorithm for 3D visualization of the clusters. t-SNE is suitable for visualizing high-dimensional data in lower-dimensional spaces, providing an intuitive understanding of the clustering results.
+
+$$
+\text{t-SNE}(X_{reduced}, d)
+$$
+
+In summary, the `NewsClusterer` class provides a concise pipeline for clustering news articles based on their titles and summaries, with dimensionality reduction and 3D visualization of the resulting clusters. The DBSCAN parameters can be adjusted to optimize the clustering performance.
 
 
