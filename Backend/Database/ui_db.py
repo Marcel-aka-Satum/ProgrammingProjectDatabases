@@ -305,6 +305,7 @@ class DBConnection:
         except Exception as e:
             return False, str(e)
 
+
     @func.is_connected
     def addUser(self, UID: int, Username: str, Email: str, Password: str, Is_admin: bool = False) -> tuple:
         """
