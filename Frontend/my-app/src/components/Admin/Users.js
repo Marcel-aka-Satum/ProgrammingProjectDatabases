@@ -14,12 +14,20 @@ export default function Users() {
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(async () => {
-        await fetch('http://127.0.0.1:4444/api/users')
-            .then(response => response.json())
-            .then(data => setUsers(data))
-            .catch(error => console.error(error));
+    useEffect(() => {
+        async function fetchUsers() {
+            try {
+                const response = await fetch('http://127.0.0.1:4444/api/users');
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        fetchUsers();
     }, []);
+
 
     const refreshUsers = () => {
         fetch('http://127.0.0.1:4444/api/users')
@@ -220,7 +228,13 @@ export default function Users() {
                                     ) : (
                                         <span className="badge bg-primary ms-2">User</span>
                                     )}
+                                    <span className="badge bg-danger ms-2">
+                                        <i className="fas fa-heart me-1"></i>
+                                        {0}
+                                    </span>
                                 </p>
+
+
                                 <div className="btn-group">
                                     <button
                                         type="button"
