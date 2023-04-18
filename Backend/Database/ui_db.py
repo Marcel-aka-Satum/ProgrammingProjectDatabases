@@ -290,7 +290,7 @@ class DBConnection:
         @brief: add a NewsArticle to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_newsarticle([url, title, summary, publisher, image, rss_url, topic]))
+            self.cursor.execute(*query_db.insert_newsarticle([url, title, summary, publisher, image, rss_url, topic]))
             return True, "success"
         except Exception as e:
             return False, str(e)

@@ -19,7 +19,9 @@ db = DBConnection()
 
 drop_db = True
 if drop_db:
-    db.loadBackup("230417_19_36.txt")
+    db.redefine()
+    db.populate()
+    # db.loadBackup("230417_19_36.txt")
     # scraper()
 
 # Setup the Flask-JWT-Extended extension

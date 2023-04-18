@@ -124,11 +124,11 @@ def insert_newsarticle(values: list) -> str:
     """
         INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
     """
-    return f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, Topic, RSS_URL)
-            VALUES ('{values[0]}', '{values[1]}', '{values[2]}', '{values[3]}', '{values[4]}', '{values[5]}',
-             '{values[6]}');
+    query = f"""
+            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+            VALUES (%s,%s,%s,%s,%s,%s,%s);
             """
+    return query, (values[0],values[1],values[2],values[3],values[4],values[5],values[6])
 
 
 def insert_visitor(values: list) -> str:

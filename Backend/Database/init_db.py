@@ -32,8 +32,8 @@ def initialize_db(cur):
                 Summary varchar,
                 Published varchar,
                 Image_URL varchar,
-                Topic varchar,
-                RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE);
+                RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE,
+                Topic varchar);
 
 
             CREATE TABLE newsaggregator.visitors (

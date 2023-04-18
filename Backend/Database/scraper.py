@@ -70,11 +70,10 @@ class BaseFeedScraper:
         summary = self.get_summary(entry)
         publisher = entry['published']
         image = self.get_image(entry)
-
-        try:
-            status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
-        except Exception as e:
-            print('error:', e, 'link:', link)
+        status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
+        if not message[0]:
+            if "duplicate key value" not in message[1]:
+                print('error:', message[1], 'link:', rss_url)
 
     def scrape_feed(self, rss_url, topic):
         try:
@@ -110,15 +109,15 @@ class FoxNewsScraper(BaseFeedScraper):
         super().__init__()
         self.DB = db
     def scrape_entry(self, entry, rss_url, topic):
-        try:
-            link = entry['link']
-            title = entry['title']
-            summary = self.get_summary(entry)
-            publisher = entry['published']
-            image = self.get_image(entry)
-            status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
-        except Exception as e:
-            print('error:', e, 'link:', link)
+        link = entry['link']
+        title = entry['title']
+        summary = self.get_summary(entry)
+        publisher = entry['published']
+        image = self.get_image(entry)
+        status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
+        if not message[0]:
+            if "duplicate key value" not in message[1]:
+                print('error:', message[1], 'link:', rss_url)
 
     # foxnews has the image in a different place
     def get_image(self, entry):
