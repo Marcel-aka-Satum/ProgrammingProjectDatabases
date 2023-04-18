@@ -4,6 +4,7 @@ def initialize_db(cur):
             DROP SCHEMA IF EXISTS newsaggregator CASCADE;
             DROP TABLE IF EXISTS rssfeeds CASCADE;
             DROP TABLE IF EXISTS newsarticles CASCADE;
+            DROP TABLE IF EXISTS relatedcluster CASCADE;
             DROP TABLE IF EXISTS visitors CASCADE;
             DROP TABLE IF EXISTS users CASCADE;
             DROP TABLE IF EXISTS cookies CASCADE;
@@ -34,6 +35,11 @@ def initialize_db(cur):
                 Image_URL varchar,
                 Topic varchar,
                 RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE);
+                
+
+            CREATE TABLE newsaggregator.relatedcluster (
+                URL varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
+                Cluster_ID int;
 
 
             CREATE TABLE newsaggregator.visitors (
@@ -58,6 +64,7 @@ def initialize_db(cur):
                 Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
                 PRIMARY KEY(_User, Article));
                 
+
             CREATE TABLE newsaggregator.favored (
                 _User int REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE,
                 Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
