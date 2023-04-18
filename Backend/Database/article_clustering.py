@@ -106,7 +106,7 @@ class NewsClusterer:
         """
         DB = DBConnection()
         DB.connect()
-        df = pd.DataFrame(json.loads(DB.getArticles()))
+        df = pd.DataFrame(DB.getNewsArticles()[1])
         return df
 
     def process_data(self, df):

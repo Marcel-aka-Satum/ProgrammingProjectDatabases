@@ -108,7 +108,7 @@ def get_favored() -> str:
     return "SELECT * FROM newsaggregator.favored"
 
 
-#################### INSERTERS ####################
+#################### SETTERS ####################
 
 def insert_rssfeed(values: list) -> str:
     """
@@ -180,6 +180,14 @@ def insert_favored(values: list) -> str:
             VALUES ('{values[0]}', '{values[1]}');
             """
 
+def insert_cluster(URL: str, cluster: int) -> str:
+    """
+        INSERT INTO newsaggregator.relatedcluster (URL, Cluster)
+    """
+    return f"""
+            INSERT INTO newsaggregator.relatedcluster (URL, Cluster)
+            VALUES ('{URL}', '{cluster}');
+            """
 
 #################### DELETERS ####################
 def delete_rssfeed(URL: str) -> str:

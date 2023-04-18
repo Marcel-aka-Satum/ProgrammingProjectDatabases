@@ -291,36 +291,32 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 
 The SQL statements are not executed in this code. Instead, they are returned as strings and can be executed using the `execute()` method of a cursor object.
 
-
 ---
 
 # NewsClusterer Technical Documentation
 
-The `NewsClusterer` class is designed to cluster news articles based on their titles and summaries. The clustering process involves the following steps:
+The `NewsClusterer` class clusters news articles based on their titles and summaries. The clustering process consists of:
 
-1. Preprocessing text data
-2. Converting text to numerical vectors
-3. (Optional) Applying dimensionality reduction
-4. Clustering the articles
+1. Text preprocessing with `preprocess_text()`
+2. Vectorizing text and applying dimensionality reduction using TF-IDF and SVD within `process_data()`
+3. Clustering using DBSCAN in `cluster_data()`
 
-## 1. Preprocessing Text Data
+## 1. Text Preprocessing
 
+`preprocess_text()` 
 The first step in the pipeline is to preprocess the text data. This process includes:
 
-- Removing HTML tags
-- Tokenizing the text into words
-- Removing stopwords
-- Lemmatizing the tokens
+- HTML tag removal: HTML tags are removed using the BeautifulSoup library.
+- Tokenization: The text is split into individual words (tokens) using the NLTK library.
+- Stop word removal: Common words (e.g., "the", "and") are removed to reduce noise and improve computational efficiency.
+- Lemmatization: Words are converted to their base form (e.g., "running" -> "run") to reduce dimensionality and improve similarity calculations.
 
-The text preprocessing can be represented as:
+This results in a cleaner and more compact representation of the text, making it easier for subsequent algorithms to process.
 
-$$
-\text{preprocessed\_text} = \text{Lemmatize}(\text{Tokenize}(\text{RemoveStopwords}(\text{RemoveHTMLTags}(\text{text}))))
-$$
 
-## 2. Converting Text to Numerical Vectors
+## 2. Vectorizing Text and Dimensionality Reduction
 
-Once the text data is preprocessed, the next step is to convert it into numerical vectors. This is done using the Term Frequency-Inverse Document Frequency (TF-IDF) technique. Given a set of documents, the TF-IDF score for a term $t$ in document $d$ is calculated as:
+`process_data()` converts preprocessed text into numerical vectors using the Term Frequency-Inverse Document Frequency (TF-IDF) technique. TF-IDF is chosen as it captures the importance of each word in the document, while taking into account the overall frequency of the word in the dataset.
 
 $$
 \text{tfidf}(t, d, D) = \text{tf}(t, d) \times \text{idf}(t, D)
@@ -334,53 +330,36 @@ $$
 
 where $N$ is the total number of documents, and $\text{df}(t)$ is the number of documents containing term $t$.
 
-## 3. Applying Dimensionality Reduction (Optional)
 
-Dimensionality reduction techniques like Singular Value Decomposition (SVD) can be applied to the TF-IDF matrix to further reduce the feature space and improve the clustering algorithm's performance. SVD decomposes the input matrix $X$ into three matrices $U$, $S$, and $V^T$, where $U$ and $V$ are orthogonal matrices, and $S$ is a diagonal matrix containing the singular values in descending order.
-
-$$
-X = U \times S \times V^T
-$$
-
-By selecting the first $k$ columns of $U$ and the first $k$ singular values in $S$, we can obtain a reduced feature matrix $X_{reduced}$ of shape $(n, k)$, where $n$ is the number of documents and $k$ is the desired number of components.
+Next, `process_data()` applies Singular Value Decomposition (SVD) to the TF-IDF matrix to reduce the feature space. SVD is used because it can efficiently compress information while maintaining the relationships among the documents.
 
 $$
-X_{reduced} = U[:, :k] \times S[:k, :k]
+X_{reduced} = U \times \Sigma \times V^{T}
 $$
 
-## 4. Clustering the Articles
+where $X_{reduced}$ is the reduced feature matrix, $U$ contains the left singular vectors, $\Sigma$ is a diagonal matrix with singular values, and $V^{T}$ contains the right singular vectors.
 
-The DBSCAN (Density-Based Spatial Clustering of Applications with Noise) algorithm is used to cluster the articles. DBSCAN works by defining a cluster as a dense region in the feature space, separated by regions of lower point density.
+## 3. Clustering Articles
 
-Given a set of points $P$, the DBSCAN algorithm can be summarized as:
+`cluster_data()` uses the DBSCAN algorithm to cluster articles based on the reduced feature matrix. DBSCAN is chosen as it can automatically determine the number of clusters and is robust to noise, which helps reduce the impact of irrelevant articles or outliers.
 
-1. For each point $p$ in $P$, find all points within a given distance $\epsilon$ (eps) from $p$.
-2. If the number of points within $\epsilon$ is greater than or equal to a specified minimum number of points (min_samples), create a new cluster and add $p$ and all its neighbors to the cluster.
-3. Expand the cluster by recursively applying the same process to all the neighbor points in the cluster.
-4. Repeat steps 1-3 for all unprocessed points in $P$.
-
-The algorithm can be represented as:
-
-$$
+```math
 \text{DBSCAN}(P, \epsilon, \text{min\_samples})
-$$
+```
 
-where $P$ is the set of points (article vectors), $\epsilon$ is the distance threshold, and $\text{min\_samples}$ is the minimum number of points required to form a dense region.
+DBSCAN has two main parameters that can be tweaked to improve performance:
 
-## Visualizing the Clusters
+- $\epsilon$: The maximum distance between two points for them to be considered as part of the same cluster. A smaller value will result in more clusters, while a larger value will result in fewer clusters.
+- min\_samples: The minimum number of points required to form a dense region. A higher value will make the algorithm more conservative in forming clusters, while a lower value will create more clusters.
 
-For visualizing the clusters in 3D, the t-Distributed Stochastic Neighbor Embedding (t-SNE) algorithm is used. t-SNE is a dimensionality reduction technique that is particularly well-suited for visualizing high-dimensional data in lower-dimensional spaces, such as 2D or 3D. It works by minimizing the divergence between two probability distributions, one in the high-dimensional space and one in the low-dimensional space, representing the pairwise similarities between data points.
+## Visualizing Clusters
 
-The t-SNE algorithm can be represented as:
+`visualize_clusters()` uses the t-SNE algorithm for 3D visualization of the clusters. t-SNE is suitable for visualizing high-dimensional data in lower-dimensional spaces, providing an intuitive understanding of the clustering results.
 
 $$
 \text{t-SNE}(X_{reduced}, d)
 $$
 
-where $X_{reduced}$ is the reduced feature matrix, and $d$ is the desired number of dimensions for visualization (in this case, 3).
-
-After applying t-SNE, the resulting 3D coordinates are plotted using Plotly, and the clusters are color-coded for better visualization. The hover data on the plot shows the preprocessed title and summary of the articles.
-
-In summary, the `NewsClusterer` class provides a complete pipeline for clustering news articles based on their titles and summaries, with optional dimensionality reduction and 3D visualization of the resulting clusters.
+In summary, the `NewsClusterer` class provides a concise pipeline for clustering news articles based on their titles and summaries, with dimensionality reduction and 3D visualization of the resulting clusters. The DBSCAN parameters can be adjusted to optimize the clustering performance.
 
 
