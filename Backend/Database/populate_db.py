@@ -25,10 +25,8 @@ def populate_db(conn, cur, cwd):
         conn.commit()
 
     # populate users
-    users = [['1','admin','admin@gmail.com','admin',True],['2','test','test@gmail.com','test', False]]
+    users = [['1','admin','admin@gmail.com',create_hash('admin'),True],['2','test','test@gmail.com',create_hash('test'), False]]
     # make an insert query into the users table
-
-
 
     for user in users:
         cur.execute(query.insert_visitor([user[0]]))
