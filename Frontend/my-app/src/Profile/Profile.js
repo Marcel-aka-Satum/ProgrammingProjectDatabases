@@ -1,5 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
 import {userSession} from "../App"
+//import printUserInfo from '../components/User/User'
 
 
 export default function Profile() {
@@ -10,14 +11,14 @@ export default function Profile() {
     }
 
     function showProfile(){
-
+      //printUserInfo
     }
 
   return (
     <div>
         <h1>Profile</h1>
-        <p>Welcome to ur profile {usersession.user.username} </p>
-        <p>Here u can see your profile details and also ur favorite articles!</p>
+        <p>Welcome to your profile {usersession.user.username} </p>
+        <p>Here u can see your profile details and also your favorite articles!</p>
 
 
                                

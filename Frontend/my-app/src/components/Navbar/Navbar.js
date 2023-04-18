@@ -92,7 +92,7 @@ function colConCollapse(){
                 <div className="navbar-header">
                     <NavLink className="navbar-brand" to="/">
                         <span className="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
-                        Newsagregator
+                        Newsaggregator
                     </NavLink>
                 </div>
                 <div className="toggle-collapse">

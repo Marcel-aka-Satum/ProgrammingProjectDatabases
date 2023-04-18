@@ -19,6 +19,7 @@ export class User {
     }
 
     getUsername(){
+        console.log(this.username)
         return this.username
     }
 
