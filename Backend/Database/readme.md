@@ -341,9 +341,9 @@ where $X_{reduced}$ is the reduced feature matrix, $U$ contains the left singula
 
 `cluster_data()` uses the DBSCAN algorithm to cluster articles based on the reduced feature matrix. DBSCAN is chosen as it can automatically determine the number of clusters and is robust to noise, which helps reduce the impact of irrelevant articles or outliers.
 
-$$
+```math
 \text{DBSCAN}(P, \epsilon, \text{min\_samples})
-$$
+```
 
 DBSCAN has two main parameters that can be tweaked to improve performance:
 
