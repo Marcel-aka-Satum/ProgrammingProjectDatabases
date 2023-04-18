@@ -15,6 +15,20 @@ and delete users, RSS feeds, and news articles. The API supports JSON requests a
 
 # Authentication API Documentation
 
+### authenticate
+
+```http
+POST /api/auth
+```
+
+**Response Body**
+
+| Parameter | Type     | Description |
+|:----------|:---------|:------------|
+| `message` | `string` | Message     |
+
+**Description:** _Authenticates a user._
+
 ### Register User
 
 ```http
@@ -72,6 +86,20 @@ GET /api/users/totalusers
 |`totalUsers`| `int`| Total number of users.            |
 
 **Description:** _Retrieves the total number of users._
+
+### Add Visitor
+
+```http
+POST /api/add_Visitor
+```
+
+**Response Body**
+
+| Parameter | Type  | Description |
+|:----------|:------|:------------|
+| `Cookie`  | `str` | Cookie      |
+
+**Description:** _Adds a new visitor._
 
 ### Add User
 
@@ -233,3 +261,77 @@ GET /api/articles/totalarticles
 |`totalArticles`| `int`| Total number of news articles.|
 
 **Description:** _Retrieves the total number of news articles._
+
+---
+
+# DB API Documentation
+
+### Get DB
+
+```http
+GET /db
+```
+
+**Description:** _Retrieves the database._
+
+### Get DB (rssfeeds)
+
+```http
+GET /db/rssfeeds
+```
+
+**Description:** _Retrieves the RSS feeds table._
+
+### Get DB (users)
+
+```http
+GET /db/users
+```
+
+**Description:** _Retrieves the users table._
+
+### Get DB (newsarticles)
+
+```http
+GET /db/newsarticles
+```
+
+**Description:** _Retrieves the news articles table._
+
+### Get DB (visitors)
+
+```http
+GET /db/visitors
+```
+
+**Description:** _Retrieves the visitors table._
+
+### Get DB (cookies)
+
+```http
+GET /db/cookies
+```
+
+**Description:** _Retrieves the cookies table._
+
+### Get DB (hasclicked)
+
+```http
+GET /db/hasclicked
+```
+
+**Description:** _Retrieves the hasclicked table._
+
+### Get DB (favored)
+
+```http
+GET /db/favored
+```
+
+**Description:** _Retrieves the favored table._
+
+### Get DB (backup)
+
+```http
+GET /db/backup
+```

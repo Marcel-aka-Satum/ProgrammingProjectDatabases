@@ -7,7 +7,7 @@
 
 {% block body %}
 <h1>News Aggregator
-    <li></li>
+    <br><br>
     <li><a href="{{ url_for('DBRssfeeds') }}">rssfeeds</a></li>
     <li><a href="{{ url_for('DBNewsarticles') }}">Newsarticles</a></li>
     <li><a href="{{ url_for('DBVisitors') }}">Visitors</a></li>
@@ -15,7 +15,7 @@
     <li><a href="{{ url_for('DBCookies') }}">Cookies</a></li>
     <li><a href="{{ url_for('DBHasClicked') }}">HasClicked</a></li>
     <li><a href="{{ url_for('DBFavored') }}">Favored</a></li>
-    <li><a href="{{ url_for('Backup') }}">Backup</a></li></h1>
-
-    <h1><li><a href="{{ url_for('addVisitor') }}">addVisitor</a></li></h1>
+    <li><a href="{{ url_for('Backup') }}">Backup</a></li>
+    <li><a href="{{ url_for('addVisitor') }}">addVisitor</a></li>
+</h1>
 {% endblock %}
