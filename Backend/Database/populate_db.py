@@ -1,5 +1,8 @@
 import pandas as pd
-from . import query_db as query
+try:
+    from . import query_db as query
+except:
+    import query_db as query
 import bcrypt
 
 def create_hash(password):

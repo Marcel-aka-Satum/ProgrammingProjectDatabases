@@ -4,21 +4,10 @@ import Logo from './newspaper.png'
 import './navbarStyle.css'
 import {userSession} from '../../App'
 import axios from 'axios'
-import { Squash as Hamburger } from 'hamburger-react'
-
-
-function GenreF({genre}) {
-
-    const formattedGenre = genre.replace(/\s+/g, '-');
-
-    return (
-        <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
-    );
-}
+import {Squash as Hamburger} from 'hamburger-react'
 
 
 const Navbar = () => {
-
     const [articles, setArticles] = useState([])
     const [genres, setGenres] = useState(new Set())
 
@@ -26,18 +15,12 @@ const Navbar = () => {
         const fetchArticles = async () => {
             const response = await axios.get('http://localhost:4444/api/articles');
             // const limitedArticles = response.data.slice(0, 500);
+            console.log('response:', response.data)
 
             setArticles(response.data);
         };
         fetchArticles();
     }, []);
-
-    let usersession = useContext(userSession);
-    const handleLogOut = async (e) => {
-        console.log("hello")
-        e.preventDefault();
-        usersession.user.logout()
-    }
 
     useEffect(() => {
         const fetchGenres = () => {
@@ -61,31 +44,45 @@ const Navbar = () => {
         }
     }, [articles]);
 
-    
+    function GenreF({genre}) {
+        const formattedGenre = genre.replace(/\s+/g, '-');
+        return (
+            <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
+        );
+    }
+
+    let usersession = useContext(userSession);
+    const handleLogOut = async (e) => {
+        e.preventDefault();
+        usersession.user.logout()
+    }
+
+
     const [Open, setOpen] = useState(false)
     const refIn = useRef(null)
 
-function colConCollapse(){
-    const colCon = document.querySelector(".container-fluid");
+    function colConCollapse() {
+        const colCon = document.querySelector(".container-fluid");
         setOpen(!Open)
         colCon.classList.toggle("collapse")
     }
+
     const handleClickOutside = (e) => {
-        if(Open){
-            if(!refIn.current.contains(e.target)){
-            const colCon = document.querySelector(".container-fluid");
-            colCon.classList.toggle("collapse")
-            setOpen(!Open)
-        }
+        if (Open) {
+            if (!refIn.current.contains(e.target)) {
+                const colCon = document.querySelector(".container-fluid");
+                colCon.classList.toggle("collapse")
+                setOpen(!Open)
+            }
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         document.addEventListener("click", handleClickOutside)
         return () => {
             document.removeEventListener("click", handleClickOutside);
         };
-    },[Open])
+    }, [Open])
 
     return (
         <nav className="navbar navbar-expand-md navbar-expand-lg fixed-top">
@@ -109,48 +106,37 @@ function colConCollapse(){
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div className="dropdown-menu articledrop m-0 fix-top"
+                        <div className="dropdown-menu m-0 fix-top"
                              aria-labelledby="articlesDropdown" >
                             <ul className="list-inline mx-4 p-0">
-                            {Array.from(genres).map((genre) => (
-                                <GenreF key={genre} genre={genre}/>
-                            ))}
+                                {Array.from(genres).map((genre) => (
+                                    <GenreF key={genre} genre={genre}/>
+                                ))}
                             </ul>
                         </div>
                     </li>
-                    
+                    {(usersession.user.isLogged && usersession.user.token !== false) ?
+                        <li>
+                        <NavLink to="/profile">Profile</NavLink>
+                        </li>
+                        : (<p></p>)
+                    }
                     {(usersession.user.isLogged && usersession.user.token !== false && usersession.user.isAdmin) ?
                         <li>
-                        <NavLink to="/admin/dashboard">Dashboard</NavLink>
+                            <NavLink to="/admin/dashboard">Dashboard</NavLink>
                         </li>
                         : (<p></p>)
                     }
                     <li>
-                    {(usersession.user.isLogged && usersession.user.token !== false) ?
-                    <>
-                        <NavLink className="nav-link dropdown-toggle" to="#/" id="profileDropdown" role="button"
-                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Profile</NavLink>
-
-                        <div className="dropdown-menu dropprof dropdown-menu-end fix-top"
-                             aria-labelledby="profileDropdown" >
-                            <ul className="list-unstyled p-2 px-3 py-2">
-                            <li>
-                                <NavLink to="/favorites">My Favorites</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/settings">Settings </NavLink>
-                            </li>
-                            <li>
+                        {(usersession.user.isLogged && usersession.user.token !== false) ? 
                             <NavLink to="/login" onClick={handleLogOut}>Logout</NavLink>
-                            </li>
-                            </ul>
-                        </div>
-                    </>
-                        : (<NavLink to="/login">Login</NavLink>)
-                    }
+                        : (    
+                            <NavLink to="/login">Login</NavLink>
+                            )
+                        }
                     </li>
                 </ul>
-                
+
             </div>
         </nav>
     );

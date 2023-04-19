@@ -16,17 +16,15 @@ export default function Articles() {
 
     useEffect(() => {
         async function fetchData() {
-            const r_articles = await fetch('http://localhost:4444/apiv2/articles')
+            const r_articles = await fetch('http://localhost:4444/api/articles')
             const data = await r_articles.json();
-
-            if (data.status === 200) {
-                console.log(data.articles);
+            if (data) {
                 SUCCESS("Articles loaded successfully!");
                 // only get the first 20 articles
                 // data.articles = data.articles.slice(0, 20);
-                setArticles(data.articles);
+                setArticles(data);
             } else {
-                UNKNOWN_ERROR(data.message);
+                UNKNOWN_ERROR('An error occurred while loading articles!');
             }
 
         }

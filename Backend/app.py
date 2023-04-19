@@ -295,13 +295,6 @@ def checkRSSFeed():
 
 
 ################# NEWS ARTICLE ROUTES #################
-@app.route('/apiv2/articles', methods=['GET'])
-@cross_origin()
-def getArticles():
-    articles_list = db.getNewsArticles()[1]
-    return jsonify({"articles": articles_list, "status": 200})
-
-
 @app.route('/api/articles', methods=['GET'])
 @cross_origin()
 def articles():
@@ -314,6 +307,14 @@ def articles():
 def getTotalArticles():
     totalarticles = db.getNewsArticles()[1]
     return jsonify({'totalArticles': len(totalarticles)})
+
+
+################# Favorite ROUTES #################
+@app.route('/api/favorites', methods=['GET'])
+@cross_origin()
+def favorites():
+    favorites_list = db.getFavored()[1]
+    return jsonify({'favorites': favorites_list})
 
 
 @app.errorhandler(404)
