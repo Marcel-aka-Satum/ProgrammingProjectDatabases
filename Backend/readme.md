@@ -263,6 +263,26 @@ GET /api/articles/totalarticles
 
 ---
 
+# Favorites API Documentation
+
+### Get Favorites
+
+```http
+GET /api/favorites
+```
+
+**Response Body**
+
+| Parameter | Type     | Description        |
+|:----------|:---------|:-------------------|
+|`favorites`| `list`   | List of favorites. |
+
+
+**Description:** _Retrieves a list of all favorite news articles by users._
+
+
+---
+
 # DB API Documentation
 
 ### Get DB

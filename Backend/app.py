@@ -296,6 +296,14 @@ def getTotalArticles():
     return jsonify({'totalArticles': len(totalarticles)})
 
 
+################# Favorite ROUTES #################
+@app.route('/api/favorites', methods=['GET'])
+@cross_origin()
+def favorites():
+    favorites_list = db.getFavored()[1]
+    return jsonify({'favorites': favorites_list})
+
+
 @app.errorhandler(404)
 @app.errorhandler(500)
 def error_handler():

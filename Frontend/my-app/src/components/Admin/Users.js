@@ -10,6 +10,7 @@ import axios from 'axios'
 
 export default function Users() {
     const [users, setUsers] = useState([]);
+    const [favorites, setFavorites] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
@@ -28,6 +29,18 @@ export default function Users() {
         fetchUsers();
     }, []);
 
+    useEffect(() => {
+        async function fetchFavorites() {
+            const response = await fetch(`http://127.0.0.1:4444/api/favorites`);
+            const data = await response.json();
+            if (data) {
+                setFavorites(data.favorites);
+            }
+        }
+        fetchFavorites();
+    }, [users]);
+
+    console.log('favorites', favorites)
 
     const refreshUsers = () => {
         fetch('http://127.0.0.1:4444/api/users')
@@ -230,7 +243,11 @@ export default function Users() {
                                     )}
                                     <span className="badge bg-danger ms-2">
                                         <i className="fas fa-heart me-1"></i>
-                                        {0}
+                                        {/*  loop over favorites list and return amount of times the user.UID is there  */}
+                                        {
+                                            favorites.filter((favorite) => favorite.User === user.UID).length
+                                        }
+
                                     </span>
                                 </p>
 
