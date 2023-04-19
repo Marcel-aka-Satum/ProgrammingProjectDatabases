@@ -56,6 +56,33 @@ def get_newsarticles(URL: str) -> str:
             WHERE URL = '{URL}';
             """
 
+def get_favorites(URL: str) -> str:
+    """SELECT * 
+        FROM newsaggregator.newsarticles 
+        WHERE URL IN (
+            SELECT Article 
+            FROM newsaggregator.favored 
+            WHERE _User = (
+                SELECT UID 
+                FROM newsaggregator.cookies 
+                WHERE cookie = 'YOUR_COOKIE_VALUE'
+            )
+        );
+    """
+
+    return f"""SELECT * 
+        FROM newsaggregator.newsarticles 
+        WHERE URL IN (
+            SELECT Article 
+            FROM newsaggregator.favored 
+            WHERE _User = (
+                SELECT UID 
+                FROM newsaggregator.cookies 
+                WHERE cookie = ' {URL}'
+            )
+        );
+    """
+
 
 #################### TABLE GETTERS ####################
 
@@ -180,6 +207,17 @@ def insert_favored(values: list) -> str:
             VALUES ('{values[0]}', '{values[1]}');
             """
 
+def insert_favorite(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.favorite (_User, Article)
+    """
+    return f"""
+            INSERT INTO newsaggregator.favored (_User, Article)
+            VALUES (
+                (SELECT UID FROM newsaggregator.cookies WHERE cookie = '{values[0]}'),
+                '{values[1]}'
+            );
+            """
 
 #################### DELETERS ####################
 def delete_rssfeed(URL: str) -> str:

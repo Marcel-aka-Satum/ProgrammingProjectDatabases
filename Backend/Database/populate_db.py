@@ -33,4 +33,6 @@ def populate_db(conn, cur, cwd):
         cur.execute(query.insert_user(user))
         conn.commit()
 
+    cur.execute(query.insert_cookie("abc", 1))
+
     print("Done inserting values")

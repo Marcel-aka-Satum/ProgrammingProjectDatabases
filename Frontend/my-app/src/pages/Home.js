@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react'
-import {SUCCESS} from "../components/Helpers/custom_alert";
+import {SUCCESS, ERROR} from "../components/Helpers/custom_alert";
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -63,11 +63,15 @@ function ArticleCard({article, onFilterTextChange, logged}) {
             button.classList.remove(whenLiked);
             button.innerHTML = `<i class="${dislikeBtn}"></i>`;
             button.setAttribute('title', 'Add to favorites');
+            handleFavorites(article.URL )
+            
+
         } else {
             button.classList.remove('btn-outline-danger');
             button.classList.add(whenLiked);
             button.innerHTML = `<i class="${likeBtn}"></i>`;
             button.setAttribute('title', 'Remove from favorites');
+
         }
     };
 
@@ -102,6 +106,32 @@ function ArticleCard({article, onFilterTextChange, logged}) {
     const handleImageLoad = () => {
         setIsLoading(false);
     };
+
+
+    const handleFavorites = async (URL) => {
+        try {
+            await axios.post('http://localhost:4444/api/favorites', {
+                Cookie: "abc",
+                Url: URL,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.status === 200) {
+                    SUCCESS(response.data.message)
+                    console.log(response.data)
+                } else {
+                    console.log("hello")
+                    console.log(response.data.message)
+                    ERROR(response.data.message)
+                }
+            })
+        } catch (err) {
+            console.log('response', err.response.data.message)
+            ERROR(err.response.data.message)
+        }
+    }
+
 
     return (
         <div className="article-card hide-btn-group">
@@ -331,6 +361,7 @@ const Home = () => {
         const [articles, setArticles] = useState([])
         const [genres, setGenres] = useState(new Set())
         const [articlesGenre, setArticlesGenre] = useState([])
+        const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
         const [sortOption, setSortOption] = useState("Sort By");
@@ -369,6 +400,32 @@ const Home = () => {
                 fetchGenres();
             }
         }, [articles]);
+
+        useEffect(() =>{
+            const fetchFavorites = async () => {
+                
+                await axios.post('http://localhost:4444/api/getfavorites', {
+                  Cookie: "abc",
+                  headers: {
+                    'Content-Type': 'application/json'
+                }  
+                }).then(response => {
+                    if (response.status === 200) {
+                        setFavorites(response.data)
+                    } else {
+                        console.log(response.data.message)
+                        ERROR(response.data.message)
+                    }
+                });
+            };
+            fetchFavorites();
+        })
+
+        console.log(favorites)
+
+
+
+
 
         useEffect(() => {
             function compareDatesNewest(a, b) {

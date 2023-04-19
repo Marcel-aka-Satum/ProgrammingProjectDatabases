@@ -4,6 +4,7 @@ import string
 
 import psycopg2
 import json
+from collections import defaultdict
 
 try:
     from . import init_db, populate_db, query_db
@@ -356,6 +357,18 @@ class DBConnection:
             return True, "success"
         except Exception as e:
             return False, str(e)
+        
+    @func.is_connected
+    def addFavorite(self, Cookie: str, URL: str) -> tuple:
+        """
+        @brief: add a favorite article of a user to the database.
+        """
+        try:
+            self.cursor.execute(query_db.insert_favorite([Cookie, URL]))
+            return True, "success"
+        except Exception as e:
+            return False, str(e)
+
 
     ######################### GetTables ########################
 
@@ -376,6 +389,19 @@ class DBConnection:
         @brief: get the table NewsArticles.
         """
         self.cursor.execute(query_db.get_newsarticles())
+        data = []
+        for i in self.cursor.fetchall():
+            data.append(
+                {"URL": i[0], "Title": i[1], "Summary": i[2], "Published": i[3], "Image": i[4], "Topic": i[5],
+                 "RSS_URL": i[6]})
+        return data
+    
+    @func.is_connected
+    def getFavorites(self, URL: string) -> list:
+        """
+        @brief: get the table NewsArticles.
+        """
+        self.cursor.execute(query_db.get_favorites(URL))
         data = []
         for i in self.cursor.fetchall():
             data.append(
@@ -433,9 +459,9 @@ class DBConnection:
         @brief: get the table favored.
         """
         self.cursor.execute(query_db.get_favored())
-        data = []
+        data = defaultdict(list)
         for i in self.cursor.fetchall():
-            data.append({"User": i[0], "Article": i[1]})
+            data[i[0]].append(i[1])
         return data
 
     ############################################################

@@ -139,6 +139,19 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
+################# FAVORITES #################
+@app.route("/api/favorites", methods=["POST"])
+def setFavorites():
+    Url = request.json["Url"]
+    Cookie = request.json["Cookie"]
+    status, message = db.addFavorite(Cookie, Url)
+    return jsonify(message[1])
+
+
+@app.route('/api/getfavorites', methods=['POST'])
+def getFavorites():
+    Cookie = request.json["Cookie"]
+    return jsonify(db.getFavorites(Cookie)[1])
 
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
@@ -155,7 +168,7 @@ def getTotalUsers():
     return jsonify({"totalUsers": len(json.loads(users))})
 
 
-@app.route('/api/add_Visitor')
+@app.route('/api/add_Visitor', methods=['GET'])
 def addVisitor():
     uid = db.generateUID()[1]
     cookie = db.generateCookie()[1]
