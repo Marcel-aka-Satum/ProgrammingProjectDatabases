@@ -22,6 +22,7 @@ import {
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
+import genre from "./Genre";
 
 function formatTitle(str) {
     const words = str.split('-');
@@ -315,8 +316,10 @@ function ArticleCard({article, onFilterTextChange, logged}) {
         ;
 }
 
-function GenreSection({genre, articles, filterText, onFilterTextChange, logged}) {
+function GenreSection({genre, filterText, onFilterTextChange, logged}) {
+    console.log("GenreSection begin")
     function addDashes(str) {
+        console.log(str)
         return str.replace(/\s+/g, '-');
     }
 
@@ -328,17 +331,44 @@ function GenreSection({genre, articles, filterText, onFilterTextChange, logged})
         return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
     }
 
-    const filteredArticles = articles.filter((article) => {
+    const fetchArticlesGenre = async (genre) => {
+        console.log("fetchArticlesGenre begin")
+        try {
+            const response = await axios.post('http://localhost:4444/api/articles/genre', {
+                genre: genre
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            SUCCESS(response.data.message);
+            console.log("haaay")
+            console.log(genre)
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+            // handle error
+        }
+    };
+
+    let art = fetchArticlesGenre(genre);
+
+    console.log("articles: ")
+    console.log(art)
+    const filteredArticles = art.filter((article) => {
         const title = article.Title.toLowerCase();
         const summary = article.Summary.toLowerCase();
         const url = extractBaseUrl(article.URL);
+        console.log("hallo 1")
         const filter = filterText.toLowerCase();
+        console.log(filter)
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
 
     if (filteredArticles.length === 0) {
         return null; // return null to skip rendering this component
     }
+    console.log(genre)
 
     return (
         <div className="genre-section">
@@ -361,7 +391,7 @@ function GenreSection({genre, articles, filterText, onFilterTextChange, logged})
 
 const Home = () => {
         const [articles, setArticles] = useState([])
-        const [genres, setGenres] = useState(new Set())
+        const [genres, setGenres] = useState(new Array)
         const [articlesGenre, setArticlesGenre] = useState([])
         //const [favorites, setFavorites] = useState([])
 
@@ -381,27 +411,13 @@ const Home = () => {
         }, []);
 
         useEffect(() => {
-            const fetchGenres = () => {
-                const uniqueGenres = new Set();
-                const grouped = {};
-
-                for (const article of articles) {
-                    uniqueGenres.add(article.Topic);
-
-                    if (!grouped[article.Topic]) {
-                        grouped[article.Topic] = [];
-                    }
-                    grouped[article.Topic].push(article);
-                }
-
-                setGenres(uniqueGenres);
-                setArticlesGenre(grouped);
+            const fetchGenres = async () => {
+                const response = await axios.get('http://localhost:4444/api/articles/genres');
+                // const limitedArticles = response.data.slice(0, 500);
+                setGenres(response.data);
             };
-
-            if (articles.length > 0) {
-                fetchGenres();
-            }
-        }, [articles]);
+            fetchGenres();
+        }, []);
 
         /*
         useEffect(() =>{
@@ -498,7 +514,7 @@ const Home = () => {
 
                 <div className="row">
                     {Array.from(genres).map((genre) => (
-                        <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
+                        <GenreSection key={genre} genre={genre} filterText={filterText}
                                       onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}/>
                     ))}
                 </div>

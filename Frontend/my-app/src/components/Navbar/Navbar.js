@@ -23,31 +23,18 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        const fetchGenres = () => {
-            const uniqueGenres = new Set();
-            const grouped = {};
-
-            for (const article of articles) {
-                uniqueGenres.add(article.Topic);
-
-                if (!grouped[article.Topic]) {
-                    grouped[article.Topic] = [];
-                }
-                grouped[article.Topic].push(article);
-            }
-
-            setGenres(uniqueGenres);
-        };
-
-        if (articles.length > 0) {
+            const fetchGenres = async () => {
+                const response = await axios.get('http://localhost:4444/api/articles/genres');
+                // const limitedArticles = response.data.slice(0, 500);
+                setGenres(response.data)``;
+            };
             fetchGenres();
-        }
-    }, [articles]);
+        }, []);
 
     function GenreF({genre}) {
         const formattedGenre = genre.replace(/\s+/g, '-');
         return (
-            <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
+            <li><NavLink to={`genre/${formattedGenre}`}>{formattedGenre}</NavLink></li>
         );
     }
 

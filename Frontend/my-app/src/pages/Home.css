@@ -86,8 +86,8 @@ a:hover {
     color: white;
 }
 
-button.dropdown-item:hover {
-    background: #fef7e5;
+.dropdown-item:hover {
+    background-color: #fef7e5;
 }
 
 .btn-outline-secondary {
