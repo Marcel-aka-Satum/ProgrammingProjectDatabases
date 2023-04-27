@@ -148,6 +148,31 @@ class DBConnection:
     ########################### GET ############################
 
     @func.is_connected
+    def getTopics(self) -> tuple:
+        """
+        @brief: get the Topics of the Articles.
+        """
+        self.cursor.execute(query_db.get_topics())
+        data = self.cursor.fetchall()
+        c = []
+        for i in data:
+            c.append(i[0])
+        return c
+
+    @func.is_connected
+    def getNewsArticlesTopic(self, Topic: str) -> list:
+        """
+        @brief: get the table NewsArticles.
+        """
+        self.cursor.execute(query_db.get_newsarticlesTopic(Topic))
+        data = []
+        for i in self.cursor.fetchall():
+            data.append(
+                {"URL": i[0], "Title": i[1], "Summary": i[2], "Published": i[3], "Image": i[4], "Topic": i[5],
+                 "RSS_URL": i[6]})
+        return data
+
+    @func.is_connected
     def getVisitor(self, UID: str) -> tuple:
         """
         @brief: get the UID of the Visitor if it exists.

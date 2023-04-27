@@ -23,6 +23,13 @@ def get_visitor(UID: str) -> str:
             WHERE UID = {UID};
             """
 
+def get_topics() -> str:
+    """
+        SELECT DISTINCT topics FROM newsaggregator.newsarticles
+    """
+    return f"""
+            SELECT DISTINCT Topic FROM newsaggregator.newsarticles
+            """
 
 def get_user(email: str) -> str:
     """
@@ -54,6 +61,16 @@ def get_newsarticles(URL: str) -> str:
     return f"""
             SELECT * FROM newsaggregator.newsarticles
             WHERE URL = '{URL}';
+            """
+
+def get_newsarticlesTopic(Topic: str) -> str:
+    """
+        SELECT * FROM newsaggregator.newsarticles
+        WHERE Topic = '{Topic}';
+    """
+    return f"""
+            SELECT * FROM newsaggregator.newsarticles
+            WHERE Topic = '{Topic}';
             """
 
 def get_favorites(URL: str) -> str:

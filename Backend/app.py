@@ -309,6 +309,20 @@ def getTotalArticles():
     totalarticles = db.getNewsArticles()[1]
     return jsonify({'totalArticles': len(totalarticles)})
 
+@app.route('/api/articles/genres', methods=['GET'])
+@cross_origin()
+def getTopics():
+    Topics = db.getTopics()
+    return jsonify(Topics[1])
+
+@app.route('/api/articles/genre', methods=['POST'])
+@cross_origin()
+def getArticlesTopic():
+    data = request.get_json()
+    topic = data['genre']
+    articles = db.getNewsArticlesTopic(topic)
+    return jsonify(articles[1])
+
 
 ################# Favorite ROUTES #################
 @app.route('/api/favorites', methods=['GET'])
