@@ -316,8 +316,9 @@ function ArticleCard({article, onFilterTextChange, logged}) {
         ;
 }
 
-function GenreSection({genre, filterText, onFilterTextChange, logged}) {
-    console.log("GenreSection begin")
+function GenreSection({genre, art, filterText, onFilterTextChange, logged}) {
+    console.log("GenreSection begin: " + genre)
+    console.log("articles: " + art)
     function addDashes(str) {
         console.log(str)
         return str.replace(/\s+/g, '-');
@@ -330,28 +331,6 @@ function GenreSection({genre, filterText, onFilterTextChange, logged}) {
 
         return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
     }
-
-    const fetchArticlesGenre = async (genre) => {
-        console.log("fetchArticlesGenre begin")
-        try {
-            const response = await axios.post('http://localhost:4444/api/articles/genre', {
-                genre: genre
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            SUCCESS(response.data.message);
-            console.log("haaay")
-            console.log(genre)
-            console.log(response.data);
-        } catch (error) {
-            console.error(error);
-            // handle error
-        }
-    };
-
-    let art = fetchArticlesGenre(genre);
 
     console.log("articles: ")
     console.log(art)
@@ -392,7 +371,7 @@ function GenreSection({genre, filterText, onFilterTextChange, logged}) {
 const Home = () => {
         const [articles, setArticles] = useState([])
         const [genres, setGenres] = useState(new Array)
-        const [articlesGenre, setArticlesGenre] = useState([])
+        const [articlesGenre, setArticlesGenre] = useState(new Array())
         //const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
@@ -410,14 +389,45 @@ const Home = () => {
             fetchArticles();
         }, []);
 
+        console.log(articles)
+
         useEffect(() => {
             const fetchGenres = async () => {
                 const response = await axios.get('http://localhost:4444/api/articles/genres');
                 // const limitedArticles = response.data.slice(0, 500);
+                console.log('genres lol:' +response.data)
                 setGenres(response.data);
             };
             fetchGenres();
         }, []);
+
+        console.log("Genres: " + genres)
+
+        useEffect(() => {
+            const fetchGenresArticles = () => {
+                const grouped = {};
+
+                for (const article of articles) {
+
+                    if (!grouped[article.Topic]) {
+                        grouped[article.Topic] = [];
+                    }
+                    grouped[article.Topic].push(article);
+                }
+
+                console.log("grouped: " + grouped)
+                setArticlesGenre(grouped);
+            };
+
+            if (articles.length > 0) {
+                fetchGenresArticles();
+            }
+        }, [articles]);
+
+        console.log("ArticlesGenres: " + articlesGenre)
+
+
+
 
         /*
         useEffect(() =>{
@@ -514,7 +524,7 @@ const Home = () => {
 
                 <div className="row">
                     {Array.from(genres).map((genre) => (
-                        <GenreSection key={genre} genre={genre} filterText={filterText}
+                        <GenreSection key={genre} genre={genre} art={articlesGenre} filterText={filterText}
                                       onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}/>
                     ))}
                 </div>
