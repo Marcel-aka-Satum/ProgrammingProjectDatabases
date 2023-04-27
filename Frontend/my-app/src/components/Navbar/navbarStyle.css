@@ -36,7 +36,7 @@ li .dropdown-menu.articledrop {
     position: relative;
     right: 0;
     left: 0;
-    background-color: #fef7e5;
+    background-color: #fef7e5 !important;
 }
 
 .dropdown-menu.articledrop ul {
@@ -66,24 +66,24 @@ li .dropdown-menu.articledrop {
 }
 
 
-.dropprof{
+.dropdown-menu.dropprof{
   text-align: justify !important;
   background-color: #fef7e5 !important;
   width: auto !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.dropprof li {
+.dropdown-menu.dropprof li {
   padding: 8px 0;
 }
 
-.dropprof a {
+.dropdown-menu.dropprof a {
   font-size: 14px;
   color: #444;
   text-decoration: none;
 }
 
-.dropprof a:hover {
+.dropdown-menu.dropprof a:hover {
   color: rgba(255, 195, 0, 1) !important;
 }
 
@@ -91,14 +91,14 @@ li .dropdown-menu.articledrop {
   list-style: none;
 }
 
-.dropprof ul {
+.dropdown-menu.dropprof ul {
   display: flex;
   flex-direction: column;
   padding: 0;
   margin: 0;
 }
 
-.dropprof a:hover {
+.dropdown-menu.dropprof a:hover {
   color: rgba(255, 195, 0, 1);
 }
 

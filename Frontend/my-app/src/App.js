@@ -80,7 +80,6 @@ function App() {
                         <Route path="genre/:genre" element={<Home/>}></Route>
                     </Routes>
                     <ScrollToTop smooth/>
-                    <Footer/>
                 </div>
                 <ToastContainer limit={3}/>
             </userSession.Provider>

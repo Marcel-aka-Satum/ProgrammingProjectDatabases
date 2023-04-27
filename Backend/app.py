@@ -140,18 +140,19 @@ def login_user():
         }), 200
 
 ################# FAVORITES #################
-@app.route("/api/favorites", methods=["POST"])
-def setFavorites():
-    Url = request.json["Url"]
-    Cookie = request.json["Cookie"]
-    status, message = db.addFavorite(Cookie, Url)
-    return jsonify(message[1])
+
+#@app.route("/api/favorites", methods=["POST"])
+#def setFavorites():
+#    Url = request.json["Url"]
+#    Cookie = request.json["Cookie"]
+#    status, message = db.addFavorite(Cookie, Url)
+#    return jsonify(message[1])
 
 
-@app.route('/api/getfavorites', methods=['POST'])
-def getFavorites():
-    Cookie = request.json["Cookie"]
-    return jsonify(db.getFavorites(Cookie)[1])
+#@app.route('/api/getfavorites', methods=['POST'])
+#def getFavorites():
+#    Cookie = request.json["Cookie"]
+#    return jsonify(db.getFavorites(Cookie)[1])
 
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
@@ -315,7 +316,6 @@ def getTotalArticles():
 def favorites():
     favorites_list = db.getFavored()[1]
     return jsonify({'favorites': favorites_list})
-
 
 @app.errorhandler(404)
 @app.errorhandler(500)

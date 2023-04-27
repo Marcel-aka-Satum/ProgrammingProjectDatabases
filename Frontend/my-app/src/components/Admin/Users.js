@@ -29,6 +29,7 @@ export default function Users() {
         fetchUsers();
     }, []);
 
+    
     useEffect(() => {
         async function fetchFavorites() {
             const response = await fetch(`http://127.0.0.1:4444/api/favorites`);
@@ -245,7 +246,8 @@ export default function Users() {
                                         <i className="fas fa-heart me-1"></i>
                                         {/*  loop over favorites list and return amount of times the user.UID is there  */}
                                         {
-                                            favorites.filter((favorite) => favorite.User === user.UID).length
+                                            //favorites.filter((favorite) => favorite.User === user.UID).length
+                                            1
                                         }
 
                                     </span>

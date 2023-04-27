@@ -106,8 +106,8 @@ const Navbar = () => {
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div className="dropdown-menu m-0 fix-top"
-                             aria-labelledby="articlesDropdown" >
+                        <div className="dropdown-menu articledrop m-0 fix-top"
+                             aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4 p-0">
                                 {Array.from(genres).map((genre) => (
                                     <GenreF key={genre} genre={genre}/>
@@ -115,12 +115,6 @@ const Navbar = () => {
                             </ul>
                         </div>
                     </li>
-                    {(usersession.user.isLogged && usersession.user.token !== false) ?
-                        <li>
-                        <NavLink to="/profile">Profile</NavLink>
-                        </li>
-                        : (<p></p>)
-                    }
                     {(usersession.user.isLogged && usersession.user.token !== false && usersession.user.isAdmin) ?
                         <li>
                             <NavLink to="/admin/dashboard">Dashboard</NavLink>
@@ -128,12 +122,28 @@ const Navbar = () => {
                         : (<p></p>)
                     }
                     <li>
-                        {(usersession.user.isLogged && usersession.user.token !== false) ? 
+                    {(usersession.user.isLogged && usersession.user.token !== false) ?
+                    <>
+                        <NavLink className="nav-link dropdown-toggle" to="#/" id="profileDropdown" role="button"
+                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Profile</NavLink>
+
+                        <div className="dropdown-menu dropprof dropdown-menu-end fix-top"
+                             aria-labelledby="profileDropdown" >
+                            <ul className="list-unstyled p-2 px-3 py-2">
+                            <li>
+                                <NavLink to="/favorites">My Favorites</NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/settings">Settings </NavLink>
+                            </li>
+                            <li>
                             <NavLink to="/login" onClick={handleLogOut}>Logout</NavLink>
-                        : (    
-                            <NavLink to="/login">Login</NavLink>
-                            )
-                        }
+                            </li>
+                            </ul>
+                        </div>
+                    </>
+                        : (<NavLink to="/login">Login</NavLink>)
+                    }
                     </li>
                 </ul>
 

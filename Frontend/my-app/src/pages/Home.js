@@ -63,7 +63,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
             button.classList.remove(whenLiked);
             button.innerHTML = `<i class="${dislikeBtn}"></i>`;
             button.setAttribute('title', 'Add to favorites');
-            handleFavorites(article.URL )
+            //handleFavorites(article.URL )
             
 
         } else {
@@ -108,6 +108,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
     };
 
 
+    /*
     const handleFavorites = async (URL) => {
         try {
             await axios.post('http://localhost:4444/api/favorites', {
@@ -132,6 +133,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
         }
     }
 
+*/
 
     return (
         <div className="article-card hide-btn-group">
@@ -361,7 +363,7 @@ const Home = () => {
         const [articles, setArticles] = useState([])
         const [genres, setGenres] = useState(new Set())
         const [articlesGenre, setArticlesGenre] = useState([])
-        const [favorites, setFavorites] = useState([])
+        //const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
         const [sortOption, setSortOption] = useState("Sort By");
@@ -401,6 +403,7 @@ const Home = () => {
             }
         }, [articles]);
 
+        /*
         useEffect(() =>{
             const fetchFavorites = async () => {
                 
@@ -422,7 +425,7 @@ const Home = () => {
         })
 
         console.log(favorites)
-
+*/
 
 
 
