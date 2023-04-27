@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import {useLocation} from 'react-router-dom'
 import "./Home.css"
 import axios from 'axios'
@@ -22,6 +22,7 @@ import {
 } from "react-share";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
+import {userSession} from '../App'
 
 
 function formatTitle(str) {
@@ -50,7 +51,7 @@ function formatSummary(text, url, limit = 200) {
 }
 
 
-function ArticleCard({article, onFilterTextChange}) {
+function ArticleCard({article, onFilterTextChange, logged}) {
     const handleAddToFavorites = (event) => {
         const button = event.currentTarget;
 
@@ -65,11 +66,15 @@ function ArticleCard({article, onFilterTextChange}) {
             button.classList.remove(whenLiked);
             button.innerHTML = `<i class="${dislikeBtn}"></i>`;
             button.setAttribute('title', 'Add to favorites');
+            //handleFavorites(article.URL )
+            
+
         } else {
             button.classList.remove('btn-outline-danger');
             button.classList.add(whenLiked);
             button.innerHTML = `<i class="${likeBtn}"></i>`;
             button.setAttribute('title', 'Remove from favorites');
+
         }
     };
 
@@ -99,19 +104,60 @@ function ArticleCard({article, onFilterTextChange}) {
         return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
     }
 
+
+    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
+    const handleImageLoad = () => {
+        setIsLoading(false);
+    };
+
+
+    /*
+    const handleFavorites = async (URL) => {
+        try {
+            await axios.post('http://localhost:4444/api/favorites', {
+                Cookie: "abc",
+                Url: URL,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.status === 200) {
+                    SUCCESS(response.data.message)
+                    console.log(response.data)
+                } else {
+                    console.log("hello")
+                    console.log(response.data.message)
+                    ERROR(response.data.message)
+                }
+            })
+        } catch (err) {
+            console.log('response', err.response.data.message)
+            ERROR(err.response.data.message)
+        }
+    }
+
+*/
+
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
                 <a href={article.URL} target="_blank" rel="noreferrer">
-                    <img
-                        src={article.Image}
-                        onError={(e) => e.target.style.display = 'none'}
-                        alt=''
-                        className="img-fluid rounded-top"
-                        style={{display: article.Image ? 'block' : 'none'}}
-                    />
+                    {article.Image ? (
+                        <>
+                            {isLoading && <div className="loading-animation"></div>}
+                            <img
+                                src={article.Image}
+                                onError={(e) => e.target.style.display = 'none'}
+                                alt=''
+                                className="img-fluid rounded-top"
+                                onLoad={handleImageLoad}
+                            />
+                        </>
+                    ) : (
+                        <div className="no-image"></div>
+                    )}
                 </a>
-                <div class="bottom-0">
+                <div className="bottom-0">
                     <button
                         className='background-newspaper text-decoration-none'
                         onClick={() => {
@@ -234,6 +280,8 @@ function ArticleCard({article, onFilterTextChange}) {
                             </Modal.Footer>
                         </Modal>
 
+                        {(logged)?
+                        <>
                         <button
                             className="btn btn-outline-warning me-2 hide-btn"
                             data-toggle="tooltip"
@@ -243,6 +291,7 @@ function ArticleCard({article, onFilterTextChange}) {
                         >
                             <i className="far fa-thumbs-down"></i>
                         </button>
+
                         <button
                             className="btn btn-outline-danger me-2 hide-btn"
                             data-toggle="tooltip"
@@ -252,6 +301,12 @@ function ArticleCard({article, onFilterTextChange}) {
                         >
                             <i className="far fa-heart"></i>
                         </button>
+                    </>
+                    :<></>
+                    }
+
+                         
+                       
                         <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
                     </span>
@@ -270,6 +325,8 @@ const Home = () => {
     const [filterText, setFilterText] = useState('');
     const [sortOption, setSortOption] = useState("Sort By");
     const [numDisplayedArticles, setNumDisplayedArticles] = useState(20);
+
+    let usersession = useContext(userSession);
 
     useEffect(() => {
         const fetchArticles = async () => {
@@ -377,7 +434,7 @@ const Home = () => {
             <ul className="articles-row">
                 {articlesToDisplay.map((article) => (
                     <li key={article.URL} className="p-3">
-                        <ArticleCard article={article} onFilterTextChange={handleFilterTextChange}/>
+                        <ArticleCard article={article} onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}/>
                     </li>
                 ))}
             </ul>
