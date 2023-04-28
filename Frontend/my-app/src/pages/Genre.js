@@ -23,6 +23,7 @@ import {
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
+import ReactDOM from "react-dom/client";
 
 
 function formatTitle(str) {
@@ -52,6 +53,7 @@ function formatSummary(text, url, limit = 200) {
 
 
 function ArticleCard({article, onFilterTextChange, logged}) {
+    console.log("article: " + article)
     const handleAddToFavorites = (event) => {
         const button = event.currentTarget;
 
@@ -328,6 +330,7 @@ const Home = () => {
 
     let usersession = useContext(userSession);
 
+    /*
     useEffect(() => {
         const fetchArticles = async () => {
             const response = await axios.get('http://localhost:4444/api/articles');
@@ -336,6 +339,33 @@ const Home = () => {
         };
         fetchArticles();
     }, [genre]);
+*/
+
+    useEffect(() => {
+        const fetchArticles = async () => {
+            console.log("articles: " + articles)
+            await axios.post('http://localhost:4444/api/articles/genre', {
+                genre: genre,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.status === 200) {
+                    if(response.data == []){
+                        fetchArticles()
+                    }
+                    else{
+                        setArticles(response.data);
+                    }
+                } else {
+                    console.log(response.data.message)
+                    fetchArticles()
+                    //ERROR(response.data.message)
+                }
+            });
+        };
+        fetchArticles();
+    }, []);
 
 
     useEffect(() => {
@@ -453,5 +483,5 @@ const Home = () => {
         ;
 };
 
-export default Home;
+export default React.memo(Home);
 
