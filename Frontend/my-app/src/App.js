@@ -14,7 +14,7 @@ import {Routes, Route} from 'react-router-dom'
 import React, {useState, createContext, useEffect} from 'react'
 import {User} from './components/User/User'
 import Redirection from './components/redirect/Redirection';
-import Profile from './Profile/Profile';
+import Account from './Profile/Account';
 import ScrollToTop from "react-scroll-to-top";
 
 
@@ -42,9 +42,9 @@ function App() {
                         <Route path="/login" element={<Loginform/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>
                         {(user.getIsLogged()) ?
-                            <Route path="/profile" element={<Profile/>}></Route>
+                            <Route path="/account" element={<Account/>}></Route>
                             : (
-                                <Route path="/profile" element={<Redirection/>}></Route>
+                                <Route path="/account" element={<Redirection/>}></Route>
                             )}
                         <Route path="/register" element={<Registerform/>}></Route>
                         <Route path="/admin/dashboard" element={<Redirection/>}/>
@@ -68,7 +68,7 @@ function App() {
                     <Routes id="routes">
                         <Route path="/" element={<Home/>}></Route>
                         <Route path="/login" element={<Loginform/>}></Route>
-                        <Route path="/profile" element={<Profile/>}></Route>
+                        <Route path="/account" element={<Account/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>
                         <Route path="/register" element={<Registerform/>}></Route>
                         <Route path="/admin/dashboard" element={<Dashboard/>}/>

@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect, useRef} from "react";
-import {Link, NavLink} from 'react-router-dom'
+import {NavLink} from 'react-router-dom'
 import Logo from './newspaper.png'
 import './navbarStyle.css'
 import {userSession} from '../../App'
@@ -122,28 +122,27 @@ const Navbar = () => {
                         : (<p></p>)
                     }
                     <li>
-                    {(usersession.user.isLogged && usersession.user.token !== false) ?
-                    <>
-                        <NavLink className="nav-link dropdown-toggle" to="#/" id="profileDropdown" role="button"
-                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My Profile</NavLink>
+                        {(usersession.user.isLogged && usersession.user.token !== false) ?
+                            <>
+                                <NavLink className="nav-link dropdown-toggle" to="#/" id="profileDropdown" role="button"
+                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My
+                                    Profile</NavLink>
 
-                        <div className="dropdown-menu dropprof dropdown-menu-end fix-top"
-                             aria-labelledby="profileDropdown" >
-                            <ul className="list-unstyled p-2 px-3 py-2">
-                            <li>
-                                <NavLink to="/favorites">My Favorites</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to="/settings">Settings </NavLink>
-                            </li>
-                            <li>
-                            <NavLink to="/login" onClick={handleLogOut}>Logout</NavLink>
-                            </li>
-                            </ul>
-                        </div>
-                    </>
-                        : (<NavLink to="/login">Login</NavLink>)
-                    }
+                                <div className="dropdown-menu dropprof dropdown-menu-end fix-top"
+                                     aria-labelledby="profileDropdown">
+                                    <ul className="list-unstyled p-2 px-3 py-2">
+                                        <li>
+                                            <NavLink to="/account"><i className="fas fa-user me-2"></i>Account</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/login" onClick={handleLogOut}><i
+                                                className="fas fa-sign-out-alt me-2"></i>Logout</NavLink>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </>
+                            : (<NavLink to="/login">Login</NavLink>)
+                        }
                     </li>
                 </ul>
 

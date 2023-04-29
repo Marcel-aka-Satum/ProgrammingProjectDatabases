@@ -39,15 +39,15 @@ export default function Loginform() {
         }
     }
 
-    function redirectToProfile(){
-        window.location.href = "/profile"
+    function redirectToAccount(){
+        window.location.href = "/account"
     }
     
     return (
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
                 <div>
-                    {redirectToProfile()}
+                    {redirectToAccount()}
                 </div>
                 :
                 (

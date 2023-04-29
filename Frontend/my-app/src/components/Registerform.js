@@ -44,8 +44,8 @@ export default function Registerform() {
         }
     }
 
-    function redirectToProfile() {
-        window.location.href = "/profile"
+    function redirectToAccount() {
+        window.location.href = "/account"
     }
 
     const checkPasswordStrength = (password) => {
@@ -109,7 +109,7 @@ export default function Registerform() {
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
                 <div>
-                    {redirectToProfile()}
+                    {redirectToAccount()}
                 </div>
                 : (
                     <div className="row">
