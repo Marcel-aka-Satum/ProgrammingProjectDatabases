@@ -176,6 +176,27 @@ class DBConnection:
             "Is_Admin": user_data[4]
         }
 
+    @func.is_connected
+    def getArticle(self, url: str) -> tuple:
+        """
+        @brief: get the article from the database with a specific url, if exists return True, else False
+        """
+        self.cursor.execute(query_db.get_newsarticle(url))
+        data = self.cursor.fetchone()
+        if data is None:
+            return False, ""
+
+        # return True and dict with article data
+        return True, {
+            "URL": data[0],
+            "Title": data[1],
+            "Summary": data[2],
+            "Publisher": data[3],
+            "Image": data[4],
+            "RSS_URL": data[5],
+            "Topic": data[6]
+        }
+
     ########################## UPDATE ##########################
 
     @func.is_connected
@@ -259,9 +280,9 @@ class DBConnection:
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
     @func.is_connected
-    def deleteFavored(self, UID: str) -> tuple:
+    def deleteFavored(self, UID: str, URL: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_favored(UID))
+            self.cursor.execute(query_db.delete_favored(UID, URL))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
@@ -355,6 +376,13 @@ class DBConnection:
         try:
             self.cursor.execute(query_db.insert_favored([UID, URL]))
             return True, "success"
+
+        except psycopg2.errors.UniqueViolation as e:
+            if "favored_pkey" in str(e):
+                return False, f"Article is already in favorites"
+            else:
+                return False, f"A unique constraint violation occurred: {e}"
+
         except Exception as e:
             return False, str(e)
         

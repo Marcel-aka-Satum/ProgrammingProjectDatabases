@@ -6,15 +6,16 @@ import Statistics from "./components/Admin/Statistics";
 import Rss from "./components/Admin/Rss";
 import Users from "./components/Admin/Users";
 import Articles from "./components/Admin/Articles";
-import Settings from "./components/Admin/Settings";
-import Footer from './components/Footer/Footer'
+import AdminSettings from "./components/Admin/Settings";
 import Home from './pages/Home';
 import Genre from './pages/Genre';
 import {Routes, Route} from 'react-router-dom'
-import React, {useState, createContext, useEffect} from 'react'
+import React, {useState, createContext} from 'react'
 import {User} from './components/User/User'
 import Redirection from './components/redirect/Redirection';
 import Account from './Profile/Account';
+import Favorites from './Profile/Favorites';
+import UserSettings from './Profile/Settings';
 import ScrollToTop from "react-scroll-to-top";
 
 
@@ -42,9 +43,17 @@ function App() {
                         <Route path="/login" element={<Loginform/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>
                         {(user.getIsLogged()) ?
-                            <Route path="/account" element={<Account/>}></Route>
+                            <>
+                                <Route path="/account" element={<Account/>}></Route>
+                                <Route path="/favorites" element={<Favorites/>}></Route>
+                                <Route path="/settings" element={<UserSettings/>}></Route>
+                            </>
                             : (
-                                <Route path="/account" element={<Redirection/>}></Route>
+                                <>
+                                    <Route path="/account" element={<Redirection/>}></Route>
+                                    <Route path="/favorites" element={<Redirection/>}></Route>
+                                    <Route path="/settings" element={<Redirection/>}></Route>
+                                </>
                             )}
                         <Route path="/register" element={<Registerform/>}></Route>
                         <Route path="/admin/dashboard" element={<Redirection/>}/>
@@ -69,13 +78,15 @@ function App() {
                         <Route path="/" element={<Home/>}></Route>
                         <Route path="/login" element={<Loginform/>}></Route>
                         <Route path="/account" element={<Account/>}></Route>
+                        <Route path="/favorites" element={<Favorites/>}></Route>
+                        <Route path="/settings" element={<UserSettings/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>
                         <Route path="/register" element={<Registerform/>}></Route>
                         <Route path="/admin/dashboard" element={<Dashboard/>}/>
                         <Route path="/admin/articles" element={<Articles/>}/>
                         <Route path="/admin/rss" element={<Rss/>}/>
                         <Route path="/admin/users" element={<Users/>}/>
-                        <Route path="/admin/settings" element={<Settings/>}/>
+                        <Route path="/admin/settings" element={<AdminSettings/>}/>
                         <Route path="/admin/statistics" element={<Statistics/>}/>
                         <Route path="genre/:genre" element={<Home/>}></Route>
                     </Routes>

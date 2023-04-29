@@ -139,18 +139,19 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
+
 ################# FAVORITES #################
 
-#@app.route("/api/favorites", methods=["POST"])
-#def setFavorites():
+# @app.route("/api/favorites", methods=["POST"])
+# def setFavorites():
 #    Url = request.json["Url"]
 #    Cookie = request.json["Cookie"]
 #    status, message = db.addFavorite(Cookie, Url)
 #    return jsonify(message[1])
 
 
-#@app.route('/api/getfavorites', methods=['POST'])
-#def getFavorites():
+# @app.route('/api/getfavorites', methods=['POST'])
+# def getFavorites():
 #    Cookie = request.json["Cookie"]
 #    return jsonify(db.getFavorites(Cookie)[1])
 
@@ -303,6 +304,15 @@ def articles():
     return jsonify(articles_list)
 
 
+@app.route('/api/get_article', methods=['POST'])
+@cross_origin()
+def getArticle():
+    data = request.get_json()
+    article_url = data['article_url']
+    article = db.getArticle(article_url)[1]
+    return jsonify({'article': article})
+
+
 @app.route('/api/articles/totalarticles', methods=['GET'])
 @cross_origin()
 def getTotalArticles():
@@ -316,6 +326,34 @@ def getTotalArticles():
 def favorites():
     favorites_list = db.getFavored()[1]
     return jsonify({'favorites': favorites_list})
+
+
+@app.route('/api/addFavored', methods=['POST'])
+@cross_origin()
+def addFavored():
+    data = request.get_json()
+    user_id, article_url = data['UID'], data['article_url']
+    print('addFavored: ', user_id, article_url)
+    status_db, message_db = db.addFavored(user_id, article_url)[1]
+    if status_db:
+        return jsonify({"message": "Article added to favorites", "status": 200})
+    else:
+        return jsonify({"message": message_db, "status": 401})
+
+
+@app.route('/api/delete_favored', methods=['POST'])
+@cross_origin()
+def deleteFavored():
+    data = request.get_json()
+    user_id, article_url = data['UID'], data['article_url']
+    print('deleteFavored: ', user_id, article_url)
+    status_db, message_db = db.deleteFavored(user_id, article_url)[1]
+    if status_db:
+        return jsonify({"message": "Article deleted from favorites", "status": 200})
+    else:
+        return jsonify({"message": message_db, "status": 401})
+
+
 
 @app.errorhandler(404)
 @app.errorhandler(500)

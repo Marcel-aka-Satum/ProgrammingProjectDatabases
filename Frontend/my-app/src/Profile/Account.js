@@ -1,6 +1,8 @@
 import React, {useContext} from 'react';
 import {userSession} from '../App';
 import {NavLink} from 'react-router-dom'
+import './profileStyle.css'
+
 // import printUserInfo from '../components/User/User';
 
 export default function Account() {
@@ -14,7 +16,7 @@ export default function Account() {
         <div className="container">
             <div className="row justify-content-center">
                 <div className="col-md-12 pt-4">
-                    <h1>My account</h1>
+                    <h1 className={'col-md-3'}>My account</h1>
                     <p>Welcome to your profile「{usersession.user.username}」</p>
                     <hr/>
                     <div className="d-grid col-md-4">

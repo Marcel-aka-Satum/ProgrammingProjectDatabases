@@ -46,7 +46,7 @@ def get_rssfeed(URL: str) -> str:
             """
 
 
-def get_newsarticles(URL: str) -> str:
+def get_newsarticle(URL: str) -> str:
     """
         SELECT * FROM newsaggregator.newsarticles
         WHERE URL = '{URL}';
@@ -284,14 +284,14 @@ def delete_cookie(cookie: str) -> str:
             WHERE cookie = '{cookie}';
             """
 
-def delete_favored(User, URL: str) -> str:
+def delete_favored(UID, URL: str) -> str:
     """
     DELETE FROM newsaggregator.favored
     WHERE _User = {User} AND Article = '{URL}'
     """
     return f"""
             DELETE FROM newsaggregator.favored
-            WHERE _User = {User} AND Article = '{URL}';
+            WHERE _User = {UID} AND Article = '{URL}';
             """
 
 

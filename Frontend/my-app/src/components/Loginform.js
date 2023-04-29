@@ -23,9 +23,8 @@ export default function Loginform() {
             }).then(response => {
                 if (response.status === 200) {
                     SUCCESS(response.data.message)
-                    console.log(response.data)
                     sessionStorage.setItem("token", response.data.token);
-                    usersession.user.login(response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
+                    usersession.user.login(response.data.UID, response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
                     sessionStorage.setItem("user", JSON.stringify(usersession.user))
                     window.location.reload()
                 } else {

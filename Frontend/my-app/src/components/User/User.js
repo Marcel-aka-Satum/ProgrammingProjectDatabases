@@ -4,6 +4,7 @@ export class User {
         this.token = false;
         this.isAdmin = false;
         this.email = "";
+        this.uid = -1;
         this.username = "";
         if ((sessionStorage.getItem("token") !== null) && (sessionStorage.getItem("user") !== null)) {
             this.isLogged = true;
@@ -14,6 +15,7 @@ export class User {
             }
             this.username = userdata["username"]
             this.email = userdata["email"]
+            this.uid = userdata["uid"]
             console.log("constructor of User class called")
         }
     }
@@ -51,8 +53,9 @@ export class User {
         this.username = u
     }
 
-    login(username, email, token, isAdmin){
+    login(uid,username, email, token, isAdmin){
         this.isLogged = true
+        this.uid = uid
         this.username = username
         this.email = email
         this.token = token

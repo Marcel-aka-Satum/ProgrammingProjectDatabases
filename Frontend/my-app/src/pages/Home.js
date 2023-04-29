@@ -48,7 +48,28 @@ function formatSummary(text, limit = 200) {
     }
 }
 
-function ArticleCard({article, onFilterTextChange, logged}) {
+function ArticleCard({article, onFilterTextChange, logged, uid}) {
+    const addFavorite = async (URL) => {
+        try {
+            const response = await axios.post('http://localhost:4444/api/addFavored', {
+                UID: uid,
+                article_url: URL,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (response.data.status === 200) {
+                SUCCESS(response.data.message)
+                console.log(response.data)
+            } else {
+                console.log(response.data.message)
+                ERROR(response.data.message)
+            }
+        } catch (err) {
+            console.log('response:', err)
+            ERROR(err)
+        }
+    }
     const handleAddToFavorites = (event) => {
         const button = event.currentTarget;
 
@@ -63,15 +84,15 @@ function ArticleCard({article, onFilterTextChange, logged}) {
             button.classList.remove(whenLiked);
             button.innerHTML = `<i class="${dislikeBtn}"></i>`;
             button.setAttribute('title', 'Add to favorites');
-            //handleFavorites(article.URL )
-            
+            // remove it from favorites in db
 
         } else {
             button.classList.remove('btn-outline-danger');
             button.classList.add(whenLiked);
             button.innerHTML = `<i class="${likeBtn}"></i>`;
             button.setAttribute('title', 'Remove from favorites');
-
+            // add it to favorites in db
+            addFavorite(article.URL)
         }
     };
 
@@ -176,7 +197,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
 
                 <div className="article-card-footer pb-3 mt-3">
 
-                    <div class="container mt-3">
+                    <div className="container mt-3">
 
                         <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow}
                                 data-toggle="tooltip"
@@ -228,7 +249,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
                                                 title="Copy link"
                                                 onClick={handleClipboard}
                                             >
-                                                <i class="far fa-clipboard" aria-hidden="true"></i>
+                                                <i className="far fa-clipboard" aria-hidden="true"></i>
                                             </button>
                                         </CopyToClipboard>
                                     </div>
@@ -277,33 +298,32 @@ function ArticleCard({article, onFilterTextChange, logged}) {
                             </Modal.Footer>
                         </Modal>
 
-                        {(logged)?
-                        <>
-                        <button
-                            className="btn btn-outline-warning me-2 hide-btn"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="I don't like this"
-                            onClick={handleHideArticle}
-                        >
-                            <i className="far fa-thumbs-down"></i>
-                        </button>
+                        {(logged) ?
+                            <>
+                                <button
+                                    className="btn btn-outline-warning me-2 hide-btn"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="I don't like this"
+                                    onClick={handleHideArticle}
+                                >
+                                    <i className="far fa-thumbs-down"></i>
+                                </button>
 
-                        <button
-                            className="btn btn-outline-danger me-2 hide-btn"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Add to favorites"
-                            onClick={handleAddToFavorites}
-                        >
-                            <i className="far fa-heart"></i>
-                        </button>
-                    </>
-                    :<></>
-                    }
+                                <button
+                                    className="btn btn-outline-danger me-2 hide-btn"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Add to favorites"
+                                    onClick={handleAddToFavorites}
+                                >
+                                    <i className="far fa-heart"></i>
+                                </button>
+                            </>
+                            : <></>
+                        }
 
-                         
-                       
+
                         <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
                     </span>
@@ -315,7 +335,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
         ;
 }
 
-function GenreSection({genre, articles, filterText, onFilterTextChange, logged}) {
+function GenreSection({genre, articles, filterText, onFilterTextChange, logged, uid}) {
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
     }
@@ -351,7 +371,8 @@ function GenreSection({genre, articles, filterText, onFilterTextChange, logged})
             <ul className="articles-row">
                 {filteredArticles.slice(0, 3).map((article) => (
                     <li key={article.URL} className="p-3">
-                        <ArticleCard article={article} onFilterTextChange={onFilterTextChange} logged={logged}/>
+                        <ArticleCard article={article} onFilterTextChange={onFilterTextChange} logged={logged}
+                                     uid={uid}/>
                     </li>
                 ))}
             </ul>
@@ -428,8 +449,6 @@ const Home = () => {
 */
 
 
-
-
         useEffect(() => {
             function compareDatesNewest(a, b) {
                 return new Date(b.Published) - new Date(a.Published);
@@ -499,11 +518,13 @@ const Home = () => {
                 <div className="row">
                     {Array.from(genres).map((genre) => (
                         <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
-                                      onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}/>
+                                      onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
+                                      uid={usersession.user.uid}
+                        />
                     ))}
                 </div>
             </div>
-            
+
         );
     }
 ;

@@ -141,7 +141,8 @@ const Navbar = () => {
                                     </ul>
                                 </div>
                             </>
-                            : (<NavLink to="/login">Login</NavLink>)
+                            : (<NavLink to="/login"><i
+                                className="fas fa-sign-out-alt me-2"></i>Login</NavLink>)
                         }
                     </li>
                 </ul>
