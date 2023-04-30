@@ -7,7 +7,7 @@ def is_connected(func):
     """
 
     def wrapper_func(self, *args) -> tuple:
-        if self.connection is None or self.cursor is None:
+        if self.connection is None:
             print("Database is not connected\nConnecting to database")
             try:
                 self.connect()

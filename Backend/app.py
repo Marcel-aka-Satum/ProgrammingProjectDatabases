@@ -17,7 +17,7 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 
-drop_db = False
+drop_db = True
 if drop_db:
     db.redefine()
     db.populate()
@@ -319,6 +319,21 @@ def getTotalArticles():
     totalarticles = db.getNewsArticles()[1]
     return jsonify({'totalArticles': len(totalarticles)})
 
+@app.route('/api/articles/genres', methods=['GET'])
+@cross_origin()
+def getTopics():
+    Topics = db.getTopics()
+    print(Topics)
+    return jsonify(Topics[1])
+
+@app.route('/api/articles/genre', methods=['POST'])
+@cross_origin()
+def getArticlesTopic():
+    data = request.get_json()
+    topic = data['genre']
+    articles = db.getNewsArticlesTopic(topic)
+    return jsonify(articles[1])
+
 
 ################# Favorite ROUTES #################
 @app.route('/api/favorites', methods=['GET'])
@@ -406,6 +421,10 @@ def DBFavored():
 @app.route('/db/backup')
 def Backup():
     return db.createBackup()[1]
+
+@app.route('/db/topics')
+def Topics():
+    return db.getTopics()[1]
 
 
 if __name__ == '__main__':

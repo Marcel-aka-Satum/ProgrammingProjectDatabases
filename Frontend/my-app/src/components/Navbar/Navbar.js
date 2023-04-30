@@ -8,41 +8,18 @@ import {Squash as Hamburger} from 'hamburger-react'
 
 
 const Navbar = () => {
-    const [articles, setArticles] = useState([])
     const [genres, setGenres] = useState(new Set())
 
     useEffect(() => {
-        const fetchArticles = async () => {
-            const response = await axios.get('http://localhost:4444/api/articles');
+        const fetchGenres = async () => {
+            const response = await axios.get('http://localhost:4444/api/articles/genres');
             // const limitedArticles = response.data.slice(0, 500);
-            console.log('response:', response.data)
-
-            setArticles(response.data);
+            setGenres(response.data);
+            console.log("hello")
+            console.log(response.data)
         };
-        fetchArticles();
+        fetchGenres();
     }, []);
-
-    useEffect(() => {
-        const fetchGenres = () => {
-            const uniqueGenres = new Set();
-            const grouped = {};
-
-            for (const article of articles) {
-                uniqueGenres.add(article.Topic);
-
-                if (!grouped[article.Topic]) {
-                    grouped[article.Topic] = [];
-                }
-                grouped[article.Topic].push(article);
-            }
-
-            setGenres(uniqueGenres);
-        };
-
-        if (articles.length > 0) {
-            fetchGenres();
-        }
-    }, [articles]);
 
     function GenreF({genre}) {
         const formattedGenre = genre.replace(/\s+/g, '-');
@@ -152,4 +129,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

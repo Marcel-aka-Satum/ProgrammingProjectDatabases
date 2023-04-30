@@ -23,6 +23,15 @@ def get_visitor(UID: str) -> str:
             WHERE UID = {UID};
             """
 
+def get_topics() -> str:
+    """
+        SELECT DISTINCT Topic FROM newsaggregator.newsarticles
+    """
+
+    return f"""
+            SELECT DISTINCT Topic FROM newsaggregator.newsarticles
+            """
+
 
 def get_user(email: str) -> str:
     """
@@ -54,6 +63,16 @@ def get_newsarticle(URL: str) -> str:
     return f"""
             SELECT * FROM newsaggregator.newsarticles
             WHERE URL = '{URL}';
+            """
+
+def get_newsarticlesTopic(Topic: str) -> str:
+    """
+        SELECT * FROM newsaggregator.newsarticles
+        WHERE Topic = '{Topic}';
+    """
+    return f"""
+            SELECT * FROM newsaggregator.newsarticles
+            WHERE Topic = '{Topic}';
             """
 
 def get_favorites(URL: str) -> str:
@@ -139,10 +158,10 @@ def get_favored() -> str:
 
 def insert_rssfeed(values: list) -> str:
     """
-        INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
+        INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Genre)
     """
     return f"""
-            INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Topic)
+            INSERT INTO newsaggregator.rssfeeds (URL, Publisher, Genre)
             VALUES ('{values[0]}', '{values[1]}', '{values[2]}')
             """
 
@@ -302,7 +321,7 @@ def update_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
     """
     return f"""
             UPDATE newsaggregator.rssfeeds
-            SET Publisher = '{Publisher}', Topic = '{Topic}'
+            SET Publisher = '{Publisher}', Genre = '{Topic}'
             WHERE URL = '{URL}';
             """
 

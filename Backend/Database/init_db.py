@@ -24,7 +24,7 @@ def initialize_db(cur):
             CREATE TABLE newsaggregator.rssfeeds (
                 URL varchar PRIMARY KEY, 
                 Publisher varchar, 
-                Topic varchar);
+                Genre varchar);
 
 
             CREATE TABLE newsaggregator.newsarticles (
@@ -39,7 +39,7 @@ def initialize_db(cur):
 
             CREATE TABLE newsaggregator.relatedcluster (
                 URL varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
-                Cluster_ID int;
+                Cluster_ID int);
 
 
             CREATE TABLE newsaggregator.visitors (
