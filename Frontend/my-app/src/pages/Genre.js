@@ -3,55 +3,27 @@ import {useLocation} from 'react-router-dom'
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {SUCCESS} from "../components/Helpers/custom_alert";
 import {
-    FacebookShareButton,
-    FacebookShareCount,
-    FacebookIcon,
-    WhatsappShareButton,
-    WhatsappIcon,
-    RedditShareButton,
-    RedditShareCount,
-    RedditIcon,
-    TumblrShareButton,
-    TumblrShareCount,
-    TumblrIcon,
-    TwitterShareButton,
-    TwitterIcon
+    formatTitle,
+    formatDate,
+    formatSummary,
+    handleClipboard,
+    handleHideArticle,
+    PrintNewspaper,
+    shares,
+    extractBaseUrl
+} from "../components/Helpers/general"
 
-} from "react-share";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 
 
-function formatTitle(str) {
-    const words = str.split('-');
-    const formattedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-    return formattedWords.join(' ');
-}
-
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    const day = date.getDate();
-    const month = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day} ${month} ${year}, ${hours}:${minutes}`;
-}
-
-function formatSummary(text, url, limit = 200) {
-    if (text.length <= limit) {
-        return [text, false];
-    } else {
-        const truncatedText = text.slice(0, limit);
-        return [truncatedText.trim() + '...', true];
-    }
-}
-
-
 function ArticleCard({article, onFilterTextChange, logged}) {
+    const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
+    const text = formatSummary(article.Summary);
+
     const handleAddToFavorites = (event) => {
         const button = event.currentTarget;
 
@@ -67,7 +39,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
             button.innerHTML = `<i class="${dislikeBtn}"></i>`;
             button.setAttribute('title', 'Add to favorites');
             //handleFavorites(article.URL )
-            
+
 
         } else {
             button.classList.remove('btn-outline-danger');
@@ -78,65 +50,15 @@ function ArticleCard({article, onFilterTextChange, logged}) {
         }
     };
 
-    const handleHideArticle = () => {
-        SUCCESS('Not implemented yet.');
-    };
-
-    const handleClipboard = () => {
-        SUCCESS('Link is successfully copied to your clipboard');
-    };
-
-
-    const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const text = formatSummary(article.Summary);
-
-    function PrintNewspaper(url) {
-        const URL = url.url;
-
-        const matches = URL.match(/^https?:\/\/(www\.)?([^/?#]+)/);
-
-        const hostname = matches[2];
-
-        return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
-    }
 
 
-    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const handleImageLoad = () => {
         setIsLoading(false);
     };
-
-
-    /*
-    const handleFavorites = async (URL) => {
-        try {
-            await axios.post('http://localhost:4444/api/favorites', {
-                Cookie: "abc",
-                Url: URL,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.status === 200) {
-                    SUCCESS(response.data.message)
-                    console.log(response.data)
-                } else {
-                    console.log("hello")
-                    console.log(response.data.message)
-                    ERROR(response.data.message)
-                }
-            })
-        } catch (err) {
-            console.log('response', err.response.data.message)
-            ERROR(err.response.data.message)
-        }
-    }
-
-*/
 
     return (
         <div className="article-card hide-btn-group">
@@ -236,41 +158,8 @@ function ArticleCard({article, onFilterTextChange, logged}) {
                                         </CopyToClipboard>
                                     </div>
 
-                                    <div className="mt-3" style={{display: 'flex', justifyContent: 'space-between'}}>
-                                        <FacebookShareButton url={article.URL} hashtag='#Newsaggregator'
-                                                             className="mr-3">
-                                            <FacebookIcon size={70} round={true}/>
-                                            <FacebookShareCount url={article.URL}>
-                                                {count => <div className="share-count">{count}</div>}
-                                            </FacebookShareCount>
-                                        </FacebookShareButton>
-                                        <WhatsappShareButton url={article.URL} className="mr-3">
-                                            <WhatsappIcon size={70} round={true}/>
-                                        </WhatsappShareButton>
-                                        <TwitterShareButton
-                                            url={article.URL}
-                                            title="Look which article I found at Newsaggregator"
-                                            hashtags={['Newsaggregator']}
-                                        >
-                                            <TwitterIcon size={70} round/>
-                                        </TwitterShareButton>
-                                        <RedditShareButton url={article.URL}
-                                                           title="Look which article I found at Newsaggregator"
-                                                           className="mr-3">
-                                            <RedditIcon size={70} round={true}/>
-                                            <RedditShareCount url={article.URL}>
-                                                {count => <div className="share-count">{count}</div>}
-                                            </RedditShareCount>
-                                        </RedditShareButton>
-                                        <TumblrShareButton url={article.URL}
-                                                           title="Look which article I found at Newsaggregator"
-                                                           className="mr-3">
-                                            <TumblrIcon size={70} round={true} style={{marginTop: '18px'}}/>
-                                            <TumblrShareCount url={article.URL}>
-                                                {count => <div className="share-count">{count}</div>}
-                                            </TumblrShareCount>
-                                        </TumblrShareButton>
-                                    </div>
+                                    {shares(article)}
+
                                 </div>
                             </Modal.Body>
                             <Modal.Footer>
@@ -280,33 +169,32 @@ function ArticleCard({article, onFilterTextChange, logged}) {
                             </Modal.Footer>
                         </Modal>
 
-                        {(logged)?
-                        <>
-                        <button
-                            className="btn btn-outline-warning me-2 hide-btn"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="I don't like this"
-                            onClick={handleHideArticle}
-                        >
-                            <i className="far fa-thumbs-down"></i>
-                        </button>
+                        {(logged) ?
+                            <>
+                                <button
+                                    className="btn btn-outline-warning me-2 hide-btn"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="I don't like this"
+                                    onClick={handleHideArticle}
+                                >
+                                    <i className="far fa-thumbs-down"></i>
+                                </button>
 
-                        <button
-                            className="btn btn-outline-danger me-2 hide-btn"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Add to favorites"
-                            onClick={handleAddToFavorites}
-                        >
-                            <i className="far fa-heart"></i>
-                        </button>
-                    </>
-                    :<></>
-                    }
+                                <button
+                                    className="btn btn-outline-danger me-2 hide-btn"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="Add to favorites"
+                                    onClick={handleAddToFavorites}
+                                >
+                                    <i className="far fa-heart"></i>
+                                </button>
+                            </>
+                            : <></>
+                        }
 
-                         
-                       
+
                         <span className="article-card-date float-end p-2 pb-4">
                         <i>{formatDate(article.Published)}</i>
                     </span>
@@ -317,7 +205,6 @@ function ArticleCard({article, onFilterTextChange, logged}) {
     )
         ;
 }
-
 
 const Home = () => {
     const genre = useLocation().pathname.split('/')[2];
@@ -357,14 +244,6 @@ const Home = () => {
     const handleSortChange = (e) => {
         setSortOption(e.target.value);
     };
-
-    function extractBaseUrl(url) {
-        const matches = url.match(/^https?:\/\/(www\.)?([^/?#]+)/);
-
-        const hostname = matches[2];
-
-        return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
-    }
 
     const filteredArticles = articles.filter((article) => {
         const title = article.Title.toLowerCase();
@@ -434,7 +313,8 @@ const Home = () => {
             <ul className="articles-row">
                 {articlesToDisplay.map((article) => (
                     <li key={article.URL} className="p-3">
-                        <ArticleCard article={article} onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}/>
+                        <ArticleCard article={article} onFilterTextChange={handleFilterTextChange}
+                                     logged={usersession.user.isLogged}/>
                     </li>
                 ))}
             </ul>

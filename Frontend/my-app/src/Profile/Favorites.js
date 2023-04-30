@@ -1,54 +1,18 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {NavLink} from 'react-router-dom'
 import '../pages/Home.css'
 import {SUCCESS, ERROR} from "../components/Helpers/custom_alert";
+import {formatDate, formatSummary, formatTitle, PrintNewspaper, extractBaseUrl} from "../components/Helpers/general";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {userSession} from "../App";
 
 
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    const day = date.getDate();
-    const month = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(date);
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day} ${month} ${year}, ${hours}:${minutes}`;
-}
-
-function formatTitle(str) {
-    const words = str.split('-');
-    const formattedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-    return formattedWords.join(' ');
-}
-
-function formatSummary(text, limit = 200) {
-    if (text.length <= limit) {
-        return [text, false];
-    } else {
-        const truncatedText = text.slice(0, limit);
-        return [truncatedText.trim() + '...', true];
-    }
-}
-
-function PrintNewspaper(url) {
-    const URL = url.url;
-
-    const matches = URL.match(/^https?:\/\/(www\.)?([^/?#]+)/);
-
-    const hostname = matches[2];
-
-    return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
-}
-
-
 function ArticleCard({article, removeFavorite, filterText}) {
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
+    const text = formatSummary(article.Summary);
 
     const handleImageLoad = () => {
         setIsLoading(false);
     };
-    const text = formatSummary(article.Summary);
 
     return (
         <div className="article-card hide-btn-group">
@@ -155,7 +119,6 @@ export default function Account() {
         }
         , [favorites]);
 
-    console.log('articles', articles)
     useEffect(() => {
         function compareDatesNewest(a, b) {
             return new Date(b.Published) - new Date(a.Published);
@@ -180,13 +143,6 @@ export default function Account() {
         setFilterText(newText);
     };
 
-    function extractBaseUrl(url) {
-        const matches = url.match(/^https?:\/\/(www\.)?([^/?#]+)/);
-
-        const hostname = matches[2];
-
-        return (hostname.startsWith("www.") ? hostname.substring(4) : hostname)
-    }
 
     const filteredArticles = articles.filter((article) => {
         const title = article.Title.toLowerCase();
