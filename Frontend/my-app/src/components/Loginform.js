@@ -4,15 +4,21 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios';
 import {userSession} from "../App"
 import {SUCCESS, ERROR} from "./Helpers/custom_alert";
-
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Loginform() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [captchaValue, setCaptchaValue] = useState(null);
     let usersession = useContext(userSession);
+
+    // TODO: enable this to test
+    // const recaptchaRef = React.createRef();
 
     const handleLogIn = async (e) => {
         e.preventDefault();
+        //TODO: Enable this to test
+        // if (captchaValue) {
         try {
             await axios.post('http://localhost:4444/api/login', {
                 Email: email,
@@ -36,12 +42,21 @@ export default function Loginform() {
             console.log('response', err.response.data.message)
             ERROR(err.response.data.message)
         }
+        // TODO: enable this to test
+        // }
+        // else {
+        //     ERROR("Please complete the CAPTCHA verification");
+        // }
     }
 
-    function redirectToAccount(){
+    function redirectToAccount() {
         window.location.href = "/"
     }
-    
+
+    function onChange(value) {
+        setCaptchaValue(value);
+    }
+
     return (
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
@@ -93,6 +108,16 @@ export default function Loginform() {
                                             <label htmlFor="floatingPassword">Password</label>
                                         </div>
                                     </div>
+
+                                    {/*TODO: Enable this to test*/}
+                                    {/*<div className="text-center mb-3">*/}
+                                    {/*    <ReCAPTCHA*/}
+                                    {/*        ref={recaptchaRef}*/}
+                                    {/*        sitekey="6Lei_c4lAAAAAJnoVDCICmLZqRnqrehQfeYAmXht"*/}
+                                    {/*        onChange={onChange}*/}
+                                    {/*    />*/}
+                                    {/*</div>*/}
+
                                     <div className="text-center">
                                         <button type="submit" onClick={handleLogIn}
                                                 className="btn btn-outline-secondary px-5 mb-5 w-100 btn-animation">Login

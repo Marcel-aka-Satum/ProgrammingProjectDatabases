@@ -12,6 +12,8 @@ from Database.ui_db import DBConnection
 from Helpers import helpers as h
 from Helpers.ErrorDetectionRoutes import *
 
+from log import logger
+
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -23,6 +25,8 @@ if drop_db:
     db.populate()
     # db.loadBackup("230417_19_36.txt")
     # scraper()
+    # clear logger file
+    logger.warning("Database dropped and redefined")
 
 # Set up the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
@@ -100,6 +104,7 @@ def register_user():
 
     # access_token = create_access_token(identity=email)
 
+    logger.info(f"Successful registration: email={email}")
     return jsonify({"message": f"Welcome {username}",
                     "token": encoded_jwt}), 200
 
@@ -115,12 +120,14 @@ def login_user():
         return jsonify({"message": "please fill in all fields"}), 401
 
     if user_exists[0] in [None, False]:
+        logger.info(f"Failed login attempt: email={email} | password={password}, reason=user does not exist")
         return jsonify({"message": "user does not exist."}), 401
 
     # check if password is correct compared to hashed password in db
     result = bcrypt.checkpw(password.encode('utf-8'), user_exists[1]["Password"].encode('utf-8'))
 
     if not result:
+        logger.info(f"Failed login attempt: email={email} | password={password}, reason=incorrect password")
         return jsonify({"message": "password is incorrect"}), 401
     else:
         # jwt token
@@ -129,7 +136,7 @@ def login_user():
                                       datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
                                  app.config["JWT_SECRET_KEY"])
         # access_token = create_access_token(identity=email)
-
+        logger.info(f"Successful login: email={email}")
         return jsonify({
             "message": f"Authorized > Welcome Back",
             "UID": user_exists[1]['UID'],
@@ -176,13 +183,11 @@ def change_password():
         if new_password != confirm_password:
             return jsonify({"message": "passwords do not match", "status": 401})
 
-        # status_db, message_db = db.updatePassword(email, h.create_hash(new_password))[1]
-        # if not status_db:
-        #     return jsonify({"message": message_db}), 401
-
+        logger.info(f"Password changed: email={email}")
         return jsonify({
             "message": f"Password matched", "status": 200
         })
+
 
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
@@ -221,6 +226,7 @@ def addUser():
     elif status_pwd_val == 200:
         status_db, message_db = db.addUser(db.generateUID()[1], username, email, h.create_hash(password), is_admin)[1]
         if status_db:
+            logger.info(f"User added: username={username} | email={email}")
             return jsonify({"message": "User added successfully", "status": 200})
         else:
             return jsonify({"message": message_db, "status": 401})
@@ -236,6 +242,7 @@ def updateUser(id):
 
     status, message = db.updateUser(id, username, email, h.create_hash(password), is_admin)[1]
     if status:
+        logger.info(f"User updated: username={username} | email={email}")
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
     else:
         return jsonify({"message": message, "status": 401})
@@ -249,6 +256,7 @@ def deleteUser(id):
         return jsonify({"message": f"USER ({id}) Not Found", "status": 404})
     else:
         db.deleteUser(id)
+        logger.info(f"User deleted: username={user[1]['Username']} | email={user[1]['Email']}")
         return jsonify({"message": f"USER ({id}) Deleted Successfully", "status": 200})
 
 
@@ -295,6 +303,7 @@ def updateRSSFeed():
 
     status_db, message_db = db.updateRSSFeed(url, publisher, topic)[1]
     if status_db:
+        logger.info(f"RSS Feed updated: url={url} | publisher={publisher} | topic={topic}")
         return jsonify({"message": "RSS Feed updated successfully", "status": 200})
     else:
         return jsonify({"message": message_db, "status": 401})
@@ -306,6 +315,7 @@ def deleteRSSFeed():
     data = request.get_json()
     status_db, message_db = db.deleteRSSFeed(data['URL'])[1]
     if status_db:
+        logger.info(f"RSS Feed deleted: url={data['URL']}")
         return jsonify({"message": "RSS Feed deleted successfully", "status": 200})
     else:
         return jsonify({"message": message_db, "status": 401})
@@ -348,11 +358,13 @@ def getTotalArticles():
     totalarticles = db.getNewsArticles()[1]
     return jsonify({'totalArticles': len(totalarticles)})
 
+
 @app.route('/api/articles/genres', methods=['GET'])
 @cross_origin()
 def getTopics():
     Topics = db.getTopics()
     return jsonify(Topics[1])
+
 
 @app.route('/api/articles/genre', methods=['POST'])
 @cross_origin()
@@ -405,6 +417,7 @@ def deleteAllFavored():
         return jsonify({"message": "All Articles deleted from favorites", "status": 200})
     else:
         return jsonify({"message": message_db, "status": 401})
+
 
 ################# OTHERS #################
 @app.errorhandler(404)
