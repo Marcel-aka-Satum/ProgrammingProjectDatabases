@@ -27,7 +27,6 @@ class DBConnection:
         @brief: default constructor.
         """
         self.connection = None
-        self.cursor = None
 
     def __del__(self):
         """
@@ -41,7 +40,7 @@ class DBConnection:
         """
         @brief: recreates the database, the database will be empty.
         """
-        init_db.initialize_db(self.cursor)
+        init_db.initialize_db(self.connection.cursor())
 
     @func.is_connected
     @func.getCWD
@@ -49,7 +48,7 @@ class DBConnection:
         """
         @brief: populates the database with hardcoded data.
         """
-        populate_db.populate_db(self.connection, self.cursor, cwd)
+        populate_db.populate_db(self.connection, self.connection.cursor(), cwd)
 
     def connect(self) -> bool:
         """
@@ -58,14 +57,13 @@ class DBConnection:
         try:
             self.connection = psycopg2.connect(user="postgres")
             self.connection.autocommit = True
-            self.cursor = self.connection.cursor()
+            cursor = self.connection.cursor()
         except (Exception, psycopg2.DatabaseError) as err:
             print(err)
             return False
-        finally:
-            if self.cursor == None:
-                return False
-            return True
+        if cursor is None:
+            return False
+        return True
 
     @func.is_connected
     @func.getCWD
@@ -105,6 +103,7 @@ class DBConnection:
         """
         self.redefine()
         try:
+            cursor = self.connection.cursor()
             d = {"rssfeed": query_db.insert_rssfeed, "newsaricles" : query_db.insert_newsarticle ,"visitor": query_db.insert_visitor,
                  "users": query_db.insert_user, "cookies": query_db.insert_cookie,
                  "hasclicked": query_db.insert_hasclicked, "favored": query_db.insert_favored}
@@ -115,7 +114,7 @@ class DBConnection:
                 for j in data:
                     insert = d[j]
                     for k in data[j]:
-                        self.cursor.execute(insert(k))
+                        cursor.execute(insert(k))
         except Exception as e:
             print("Can not load backup")
             print(e)
@@ -128,8 +127,9 @@ class DBConnection:
         @brief: gegnerate a unique UID that can be used in the Database.
         """
         if self.staticVar < 0:
-            self.cursor.execute(query_db.get_maxUID())
-            self.staticVar = self.cursor.fetchall()[0][0] + 1
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.get_maxUID())
+            self.staticVar = cursor.fetchall()[0][0] + 1
         while self.getVisitor(self.staticVar)[1][0]:
             self.staticVar += 1
         UID = self.staticVar
@@ -181,8 +181,9 @@ class DBConnection:
         """
         @brief: get the UID of the Visitor if it exists.
         """
-        self.cursor.execute(query_db.get_visitor(UID))
-        data = self.cursor.fetchall()
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_visitor(UID))
+        data = cursor.fetchall()
         return len(data) == 1, UID
 
     """
@@ -191,8 +192,9 @@ class DBConnection:
 
     @func.is_connected
     def getUser(self, email: str) -> tuple:
-        self.cursor.execute(query_db.get_user(email))
-        user_data = self.cursor.fetchone()
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_user(email))
+        user_data = cursor.fetchone()
         if user_data is None:
             return False, ""
 
@@ -210,8 +212,9 @@ class DBConnection:
         """
         @brief: get the article from the database with a specific url, if exists return True, else False
         """
-        self.cursor.execute(query_db.get_newsarticle(url))
-        data = self.cursor.fetchone()
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_newsarticle(url))
+        data = cursor.fetchone()
         if data is None:
             return False, ""
 
@@ -233,7 +236,8 @@ class DBConnection:
         """
         @brief: update a newsarticle in the database.
         """
-        self.cursor.execute(query_db.update_newsarticle(url, title, summary, publisher, image, rss_url, topic))
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.update_newsarticle(url, title, summary, publisher, image, rss_url, topic))
 
     @func.is_connected
     def updateUser(self, id: int, username: str, email: str, password: str, is_admin: bool) -> tuple:
@@ -241,7 +245,8 @@ class DBConnection:
         @brief: update a user in the database.
         """
         try:
-            self.cursor.execute(query_db.update_user(id, username, email, password, is_admin))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.update_user(id, username, email, password, is_admin))
             return True, "success"
         except psycopg2.errors.UniqueViolation as e:
             if "users_email_key" in str(e):
@@ -257,7 +262,8 @@ class DBConnection:
         @brief: update a RSSFeed in the database.
         """
         try:
-            self.cursor.execute(query_db.update_rssfeed(url, publisher, topic))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.update_rssfeed(url, publisher, topic))
             return True, "success"
         except psycopg2.errors.UniqueViolation as e:
             if "rssfeeds_pkey" in str(e):
@@ -272,7 +278,8 @@ class DBConnection:
     @func.is_connected
     def deleteRSSFeed(self, URL: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_rssfeed(URL))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_rssfeed(URL))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
@@ -280,7 +287,8 @@ class DBConnection:
     @func.is_connected
     def deleteNewsArticle(self, URL: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_newsarticle(URL))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_newsarticle(URL))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
@@ -288,7 +296,8 @@ class DBConnection:
     @func.is_connected
     def deleteVisitor(self, UID: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_visitor(UID))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_visitor(UID))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
@@ -296,7 +305,8 @@ class DBConnection:
     @func.is_connected
     def deleteUser(self, UID: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_user(UID))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_user(UID))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
@@ -304,14 +314,16 @@ class DBConnection:
     @func.is_connected
     def deleteCookie(self, UID: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_cookie(UID))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_cookie(UID))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
     @func.is_connected
     def deleteFavored(self, UID: str, URL: str) -> tuple:
         try:
-            self.cursor.execute(query_db.delete_favored(UID, URL))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_favored(UID, URL))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
@@ -324,7 +336,8 @@ class DBConnection:
         @brief: add a RSSFeed to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_rssfeed([URL, Publisher, Topic]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_rssfeed([URL, Publisher, Topic]))
             return True, "success"
         except psycopg2.errors.UniqueViolation as e:
             if "rssfeeds_pkey" in str(e):
@@ -340,7 +353,8 @@ class DBConnection:
         @brief: add a NewsArticle to the database.
         """
         try:
-            self.cursor.execute(*query_db.insert_newsarticle([url, title, summary, publisher, image, rss_url, topic]))
+            cursor = self.connection.cursor()
+            cursor.execute(*query_db.insert_newsarticle([url, title, summary, publisher, image, rss_url, topic]))
             return True, "success"
         except Exception as e:
             return False, str(e)
@@ -351,7 +365,8 @@ class DBConnection:
         @brief: add a Visitor to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_visitor([UID]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_visitor([UID]))
             return True, "success"
         except Exception as e:
             return False, str(e)
@@ -364,8 +379,9 @@ class DBConnection:
         """
         try:
             print('inserting user:', UID, Username, Email, Password, Is_admin)
-            self.cursor.execute(query_db.insert_visitor([UID]))
-            self.cursor.execute(query_db.insert_user([UID, Username, Email, Password, Is_admin]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_visitor([UID]))
+            cursor.execute(query_db.insert_user([UID, Username, Email, Password, Is_admin]))
             return True, "success"
         except psycopg2.errors.UniqueViolation as e:
             if "users_email_key" in str(e):
@@ -381,7 +397,8 @@ class DBConnection:
         @brief: add a Cookie to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_cookie([cookie, UID]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_cookie([cookie, UID]))
             return True, "success"
         except Exception as e:
             return False, str(e)
@@ -392,7 +409,8 @@ class DBConnection:
         @brief: add a user interaction to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_hasclicked([UID, URL]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_hasclicked([UID, URL]))
             return True, "success"
         except Exception as e:
             return False, str(e)
@@ -403,7 +421,8 @@ class DBConnection:
         @brief: add a favored article of a user to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_favored([UID, URL]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_favored([UID, URL]))
             return True, "success"
 
         except psycopg2.errors.UniqueViolation as e:
@@ -421,7 +440,8 @@ class DBConnection:
         @brief: add a favorite article of a user to the database.
         """
         try:
-            self.cursor.execute(query_db.insert_favorite([Cookie, URL]))
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_favorite([Cookie, URL]))
             return True, "success"
         except Exception as e:
             return False, str(e)
@@ -434,9 +454,10 @@ class DBConnection:
         """
         @brief: get the table RSSFeed.
         """
-        self.cursor.execute(query_db.get_rssfeeds())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_rssfeeds())
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append({"URL": i[0], "Publisher": i[1], "Topic": i[2]})
         return data
 
@@ -445,9 +466,10 @@ class DBConnection:
         """
         @brief: get the table NewsArticles.
         """
-        self.cursor.execute(query_db.get_newsarticles())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_newsarticles())
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append(
                 {"URL": i[0], "Title": i[1], "Summary": i[2], "Published": i[3], "Image": i[4], "Topic": i[5],
                  "RSS_URL": i[6]})
@@ -458,9 +480,10 @@ class DBConnection:
         """
         @brief: get the table NewsArticles.
         """
-        self.cursor.execute(query_db.get_favorites(URL))
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_favorites(URL))
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append(
                 {"URL": i[0], "Title": i[1], "Summary": i[2], "Published": i[3], "Image": i[4], "Topic": i[5],
                  "RSS_URL": i[6]})
@@ -471,9 +494,10 @@ class DBConnection:
         """
         @brief: get the table Visitors.
         """
-        self.cursor.execute(query_db.get_visitors())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_visitors())
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append({"UID": i[0]})
         return data
 
@@ -482,9 +506,10 @@ class DBConnection:
         """
         @brief: get the table Users.
         """
-        self.cursor.execute(query_db.get_users())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_users())
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append({"UID": i[0], "Username": i[1], "Email": i[2], "Password": i[3], "Is_Admin": i[4]})
         return data
 
@@ -493,9 +518,10 @@ class DBConnection:
         """
         @brief: get the table Cookies.
         """
-        self.cursor.execute(query_db.get_cookies())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_cookies())
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append({"cookie": i[0], "UID": i[1]})
         return data
 
@@ -504,9 +530,10 @@ class DBConnection:
         """
         @brief: get the table HasClicked.
         """
-        self.cursor.execute(query_db.get_hasclicked())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_hasclicked())
         data = []
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data.append({"User": i[0], "Article": i[1]})
         return data
 
@@ -515,9 +542,10 @@ class DBConnection:
         """
         @brief: get the table favored.
         """
-        self.cursor.execute(query_db.get_favored())
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_favored())
         data = defaultdict(list)
-        for i in self.cursor.fetchall():
+        for i in cursor.fetchall():
             data[i[0]].append(i[1])
         return data
 

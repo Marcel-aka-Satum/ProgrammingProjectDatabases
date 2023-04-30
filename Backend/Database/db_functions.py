@@ -11,7 +11,7 @@ def is_connected(func):
             print("Database is not connected\nConnecting to database")
             try:
                 self.connect()
-                if self.connection is None or self.cursor is None:
+                if self.connection is None:
                     raise Exception("Database is not connected")
             except Exception as e:
                 print("Can not connect to database")
