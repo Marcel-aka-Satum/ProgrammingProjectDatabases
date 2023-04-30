@@ -191,7 +191,7 @@ class DBConnection:
             "URL": data[0],
             "Title": data[1],
             "Summary": data[2],
-            "Publisher": data[3],
+            "Published": data[3],
             "Image": data[4],
             "RSS_URL": data[5],
             "Topic": data[6]

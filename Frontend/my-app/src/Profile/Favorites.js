@@ -88,7 +88,7 @@ function ArticleCard({article, removeFavorite, filterText}) {
 
                 <div className="article-card-content" dangerouslySetInnerHTML={{__html: text[0]}}/>
 
-                <i className={'float-end pb-2'}>{formatDate(article.Publisher)}</i>
+                <i className={'float-end pb-2'}>{formatDate(article.Published)}</i>
                 <button className="btn btn-outline-danger w-100" data-toggle="tooltip"
                         data-placement="top"
                         title="Remove from favorites"
@@ -111,47 +111,51 @@ export default function Account() {
     const [filterText, setFilterText] = useState("");
     const [sortOption, setSortOption] = useState("Sort By");
 
-    async function fetchFavorites() {
-        const r_favorites = await fetch('http://localhost:4444/api/favorites')
-        const data = await r_favorites.json();
-        const data_user = data.favorites[usersession.user.uid]
-        if (data_user) {
-            setFavorites(data_user)
-        }
-    }
 
     useEffect(() => {
+        async function fetchFavorites() {
+            const r_favorites = await fetch('http://localhost:4444/api/favorites')
+            const data = await r_favorites.json();
+            const data_user = data.favorites[usersession.user.uid]
+            if (data_user) {
+                setFavorites(data_user)
+            }
+        }
+
         fetchFavorites();
     }, []);
 
-    async function fetchArticles() {
-        //     loop over favorites and do a fetch for each article
-        for (let i = 0; i < favorites.length; i++) {
-            let a_url = favorites[i]
-            const r_article = await fetch('http://localhost:4444/api/get_article', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({article_url: a_url}),
-            });
-            const data = await r_article.json();
-            if (data.article) {
-                // if article url not in there add it
-                const isArticleInArray = articles.some((article) => article.url === data.article.url);
-
-                if (!isArticleInArray) {
-                    // If the article is not in the array, add it
-                    setArticles((articles) => [...articles, data.article[1]]);
-                }
-            }
-        }
-    }
 
     useEffect(() => {
+            async function fetchArticles() {
+                //     loop over favorites and do a fetch for each article
+                for (let i = 0; i < favorites.length; i++) {
+                    let a_url = favorites[i]
+                    const r_article = await fetch('http://localhost:4444/api/get_article', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({article_url: a_url}),
+                    });
+                    const data = await r_article.json();
+                    if (data.article) {
+                        // if article url not in there add it
+                        const isArticleInArray = articles.some((article) => article.url === data.article.url);
+
+                        if (!isArticleInArray) {
+                            // If the article is not in the array, add it
+                            setArticles((articles) => [...articles, data.article[1]]);
+                        }
+                    }
+                }
+            }
+
             fetchArticles();
         }
         , [favorites]);
+
+    console.log('articles', articles)
     useEffect(() => {
         function compareDatesNewest(a, b) {
             return new Date(b.Published) - new Date(a.Published);
@@ -200,11 +204,10 @@ export default function Account() {
             body: JSON.stringify({article_url: url, UID: usersession.user.uid}),
         });
         const data = await response.json();
-
         if (data.status === 200) {
             SUCCESS('Successfully removed from favorites')
-
-
+            setFavorites(favorites.filter((item) => item !== url))
+            setArticles(articles.filter((item) => item.URL !== url))
         } else {
             ERROR('Failed to remove from favorites')
         }
@@ -214,7 +217,7 @@ export default function Account() {
     return (
         <div className="container-lg pt-5">
             <h1>
-                My Favorites
+                My Favorites (im not gay)
                 <>
                     <i className="fas fa-heart ps-3" style={{color: 'red'}}/>
                     <span className="ps-2">{favorites.length}</span>
