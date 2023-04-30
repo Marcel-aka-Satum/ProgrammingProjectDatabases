@@ -67,14 +67,13 @@ function ArticleCard({article, removeFavorite, filterText}) {
 
 
 export default function Account() {
-    let usersession = useContext(userSession);
-
     const [favorites, setFavorites] = useState([])
     const [articles, setArticles] = useState([])
 
     const [filterText, setFilterText] = useState("");
-    const [sortOption, setSortOption] = useState("Sort By");
+    const [sortOption, setSortOption] = useState("newest");
 
+    let usersession = useContext(userSession);
 
     useEffect(() => {
         async function fetchFavorites() {
@@ -170,6 +169,18 @@ export default function Account() {
     }
 
 
+    const articlesToDisplay = filteredArticles
+        .sort((a, b) => {
+            const dateA = new Date(a.Published);
+            const dateB = new Date(b.Published);
+            if (sortOption === "oldest") {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
+        })
+
+
     return (
         <div className="container-lg pt-5">
             <h1>
@@ -222,7 +233,7 @@ export default function Account() {
             <div className="row">
                 <ul className="articles-row">
 
-                    {filteredArticles.map((article) => (
+                    {articlesToDisplay.map((article) => (
                         <li key={article.URL} className="p-3">
                             <ArticleCard article={article} removeFavorite={removeFavorite}
                                          filterText={handleFilterTextChange}/>

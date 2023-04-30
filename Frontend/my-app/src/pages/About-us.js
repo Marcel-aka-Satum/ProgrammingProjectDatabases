@@ -1,38 +1,106 @@
 import {Container, Row, Col} from 'react-bootstrap';
+import {FaGithub, FaTwitter, FaLinkedin, FaMailBulk} from 'react-icons/fa';
 
-export default function About_us() {
+const teamMembers = [
+    {
+        name: 'Nabil El Ouaamari',
+        github: 'https://github.com/SunajCS',
+        linkedin: 'https://www.linkedin.com/in/nabil-elouaamari',
+        mail: 'mailto:elouaamarinabil@gmail.com'
+    },
+    {
+        name: 'Simon Olivier',
+        github: 'https://github.com/Sisooli4',
+    },
+    {
+        name: 'Robbe Teughels',
+        github: 'https://github.com/RO02222',
+    },
+    {
+        name: 'Pim Van den Bosch',
+        github: 'https://github.com/Nabla7',
+    },
+    {
+        name: 'Marceli Wilczynski',
+        github: 'https://github.com/Marcel-aka-Satum',
+    }
+];
+
+
+export default function AboutUs() {
     return (
         <Container>
             <Row className="justify-content-center">
                 <Col md={8}>
                     <h1 className="text-center mt-3">About Us</h1>
+                    <h2>The Purpose</h2>
                     <p className="lead">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam tempus malesuada magna, eget
-                        euismod nisi molestie at. Nullam volutpat laoreet ante, quis varius sapien luctus vel. Sed vel
-                        enim quis sapien mollis fringilla. Sed vel blandit mi, in congue urna. Sed bibendum sapien nec
-                        nisl imperdiet, ac bibendum felis elementum. Praesent auctor, tortor in molestie malesuada, sem
-                        nibh dapibus nibh, eu cursus quam ipsum ut nunc.
+                        Our team was formed for the purpose of completing the programming project databases, a
+                        comprehensive
+                        software project developed in a team environment. We aimed to apply the theory from the
+                        Introduction to
+                        Databases course into practice, work independently in a team, plan tasks, think creatively to
+                        solve
+                        problems, report on progress and choices, and write high-quality software that is usable,
+                        efficient, and
+                        scalable.
                     </p>
+                    <h2>Functionalities</h2>
                     <p className="lead">
-                        Sed eu tellus ut quam tempor pharetra. Vestibulum dignissim est sit amet luctus vulputate.
-                        Nullam pellentesque ultrices metus, ac posuere urna congue id. Maecenas at neque vestibulum,
-                        volutpat neque ac, posuere urna. Praesent volutpat faucibus elit, nec maximus urna bibendum sed.
-                        Aenean lobortis, ante in posuere feugiat, erat turpis aliquet eros, ac auctor velit velit at
-                        eros. Sed blandit urna a quam convallis consectetur. Donec consequat libero non sem scelerisque,
-                        quis ultrices est sagittis. Integer cursus efficitur magna, a eleifend orci pellentesque eget.
-                        Aliquam sodales velit vel dolor pellentesque, vel egestas lacus malesuada. Suspendisse et
-                        bibendum odio.
+                        We were tasked with developing a web application that gathers news from various sources and
+                        displays it to
+                        users. The application displays only titles, descriptions, and photos of articles, and users can
+                        read the
+                        full articles on the respective news sources. Articles are displayed in a simple layout, such as
+                        a list,
+                        and a recommender system determines the order in which articles are displayed to users. We used
+                        a
+                        recency-based recommender and collaborative filtering to determine the relevance of articles to
+                        users. Our
+                        task was complicated by the fact that multiple news sources may publish very similar articles,
+                        and only one
+                        version of these articles should be displayed, with links to the different news sources.
                     </p>
-                    <p className="lead">
-                        Vivamus malesuada dapibus velit sit amet euismod. Nulla facilisi. Donec vitae orci sit amet
-                        sapien sodales molestie. Sed rutrum lacinia elit, ac blandit odio consectetur sed. Donec
-                        suscipit ipsum quis mi volutpat, sed pharetra enim vulputate. Sed dictum nisl vel nunc bibendum
-                        laoreet. Sed non felis vel velit placerat bibendum. Nulla vitae tellus ac leo tristique posuere.
-                        Sed gravida eget lorem quis aliquam. Integer quis justo sed magna finibus venenatis a vitae
-                        dolor. Aenean lobortis dolor eu nulla pellentesque suscipit. Fusce et urna ex. Nulla facilisi.
-                        Sed sit amet metus bibendum, placerat ex eu, pretium urna. Mauris consectetur eros id fringilla
-                        imperdiet. Curabitur eu risus vel ipsum accumsan ornare.
-                    </p>
+                    <h2 className="text-center">The Team</h2>
+                    <div className="row">
+                        {teamMembers.map(member => (
+                            <div key={member.name} className="col-md-6 mb-3">
+                                <div className="card h-100">
+                                    <div className="card-body d-flex flex-column justify-content-between">
+                                        <h5 className="card-title">{member.name}</h5>
+                                        <div>
+                                            {member.github && (
+                                                <a href={member.github} target="_blank" rel="noopener noreferrer"
+                                                   className="me-2">
+                                                    <FaGithub/>
+                                                </a>
+                                            )}
+                                            {member.twitter && (
+                                                <a href={member.twitter} target="_blank" rel="noopener noreferrer"
+                                                   className="me-2">
+                                                    <FaTwitter/>
+                                                </a>
+                                            )}
+                                            {member.linkedin && (
+                                                <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
+                                                   className="me-2">
+                                                    <FaLinkedin/>
+                                                </a>
+                                            )}
+                                            {member.mail && (
+                                                <a href={member.mail} target="_blank" rel="noopener noreferrer"
+                                                   className="me-2">
+                                                    <FaMailBulk/>
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+
                 </Col>
             </Row>
         </Container>

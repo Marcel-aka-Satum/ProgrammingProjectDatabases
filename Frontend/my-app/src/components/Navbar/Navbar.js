@@ -22,7 +22,7 @@ const Navbar = () => {
     function GenreF({genre}) {
         const formattedGenre = genre.replace(/\s+/g, '-');
         return (
-            <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
+            <li><NavLink to={`genre/${formattedGenre}`}>{formattedGenre}</NavLink></li>
         );
     }
 

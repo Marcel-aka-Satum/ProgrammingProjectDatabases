@@ -20,7 +20,7 @@ import {userSession} from '../App'
 import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 
 
-function ArticleCard({article, onFilterTextChange, logged,uid, favorites, setFavorites}) {
+function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
@@ -74,9 +74,30 @@ function ArticleCard({article, onFilterTextChange, logged,uid, favorites, setFav
 
 
     const handleImageLoad = () => {
-        setIsLoading(false);
+        // If the article image is already loaded or the loading animation has already been removed, do nothing
+        if (!isLoading || article.Image === null) {
+            return;
+        }
+
+        let timeoutId = null;
+
+        // Set a timeout of 5 seconds to remove the loading animation and display a placeholder image
+        timeoutId = setTimeout(() => {
+            setIsLoading(false);
+            article.Image = null; // Set the article image to null to trigger the placeholder image
+            clearTimeout(timeoutId);
+        }, 5000);
+
+        // If the image finishes loading before the timeout, clear the timeout
+        const img = new Image();
+        img.onload = () => {
+            clearTimeout(timeoutId);
+            setIsLoading(false);
+        };
+        img.src = article.Image;
     };
 
+    console.log('article:', article.Title, ' has image:', article.Image)
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
@@ -297,6 +318,9 @@ const Home = () => {
     const handleSortChange = (e) => {
         setSortOption(e.target.value);
     };
+    const handleFilterTextChange = (newText) => {
+        setFilterText(newText);
+    };
 
     const filteredArticles = articles.filter((article) => {
         const title = article.Title.toLowerCase();
@@ -306,21 +330,25 @@ const Home = () => {
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
 
-    // slice the array to get the first 10 articles
-    const articlesToDisplay = filteredArticles.slice(0, numDisplayedArticles);
+    const articlesToDisplay = filteredArticles
+        .sort((a, b) => {
+            const dateA = new Date(a.Published);
+            const dateB = new Date(b.Published);
+            if (sortOption === "oldest") {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
+        })
+        .slice(0, numDisplayedArticles);
 
     const handleLoadMore = () => {
         setNumDisplayedArticles(numDisplayedArticles + 20);
     };
 
-    const handleFilterTextChange = (newText) => {
-        setFilterText(newText);
-    };
-
-
     return (
         <div className="row">
-            <h2 className="text-center text-dark mt-5">Articles for {formatTitle(genre)}</h2>
+            <h2 className="text-center text-dark mt-5">{formatTitle(genre)}</h2>
             <div className="col-12 d-flex justify-content-center">
                 <div className="form-group w-auto pb-3 d-flex justify-content-between">
                     <input
@@ -367,7 +395,8 @@ const Home = () => {
                 {articlesToDisplay.map((article) => (
                     <li key={article.URL} className="p-3">
                         <ArticleCard article={article} onFilterTextChange={handleFilterTextChange}
-                                     logged={usersession.user.isLogged} uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}/>
+                                     logged={usersession.user.isLogged} uid={usersession.user.uid} favorites={favorites}
+                                     setFavorites={setFavorites}/>
                     </li>
                 ))}
             </ul>
