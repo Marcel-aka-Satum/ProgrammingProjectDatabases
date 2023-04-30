@@ -327,6 +327,15 @@ class DBConnection:
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
 
+    @func.is_connected
+    def deleteAllFavored(self, UID: str) -> tuple:
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_all_favored(UID))
+            return True, "success"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
+
     ############################ Add ###########################
 
     @func.is_connected

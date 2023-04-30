@@ -351,7 +351,18 @@ def deleteFavored():
         return jsonify({"message": message_db, "status": 401})
 
 
+@app.route('/api/delete_all_favored', methods=['POST'])
+@cross_origin()
+def deleteAllFavored():
+    data = request.get_json()
+    user_id = data['UID']
+    status_db, message_db = db.deleteAllFavored(user_id)[1]
+    if status_db:
+        return jsonify({"message": "All Articles deleted from favorites", "status": 200})
+    else:
+        return jsonify({"message": message_db, "status": 401})
 
+################# OTHERS #################
 @app.errorhandler(404)
 @app.errorhandler(500)
 def error_handler():
