@@ -217,7 +217,7 @@ export default function Account() {
     return (
         <div className="container-lg pt-5">
             <h1>
-                My Favorites (im not gay)
+                My Favorites
                 <>
                     <i className="fas fa-heart ps-3" style={{color: 'red'}}/>
                     <span className="ps-2">{favorites.length}</span>
