@@ -71,4 +71,13 @@ export class User {
         console.log("token:", this.token)
     }
 
+    updateUserInfo(username, email, token, isAdmin){
+        this.username = username
+        this.email = email
+        this.token = token
+        this.isAdmin = isAdmin
+        sessionStorage.setItem("token", token)
+        sessionStorage.setItem("user", JSON.stringify({"username":username, "email":email, "isAdmin":isAdmin, "uid":this.uid}))
+    }
+
 }

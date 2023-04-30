@@ -66,6 +66,7 @@ export default function Settings() {
         const data2 = await update_user.json();
         if (data2.status === 200) {
             SUCCESS("Profile updated successfully");
+            usersession.user.updateUserInfo(username, email, newPassword, usersession.user.isAdmin)
             handleCloseModal();
         } else {
             ERROR("Update failed: " + data2.message);
