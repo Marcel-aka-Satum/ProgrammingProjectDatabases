@@ -13,7 +13,6 @@ import {Routes, Route} from 'react-router-dom'
 import React, {useState, createContext} from 'react'
 import {User} from './components/User/User'
 import Redirection from './components/redirect/Redirection';
-import Account from './Profile/Account';
 import Favorites from './Profile/Favorites';
 import About_us from './pages/About-us';
 import UserSettings from './Profile/Settings';
@@ -46,13 +45,11 @@ function App() {
                         <Route path="/admin" element={<Loginform/>}></Route>
                         {(user.getIsLogged()) ?
                             <>
-                                <Route path="/account" element={<Account/>}></Route>
                                 <Route path="/favorites" element={<Favorites/>}></Route>
                                 <Route path="/settings" element={<UserSettings/>}></Route>
                             </>
                             : (
                                 <>
-                                    <Route path="/account" element={<Redirection/>}></Route>
                                     <Route path="/favorites" element={<Redirection/>}></Route>
                                     <Route path="/settings" element={<Redirection/>}></Route>
                                 </>
@@ -80,7 +77,6 @@ function App() {
                         <Route path="/" element={<Home/>}></Route>
                         <Route path="/about-us" element={<About_us/>}></Route>
                         <Route path="/login" element={<Loginform/>}></Route>
-                        <Route path="/account" element={<Account/>}></Route>
                         <Route path="/favorites" element={<Favorites/>}></Route>
                         <Route path="/settings" element={<UserSettings/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>

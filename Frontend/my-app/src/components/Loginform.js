@@ -39,7 +39,7 @@ export default function Loginform() {
     }
 
     function redirectToAccount(){
-        window.location.href = "/account"
+        window.location.href = "/"
     }
     
     return (

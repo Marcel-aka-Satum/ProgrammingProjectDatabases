@@ -17,7 +17,7 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 
-drop_db = False
+drop_db = True
 if drop_db:
     db.redefine()
     db.populate()
@@ -139,6 +139,50 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
+# check if old password is correct
+# if not return error
+# if correct, check if new password is valid
+# if not return error
+# if valid, update password in db
+# return success message
+
+
+@app.route("/api/change_password", methods=["POST"])
+@cross_origin()
+def change_password():
+    email = request.json["Email"]
+    old_password = request.json["OldPassword"]
+    new_password = request.json["NewPassword"]
+    confirm_password = request.json["ConfirmPassword"]
+    user_exists = db.getUser(email)[1]
+
+    if email == "" or old_password == "" or new_password == "" or confirm_password == "":
+        return jsonify({"message": "please fill in all fields", "status": 401})
+
+    if user_exists[0] in [None, False]:
+        return jsonify({"message": "user does not exist.", "status": 401})
+
+    # check if password is correct compared to hashed password in db
+    result = bcrypt.checkpw(old_password.encode('utf-8'), user_exists[1]["Password"].encode('utf-8'))
+
+    if not result:
+        return jsonify({"message": "old password is incorrect", "status": 401})
+    else:
+        message_pwd_val, status_pwd_val = validate_pwd(new_password)
+
+        if status_pwd_val == 401:
+            return jsonify({"message": message_pwd_val, "status": 401})
+
+        if new_password != confirm_password:
+            return jsonify({"message": "passwords do not match", "status": 401})
+
+        # status_db, message_db = db.updatePassword(email, h.create_hash(new_password))[1]
+        # if not status_db:
+        #     return jsonify({"message": message_db}), 401
+
+        return jsonify({
+            "message": f"Password matched", "status": 200
+        })
 
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
@@ -190,7 +234,7 @@ def updateUser(id):
     data = request.get_json()
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
 
-    status, message = db.updateUser(id, username, email, password, is_admin)[1]
+    status, message = db.updateUser(id, username, email, h.create_hash(password), is_admin)[1]
     if status:
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
     else:
