@@ -15,8 +15,6 @@ const Navbar = () => {
             const response = await axios.get('http://localhost:4444/api/articles/genres');
             // const limitedArticles = response.data.slice(0, 500);
             setGenres(response.data);
-            console.log("hello")
-            console.log(response.data)
         };
         fetchGenres();
     }, []);

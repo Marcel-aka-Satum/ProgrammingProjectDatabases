@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {Pagination} from "react-bootstrap";
 import 'react-toastify/dist/ReactToastify.css';
 import {SUCCESS, ERROR, UNKNOWN_ERROR} from '../Helpers/custom_alert.js';
-import axios from 'axios'
 
 
 export default function Users() {
@@ -29,7 +28,7 @@ export default function Users() {
         fetchUsers();
     }, []);
 
-    
+
     useEffect(() => {
         async function fetchFavorites() {
             const response = await fetch(`http://127.0.0.1:4444/api/favorites`);
@@ -38,6 +37,7 @@ export default function Users() {
                 setFavorites(data.favorites);
             }
         }
+
         fetchFavorites();
     }, [users]);
 
@@ -244,11 +244,14 @@ export default function Users() {
                                     )}
                                     <span className="badge bg-danger ms-2">
                                         <i className="fas fa-heart me-1"></i>
-                                        {/*  loop over favorites list and return amount of times the user.UID is there  */}
                                         {
-                                            //favorites.filter((favorite) => favorite.User === user.UID).length
-                                            1
-                                        }
+                                            Object.keys(favorites).reduce((count, key) => {
+                                                if (key === String(user.UID)) {
+                                                    return count + favorites[key].length;
+                                                } else {
+                                                    return count;
+                                                }
+                                            }, 0)}
 
                                     </span>
                                 </p>

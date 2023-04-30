@@ -17,43 +17,60 @@ import {
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
+import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 
 
-function ArticleCard({article, onFilterTextChange, logged}) {
+function ArticleCard({article, onFilterTextChange, logged,uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
 
-    const handleAddToFavorites = (event) => {
-        const button = event.currentTarget;
-
-        const likeBtn = "fa fa-heart"
-        const dislikeBtn = "far fa-heart"
-
-        const whenLiked = 'btn-danger';
-        const isToggled = button.classList.contains(whenLiked);
-
-        if (isToggled) {
-            button.classList.add('btn-outline-danger')
-            button.classList.remove(whenLiked);
-            button.innerHTML = `<i class="${dislikeBtn}"></i>`;
-            button.setAttribute('title', 'Add to favorites');
-            //handleFavorites(article.URL )
-
-
-        } else {
-            button.classList.remove('btn-outline-danger');
-            button.classList.add(whenLiked);
-            button.innerHTML = `<i class="${likeBtn}"></i>`;
-            button.setAttribute('title', 'Remove from favorites');
-
+    const addFavorite = async (URL) => {
+        try {
+            const response = await axios.post('http://localhost:4444/api/addFavored', {
+                UID: uid,
+                article_url: URL,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (response.data.status === 200) {
+                SUCCESS(response.data.message)
+                console.log(response.data)
+                setFavorites([...favorites, URL]) // Update the favorites state immediately
+            } else {
+                console.log(response.data.message)
+                ERROR(response.data.message)
+            }
+        } catch (err) {
+            console.log('response:', err)
+            ERROR(err)
         }
-    };
+    }
 
+    const removeFavorite = async (URL) => {
+        try {
+            const response = await axios.post('http://localhost:4444/api/delete_favored', {
+                UID: uid,
+                article_url: URL,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (response.data.status === 200) {
+                SUCCESS(response.data.message)
+                console.log(response.data)
+                setFavorites(favorites.filter(favorite => favorite !== URL)) // Update the favorites state immediately
+            } else {
+                ERROR(response.data.message)
+            }
+        } catch (err) {
+            ERROR(err)
+        }
+    }
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
 
 
     const handleImageLoad = () => {
@@ -181,15 +198,36 @@ function ArticleCard({article, onFilterTextChange, logged}) {
                                     <i className="far fa-thumbs-down"></i>
                                 </button>
 
-                                <button
-                                    className="btn btn-outline-danger me-2 hide-btn"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    title="Add to favorites"
-                                    onClick={handleAddToFavorites}
-                                >
-                                    <i className="far fa-heart"></i>
-                                </button>
+                                {favorites.includes(article.URL) ?
+                                    <>
+                                        <button
+                                            className="btn btn-danger me-2"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Remove from favorites"
+                                            onClick={
+                                                () => removeFavorite(article.URL)
+                                            }
+                                        >
+                                            <i className="fa fa-heart"></i>
+                                        </button>
+
+                                    </>
+                                    :
+                                    <>
+                                        <button
+                                            className="btn btn-outline-danger me-2"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Add to favorites"
+                                            onClick={
+                                                () => addFavorite(article.URL)
+                                            }
+                                        >
+                                            <i className="far fa-heart"></i>
+                                        </button>
+                                    </>
+                                }
                             </>
                             : <></>
                         }
@@ -209,9 +247,11 @@ function ArticleCard({article, onFilterTextChange, logged}) {
 const Home = () => {
     const genre = useLocation().pathname.split('/')[2];
     const [articles, setArticles] = useState([])
-    const [filterText, setFilterText] = useState('');
-    const [sortOption, setSortOption] = useState("Sort By");
     const [numDisplayedArticles, setNumDisplayedArticles] = useState(20);
+    const [favorites, setFavorites] = useState([])
+
+    const [filterText, setFilterText] = useState('');
+    const [sortOption, setSortOption] = useState("newest");
 
     let usersession = useContext(userSession);
 
@@ -224,6 +264,19 @@ const Home = () => {
         fetchArticles();
     }, [genre]);
 
+
+    useEffect(() => {
+        async function fetchFavorites() {
+            const r_favorites = await fetch('http://localhost:4444/api/favorites')
+            const data = await r_favorites.json();
+            const data_user = data.favorites[usersession.user.uid]
+            if (data_user) {
+                setFavorites(data_user)
+            }
+        }
+
+        fetchFavorites();
+    }, []);
 
     useEffect(() => {
         function compareDatesNewest(a, b) {
@@ -314,7 +367,7 @@ const Home = () => {
                 {articlesToDisplay.map((article) => (
                     <li key={article.URL} className="p-3">
                         <ArticleCard article={article} onFilterTextChange={handleFilterTextChange}
-                                     logged={usersession.user.isLogged}/>
+                                     logged={usersession.user.isLogged} uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}/>
                     </li>
                 ))}
             </ul>

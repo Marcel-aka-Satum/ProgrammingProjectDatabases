@@ -17,7 +17,7 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 
-drop_db = True
+drop_db = False
 if drop_db:
     db.redefine()
     db.populate()
@@ -139,21 +139,6 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
-
-################# FAVORITES #################
-
-# @app.route("/api/favorites", methods=["POST"])
-# def setFavorites():
-#    Url = request.json["Url"]
-#    Cookie = request.json["Cookie"]
-#    status, message = db.addFavorite(Cookie, Url)
-#    return jsonify(message[1])
-
-
-# @app.route('/api/getfavorites', methods=['POST'])
-# def getFavorites():
-#    Cookie = request.json["Cookie"]
-#    return jsonify(db.getFavorites(Cookie)[1])
 
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
@@ -297,7 +282,7 @@ def checkRSSFeed():
 
 
 ################# NEWS ARTICLE ROUTES #################
-@app.route('/api/articles', methods=['GET'])
+@app.route('/api/articles', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def articles():
     articles_list = db.getNewsArticles()[1]
@@ -323,7 +308,6 @@ def getTotalArticles():
 @cross_origin()
 def getTopics():
     Topics = db.getTopics()
-    print(Topics)
     return jsonify(Topics[1])
 
 @app.route('/api/articles/genre', methods=['POST'])
@@ -348,7 +332,6 @@ def favorites():
 def addFavored():
     data = request.get_json()
     user_id, article_url = data['UID'], data['article_url']
-    print('addFavored: ', user_id, article_url)
     status_db, message_db = db.addFavored(user_id, article_url)[1]
     if status_db:
         return jsonify({"message": "Article added to favorites", "status": 200})
@@ -361,7 +344,6 @@ def addFavored():
 def deleteFavored():
     data = request.get_json()
     user_id, article_url = data['UID'], data['article_url']
-    print('deleteFavored: ', user_id, article_url)
     status_db, message_db = db.deleteFavored(user_id, article_url)[1]
     if status_db:
         return jsonify({"message": "Article deleted from favorites", "status": 200})

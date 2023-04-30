@@ -91,7 +91,7 @@ function App() {
                         <Route path="/admin/users" element={<Users/>}/>
                         <Route path="/admin/settings" element={<AdminSettings/>}/>
                         <Route path="/admin/statistics" element={<Statistics/>}/>
-                        <Route path="genre/:genre" element={<Home/>}></Route>
+                        <Route path="genre/:genre" element={<Genre/>}></Route>
                     </Routes>
                     <ScrollToTop smooth/>
                 </div>

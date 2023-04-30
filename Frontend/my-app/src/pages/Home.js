@@ -20,6 +20,7 @@ import {userSession} from '../App'
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
 
     const addFavorite = async (URL) => {
@@ -71,8 +72,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     const handleShow = () => setShow(true);
 
 
-
-    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const handleImageLoad = () => {
         setIsLoading(false);
     };
@@ -288,7 +287,7 @@ const Home = () => {
         const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
-        const [sortOption, setSortOption] = useState("Sort By");
+        const [sortOption, setSortOption] = useState("newest");
 
         let usersession = useContext(userSession);
 
@@ -301,6 +300,7 @@ const Home = () => {
                 }
             };
             fetchArticles();
+
         }, []);
 
         useEffect(() => {
@@ -317,29 +317,6 @@ const Home = () => {
         }, []);
 
         useEffect(() => {
-            const fetchGenres = () => {
-                const uniqueGenres = new Set();
-                const grouped = {};
-
-                for (const article of articles) {
-                    uniqueGenres.add(article.Topic);
-
-                    if (!grouped[article.Topic]) {
-                        grouped[article.Topic] = [];
-                    }
-                    grouped[article.Topic].push(article);
-                }
-
-                setGenres(uniqueGenres);
-                setArticlesGenre(grouped);
-            };
-
-            if (articles.length > 0) {
-                fetchGenres();
-            }
-        }, [articles]);
-
-        useEffect(() => {
             function compareDatesNewest(a, b) {
                 return new Date(b.Published) - new Date(a.Published);
             }
@@ -348,12 +325,57 @@ const Home = () => {
                 return new Date(a.Published) - new Date(b.Published);
             }
 
-            if (sortOption === "newest") {
-                setArticles((prevArticles) => [...prevArticles].sort(compareDatesNewest));
-            } else if (sortOption === "oldest") {
-                setArticles((prevArticles) => [...prevArticles].sort(compareDatesOldest));
+            function sortArticlesByDate(articles, sortOption) {
+                if (sortOption === "newest") {
+                    return articles.sort(compareDatesNewest);
+                } else if (sortOption === "oldest") {
+                    return articles.sort(compareDatesOldest);
+                } else {
+                    return articles;
+                }
             }
-        }, [sortOption]);
+
+            function fetchGenres(sortedArticles) {
+                const uniqueGenres = new Set();
+                const grouped = {};
+
+                for (const article of sortedArticles) {
+                    uniqueGenres.add(article.Topic);
+
+                    if (!grouped[article.Topic]) {
+                        grouped[article.Topic] = [];
+                    }
+                    grouped[article.Topic].push(article);
+                }
+
+                // Sort each genre's articles by date
+                for (const genre in grouped) {
+                    grouped[genre] = sortArticlesByDate(grouped[genre], sortOption);
+                }
+
+                // Sort the genres by the date of the latest article in each genre
+                const sortedGenres = Array.from(uniqueGenres).sort((a, b) => {
+                    const latestA = grouped[a][0].Published;
+                    const latestB = grouped[b][0].Published;
+                    return new Date(latestB) - new Date(latestA);
+                });
+
+                // Reverse the order so that the genres with the latest articles are first
+                if (sortOption === "oldest") {
+                    sortedGenres.reverse();
+                }
+                setGenres(sortedGenres);
+
+                setArticlesGenre(grouped);
+            }
+
+            if (articles.length > 0) {
+                // Sort all articles by date before grouping them by genre
+                const sortedArticles = sortArticlesByDate([...articles], sortOption);
+                fetchGenres(sortedArticles);
+            }
+        }, [articles, sortOption]);
+
 
         const handleSortChange = (e) => {
             setSortOption(e.target.value);
@@ -388,7 +410,7 @@ const Home = () => {
                     <div className="dropdown ps-2">
                         <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {sortOption ? sortOption : 'Sort By'}
+                            {sortOption ? sortOption : 'newest'}
                         </button>
                         <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li>

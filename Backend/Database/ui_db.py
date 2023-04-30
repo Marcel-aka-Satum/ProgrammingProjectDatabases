@@ -159,7 +159,6 @@ class DBConnection:
         c = []
         for i in data:
             c.append(i[0])
-            print(i[0])
         return c
 
     @func.is_connected
