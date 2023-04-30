@@ -15,6 +15,7 @@ import {User} from './components/User/User'
 import Redirection from './components/redirect/Redirection';
 import Account from './Profile/Account';
 import Favorites from './Profile/Favorites';
+import About_us from './pages/About-us';
 import UserSettings from './Profile/Settings';
 import ScrollToTop from "react-scroll-to-top";
 
@@ -40,6 +41,7 @@ function App() {
                     <Navbar/>
                     <Routes id="routes">
                         <Route path="/" element={<Home/>}></Route>
+                        <Route path="/about-us" element={<About_us/>}></Route>
                         <Route path="/login" element={<Loginform/>}></Route>
                         <Route path="/admin" element={<Loginform/>}></Route>
                         {(user.getIsLogged()) ?
@@ -76,6 +78,7 @@ function App() {
                     <Navbar/>
                     <Routes id="routes">
                         <Route path="/" element={<Home/>}></Route>
+                        <Route path="/about-us" element={<About_us/>}></Route>
                         <Route path="/login" element={<Loginform/>}></Route>
                         <Route path="/account" element={<Account/>}></Route>
                         <Route path="/favorites" element={<Favorites/>}></Route>
