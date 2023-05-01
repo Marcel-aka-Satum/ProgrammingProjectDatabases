@@ -108,7 +108,6 @@ def register_user():
     return jsonify({"message": f"Welcome {username}",
                     "token": encoded_jwt}), 200
 
-
 @app.route("/api/login", methods=["POST"])
 @cross_origin()
 def login_user():
@@ -146,14 +145,6 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
-# check if old password is correct
-# if not return error
-# if correct, check if new password is valid
-# if not return error
-# if valid, update password in db
-# return success message
-
-
 @app.route("/api/change_password", methods=["POST"])
 @cross_origin()
 def change_password():
@@ -162,6 +153,7 @@ def change_password():
     new_password = request.json["NewPassword"]
     confirm_password = request.json["ConfirmPassword"]
     user_exists = db.getUser(email)[1]
+
 
     if email == "" or old_password == "" or new_password == "" or confirm_password == "":
         return jsonify({"message": "please fill in all fields", "status": 401})
@@ -422,9 +414,9 @@ def deleteAllFavored():
 ################# OTHERS #################
 @app.errorhandler(404)
 @app.errorhandler(500)
+@app.errorhandler(429)
 def error_handler():
     return render_template('errors/404.html'), 404
-
 
 #################### DATABASE TABLES ####################
 

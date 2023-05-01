@@ -243,7 +243,17 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         ;
 }
 
-function GenreSection({genre, articles, filterText, onFilterTextChange, logged, uid, favorites, setFavorites}) {
+function GenreSection({
+                          genre,
+                          articles,
+                          filterText,
+                          onFilterTextChange,
+                          logged,
+                          uid,
+                          favorites,
+                          setFavorites,
+                          usersession
+                      }) {
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
     }
@@ -263,9 +273,13 @@ function GenreSection({genre, articles, filterText, onFilterTextChange, logged, 
     return (
         <div className="genre-section">
             <h2>
-                {genre}{' '}
+                {genre} {logged && usersession.user.isAdmin && (
+                `(${filteredArticles.length})`
+            )}
+
+
                 <a href={`genre/${addDashes(genre)}`} rel='noreferrer'>
-                    <button className="btn btn-outline-secondary">Show All</button>
+                    <button className="btn btn-outline-secondary ms-3">Show All</button>
                 </a>
             </h2>
             <ul className="articles-row">
@@ -388,7 +402,7 @@ const Home = () => {
 
         return (
             <div className="container-lg pt-5">
-                <div className="form-group w-50 pb-3 d-flex justify-content-between">
+                <div className="form-group w-auto pb-3 d-flex justify-content-between">
                     <input
                         type="text"
                         className="form-control"
@@ -425,13 +439,19 @@ const Home = () => {
                             </li>
                         </ul>
                     </div>
-                </div>
+                    <a href="/genre/recommended">
+                        <button className="btn btn-outline-secondary d-inline-flex align-items-center">
+                            <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
+                        </button>
+                    </a>
 
+                </div>
                 <div className="row">
                     {Array.from(genres).map((genre) => (
                         <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
                                       onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
                                       uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
+                                      usersession={usersession}
                         />
                     ))}
                 </div>

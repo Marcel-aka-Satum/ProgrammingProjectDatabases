@@ -97,7 +97,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         img.src = article.Image;
     };
 
-    console.log('article:', article.Title, ' has image:', article.Image)
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
@@ -279,6 +278,12 @@ const Home = () => {
     useEffect(() => {
         const fetchArticles = async () => {
             const response = await axios.get('http://localhost:4444/api/articles');
+            if (genre === 'recommended'){
+                // TODO: update this to use the user's preferences | now it shows all
+                const filteredArticles = response.data
+                setArticles(filteredArticles);
+                return;
+            }
             const filteredArticles = response.data.filter(article => article.Topic === formatTitle(genre));
             setArticles(filteredArticles);
         };
