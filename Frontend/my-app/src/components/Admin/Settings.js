@@ -1,17 +1,47 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
+import {SUCCESS, ERROR} from "../Helpers/custom_alert";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './tool.css'
+import {userSession} from "../../App";
 
 export default function Settings() {
-    const [selectedRecommendationSystem, setSelectedRecommendationSystem] = React.useState('Simple Recommender System (timestamp)');
-    const [selectedClassificationAlgorithm, setSelectedClassificationAlgorithm] = React.useState('Simple Algorithm (word count)');
-    const [selectedUpdateInterval, setSelectedUpdateInterval] = React.useState('1440');
-    const [notifyAdmins, setNotifyAdmins] = React.useState(true);
+    // User session
+    let usersession = useContext(userSession);
 
-    const handleIntervalChange = (e) => {
-        if (e.target.value === '0') {
-            setNotifyAdmins(false);
+    // Scraper settings
+    const [selectedUpdateInterval, setSelectedUpdateInterval] = useState('1440');
+    const [currentSelectedUpdateInterval, setCurrentSelectedUpdateInterval] = useState(selectedUpdateInterval);
+
+    // Rss settings
+
+    // Debug settings
+    const [selectedDebug, setSelectedDebug] = useState(usersession.user.getDebug());
+    const [currentSelectedDebug, setCurrentSelectedDebug] = useState(selectedDebug);
+
+
+    useEffect(() => {
+        setCurrentSelectedUpdateInterval(selectedUpdateInterval);
+    }, [selectedUpdateInterval]);
+
+    const applySettings = async () => {
+        if (isNaN(currentSelectedUpdateInterval) || currentSelectedUpdateInterval < 1 || currentSelectedUpdateInterval > 10080) {
+            setCurrentSelectedUpdateInterval(selectedUpdateInterval);
+            ERROR("Update interval must be a number between 1 and 10080");
+            return;
         }
+        setSelectedUpdateInterval(currentSelectedUpdateInterval);
+
+        setSelectedDebug(currentSelectedDebug);
+        usersession.user.updateUserInfo(
+            usersession.user.getUsername(),
+            usersession.user.getEmail(),
+            usersession.user.getUid(),
+            usersession.user.getIsAdmin(),
+            selectedDebug
+        )
+        console.log(usersession.user.printUserInfo())
+
+        SUCCESS("Settings applied");
     }
 
     return (
@@ -22,52 +52,71 @@ export default function Settings() {
                     <div className="card">
                         <div className="card-body">
                             <div className="row">
-                                <div className="col-md-6">
-                                    <div className="form-group mb-3">
-                                        <label htmlFor="recommendation-system">Choose a Recommendation System</label>
-                                        <select className="form-control" id="recommendation-system" value={selectedRecommendationSystem} onChange={e => setSelectedRecommendationSystem(e.target.value)}>
-                                            <option>Simple Recommender System (timestamp)</option>
-                                            <option>Advanced Recommender System (collaborative filtering)</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label htmlFor="classification-algorithm">Choose a Classification Algorithm</label>
-                                        <select className="form-control" id="classification-algorithm" value={selectedClassificationAlgorithm} onChange={e => setSelectedClassificationAlgorithm(e.target.value)}>
-                                            <option>Simple Algorithm (word count)</option>
-                                        </select>
-                                    </div>
-                                    <div className="form-group form-check mb-3">
-                                        <input type="checkbox" className="form-check-input" id="notify-admins" disabled={!notifyAdmins} checked={notifyAdmins} />
-                                        <label className="form-check-label" htmlFor="notify-admins">Notify admins if any of the RSS feeds are not responsive</label>
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>Choose an interval to check whether the RSS feeds are responsive</label>
-                                        <select className="form-control w-50" onChange={handleIntervalChange}>
-                                            <option value="0">Never</option>
-                                            <option value="5">Every 5 minutes</option>
-                                            <option value="10">Every 10 minutes</option>
-                                            <option value="15">Every 15 minutes</option>
-                                            <option value="30">Every 30 minutes</option>
-                                            <option value="60">Every hour</option>
-                                            <option value="360">Every 6 hours</option>
-                                            <option value="720">Every 12 hours</option>
-                                            <option value="1440" selected={true}>Every day</option>
-                                            <option value="10080">Every week</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                <div className="form-group">
+                                    {/*Category settings*/}
+                                    <h5 className="mb-3 d-block">Scraper Settings</h5>
+                                    <div className="card mb-4 ms-3">
+                                        <div className="m-3">
+                                            <b>
+                                                <abbr title="" data-toggle="tooltip" data-placement="top"
+                                                      data-original-title="Select how often the scraper should update.">Update
+                                                    Interval:
+                                                </abbr>
+                                            </b>
 
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <h5 className="mb-3 d-block text-center">Current Settings</h5>
-                                        <p><b>Recommendation System:</b> {selectedRecommendationSystem}</p>
-                                        <p><b>Classification Algorithm:</b> {selectedClassificationAlgorithm}</p>
-                                        <p><b>Notify Admins:</b> {notifyAdmins ? 'Yes' : 'No'}</p>
-                                        <p><b>Update Interval:</b> {selectedUpdateInterval} minutes</p>
+                                            {
+                                                <input
+                                                    type="number" className="form-control w-25 d-inline-block ms-2"
+                                                    value={currentSelectedUpdateInterval}
+                                                    onChange={(e) => setCurrentSelectedUpdateInterval(e.target.value)}/>
+
+                                            } minutes
+                                            {currentSelectedUpdateInterval >= 1440 ? ` (${Math.floor(currentSelectedUpdateInterval / 1440)} days and ${Math.floor((currentSelectedUpdateInterval % 1440) / 60)} hours)` :
+                                                currentSelectedUpdateInterval >= 60 ? ` (${Math.floor(currentSelectedUpdateInterval / 60)} hours and ${currentSelectedUpdateInterval % 60} minutes)` : ''}
+
+                                            <b className="float-end">Current: {selectedUpdateInterval} minutes</b>
+                                            <input type="range" className="form-range" min="1" max="10080" step="1"
+                                                   value={currentSelectedUpdateInterval}
+                                                   onChange={(e) => setCurrentSelectedUpdateInterval(e.target.value)}/>
+                                        </div>
                                     </div>
+
+
+                                    {/*Rss settings*/}
+                                    <h5 className="mb-3 d-block">Rss Settings</h5>
+                                    <div className="card mb-4 ms-3">
+                                        <div className="m-3">
+                                            <b>Not implemented yet</b>
+                                        </div>
+                                    </div>
+
+                                    {/*Debug settings*/}
+                                    <h5 className="mb-3 d-block">Debug Settings</h5>
+                                    <div className="card mb-4 ms-3">
+                                        <div className="m-3">
+                                            {/*    add a checkbox the enable or disable*/}
+                                            <b>Debug Mode: </b>
+                                            <input type="checkbox" className="form-check-input ms-2"
+                                                   checked={currentSelectedDebug}
+                                                   onChange={(e) => setCurrentSelectedDebug(e.target.checked)}/>
+                                            <b className="float-end">Current: {selectedDebug ? 'Enabled' : 'Disabled'}</b>
+
+                                            <div className="form-text">Enabling debug mode will show you more
+                                                information
+                                                about the current stats of articles.
+                                                <br/>This will only be visible to the admin user. So only visible to
+                                                you !
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+
                                 </div>
+                                <button type="button" className="btn btn-primary w-25" onClick={applySettings}>Apply
+                                </button>
                             </div>
-                            <button type="button" className="btn btn-primary">Apply</button>
                         </div>
                     </div>
                 </div>
@@ -75,3 +124,4 @@ export default function Settings() {
         </div>
     )
 }
+
