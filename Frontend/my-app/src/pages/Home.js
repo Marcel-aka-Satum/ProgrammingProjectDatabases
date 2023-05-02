@@ -243,8 +243,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         ;
 }
 
-function GenreSection({articles, filterText, onFilterTextChange, logged, uid, favorites, setFavorites}) {
-
 function GenreSection({
                           genre,
                           articles,
@@ -259,8 +257,8 @@ function GenreSection({
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
     }
-    const filteredArticles = articles[1].filter((article) => {
-        console.log(article.Image)
+
+    const filteredArticles = articles.filter((article) => {
         const title = article.Title.toLowerCase();
         const summary = article.Summary.toLowerCase();
         const url = extractBaseUrl(article.URL);
@@ -299,6 +297,7 @@ function GenreSection({
 const Home = () => {
         const [articles, setArticles] = useState([])
         const [genres, setGenres] = useState(new Set())
+        const [articlesGenre, setArticlesGenre] = useState([])
         const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
@@ -307,14 +306,14 @@ const Home = () => {
         let usersession = useContext(userSession);
 
         useEffect(() => {
-          const fetchArticles = async () => {
-            const response = await axios.get('http://localhost:4444/api/articlesDict');
-            console.log(response.data)
-            setArticles(response.data);
-
-          };
-
-          fetchArticles();
+            const fetchArticles = async () => {
+                const response = await axios.get('http://localhost:4444/api/articles');
+                // const limitedArticles = response.data.slice(0, 500);
+                if (response.data !== "tuple index out of range") {
+                    setArticles(response.data);
+                }
+            };
+            fetchArticles();
 
         }, []);
 
@@ -332,17 +331,6 @@ const Home = () => {
         }, []);
 
         useEffect(() => {
-            const fetchGenres = async () => {
-                const response = await axios.get('http://localhost:4444/api/articles/genres');
-                // const limitedArticles = response.data.slice(0, 500);
-                setGenres(response.data);
-            };
-            fetchGenres();
-        }, []);
-
-        useEffect(() => {
-            function compareDatesNewest(a, b) {
-                return new Date(b.Published) - new Date(a.Published);
             function compareDatesNewest(a, b) {
                 return new Date(b.Published) - new Date(a.Published);
             }
@@ -459,14 +447,13 @@ const Home = () => {
 
                 </div>
                 <div className="row">
-                  {Object.keys(articles).map(key => (
-                    <GenreSection key={key} articles={articles[key]} filterText={filterText}
-                                  onFilterTextChange={handleFilterTextChange}
-                                  logged={usersession.user.isLogged}
-                                  uid={usersession.user.uid} favorites={favorites}
-                                  setFavorites={setFavorites}
-                    />
-                  ))}
+                    {Array.from(genres).map((genre) => (
+                        <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
+                                      onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
+                                      uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
+                                      usersession={usersession}
+                        />
+                    ))}
                 </div>
             </div>
 
@@ -475,4 +462,3 @@ const Home = () => {
 ;
 
 export default Home;
-
