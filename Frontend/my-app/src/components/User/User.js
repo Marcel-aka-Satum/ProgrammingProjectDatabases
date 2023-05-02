@@ -9,10 +9,10 @@ export class User {
         this.uid = -1;
         this.debug = false;
         this.username = "";
-        if ((sessionStorage.getItem("token") !== null) && (sessionStorage.getItem("user") !== null)) {
+        if ((localStorage.getItem("token") !== null) && (localStorage.getItem("user") !== null)) {
             this.isLogged = true;
-            this.token = sessionStorage.getItem("token")
-            let userdata = JSON.parse(sessionStorage.getItem("user"))
+            this.token = localStorage.getItem("token")
+            let userdata = JSON.parse(localStorage.getItem("user"))
             if(userdata["isAdmin"]){
                 this.isAdmin = true
             }
@@ -61,8 +61,8 @@ export class User {
     logout() {
         this.isLogged = false
         this.token = false
-        sessionStorage.removeItem("token")
-        sessionStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
         window.location.href = "/"
     }
 
@@ -99,8 +99,8 @@ export class User {
         this.email = email
         this.token = token
         this.isAdmin = isAdmin
-        sessionStorage.setItem("token", token)
-        sessionStorage.setItem("user",
+        localStorage.setItem("token", token)
+        localStorage.setItem("user",
             JSON.stringify({
                 "username":username,
                 "email":email,

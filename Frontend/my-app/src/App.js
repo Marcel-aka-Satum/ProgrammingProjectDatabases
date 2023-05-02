@@ -10,14 +10,15 @@ import AdminSettings from "./components/Admin/Settings";
 import Home from './pages/Home';
 import Genre from './pages/Genre';
 import {Routes, Route} from 'react-router-dom'
-import React, {useState, createContext} from 'react'
+import React, {useState, createContext, useEffect} from 'react'
 import {User} from './components/User/User'
 import Redirection from './components/redirect/Redirection';
 import Favorites from './Profile/Favorites';
 import About_us from './pages/About-us';
 import UserSettings from './Profile/Settings';
 import ScrollToTop from "react-scroll-to-top";
-
+import { v4 as uuid } from 'uuid';
+import Cookies from 'js-cookie';
 
 /////////////////// import css
 import "./components/Navbar/navbarStyle.css"
@@ -27,11 +28,38 @@ import {ToastContainer} from "react-toastify";
 
 let userSession = createContext();
 
+
 function App() {
+    const [cookies, setCookies] = useState([]);
+    useEffect(() => {
+        // Set cookie expiration date to one week from now
+        let expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 7);
+        const unique_id = uuid();
+        const ifCookie = Cookies.get('user')
+        
+        async function fetchCookie() {
+            try {
+                const response = await fetch('http://127.0.0.1:4444/api/add_Visitor');
+                const data = await response.json();
+                setCookies(data)
+                console.log(data)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        if(ifCookie === undefined){
+            fetchCookie();
+            // Set the cookie with a value and expiration time
+            Cookies.set('user', unique_id, { expires: 60000 });
+        }
+        
+        
+    }, []);
 
     document.title = "PPDBT8"
     let [user, setUser] = useState(new User());
-
+    console.log(user.getIsAdmin())
     //if user is not an admin he should not be able to see pages with admin perms
     if (!user.getIsAdmin()) {
         return (

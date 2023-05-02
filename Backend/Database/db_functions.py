@@ -33,7 +33,7 @@ def getCWD(func):
     """
 
     def wrapper_func(self, *args):
-        seperator = "/"
+        seperator = os.path.sep
         cwd = os.getcwd().split(seperator)
         while cwd[-1] != "ProgrammingProjectDatabases":
             cwd.pop(-1)

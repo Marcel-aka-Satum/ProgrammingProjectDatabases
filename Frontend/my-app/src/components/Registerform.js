@@ -31,9 +31,9 @@ export default function Registerform() {
             }).then(response => {
                 if (response.status === 200) {
                     SUCCESS(response.data.message)
-                    sessionStorage.setItem("token", response.data.token);
+                    localStorage.setItem("token", response.data.token);
                     usersession.user.register(true, response.data.token, false, email, username)
-                    sessionStorage.setItem("user", JSON.stringify(usersession.user))
+                    localStorage.setItem("user", JSON.stringify(usersession.user))
                     window.location.reload()
                 } else {
                     ERROR(response.data.message)
