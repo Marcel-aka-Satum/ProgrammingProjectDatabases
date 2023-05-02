@@ -177,6 +177,15 @@ class DBConnection:
         return data
 
     @func.is_connected
+    def getArticlesDict(self) -> list:
+        """
+        @brief: get articles for the homepage.
+        """
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_ArticlesDict())
+        return cursor.fetchall()
+
+    @func.is_connected
     def getVisitor(self, UID: str) -> tuple:
         """
         @brief: get the UID of the Visitor if it exists.

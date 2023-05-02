@@ -304,6 +304,12 @@ def articles():
     return jsonify(articles_list)
 
 
+@app.route('/api/articlesDict/', methods=['GET'])
+@cross_origin()
+def articlesDict():
+    return jsonify(db.getArticlesDict()[1])
+
+
 @app.route('/api/get_article', methods=['POST'])
 @cross_origin()
 def getArticle():

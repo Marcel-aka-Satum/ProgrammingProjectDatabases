@@ -65,6 +65,34 @@ def get_newsarticle(URL: str) -> str:
             WHERE URL = '{URL}';
             """
 
+def get_ArticlesDict() -> str:
+    """
+                SELECT Topic, JSON_AGG(json_build_object(
+                'URL', URL,
+                'Title', Title,
+                'Summary', Summary,
+                'Published', Published,
+                'Image', Image,
+                'Topic', Topic
+                )) AS Articles
+                FROM newsaggregator.newsarticles
+                GROUP BY Topic;
+    """
+    return f"""
+                SELECT Topic, JSON_AGG(json_build_object(
+                'URL', URL,
+                'Title', Title,
+                'Summary', Summary,
+                'Published', Published,
+                'Image', Image,
+                'Topic', Topic
+                )) AS Articles
+                FROM newsaggregator.newsarticles
+                GROUP BY Topic;
+            """
+
+
+
 def get_newsarticlesTopic(Topic: str) -> str:
     """
         SELECT * FROM newsaggregator.newsarticles
