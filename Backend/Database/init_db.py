@@ -10,6 +10,7 @@ def initialize_db(cur):
             DROP TABLE IF EXISTS cookies CASCADE;
             DROP TABLE IF EXISTS hasclicked CASCADE;
             DROP TABLE IF EXISTS favored CASCADE;
+            DROP TABLE IF EXISTS settings CASCADE;
             ''')
 
     print("schema and tables dropped........")
@@ -69,6 +70,11 @@ def initialize_db(cur):
                 _User int REFERENCES newsaggregator.visitors(UID) ON DELETE CASCADE,
                 Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
                 PRIMARY KEY(_User, Article));
+                
+            CREATE TABLE newsaggregator.settings (
+                settingType varchar PRIMARY KEY,
+                value varchar
+            );
             ''')
 
     print("tables added......")

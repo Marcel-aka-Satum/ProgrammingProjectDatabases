@@ -272,6 +272,18 @@ class DBConnection:
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"
 
+    @func.is_connected
+    def updateSetting(self, setting: str, value: str) -> tuple:
+        """
+        @brief: update a setting in the database.
+        """
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.update_setting(setting, value))
+            return True, "success"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
+
     ########################## DELETE ##########################
 
     @func.is_connected
@@ -454,6 +466,17 @@ class DBConnection:
         except Exception as e:
             return False, str(e)
 
+    @func.is_connected
+    def addSetting(self, SettingType: str, Value: str) -> tuple:
+        """
+        @brief: add a favorite article of a user to the database.
+        """
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.insert_setting([SettingType, Value]))
+            return True, "success"
+        except Exception as e:
+            return False, str(e)
 
     ######################### GetTables ########################
 
@@ -555,6 +578,18 @@ class DBConnection:
         data = defaultdict(list)
         for i in cursor.fetchall():
             data[i[0]].append(i[1])
+        return data
+
+    @func.is_connected
+    def getSettings(self) -> list:
+        """
+        @brief: get the table settings.
+        """
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_settings())
+        data = []
+        for i in cursor.fetchall():
+            data.append(i)
         return data
 
     ############################################################

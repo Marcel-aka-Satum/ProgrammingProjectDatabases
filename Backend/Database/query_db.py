@@ -153,6 +153,12 @@ def get_favored() -> str:
     """
     return "SELECT * FROM newsaggregator.favored"
 
+def get_settings() -> str:
+    """
+        SELECT * FROM newsaggregator.settings
+    """
+    return "SELECT * FROM newsaggregator.settings"
+
 
 #################### SETTERS ####################
 
@@ -245,6 +251,16 @@ def insert_cluster(URL: str, cluster: int) -> str:
     return f"""
             INSERT INTO newsaggregator.relatedcluster (URL, Cluster)
             VALUES ('{URL}', '{cluster}');
+            """
+
+
+def insert_setting(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.settings (settingType, value)
+    """
+    return f"""
+            INSERT INTO newsaggregator.settings (settingType, value)
+            VALUES ('{values[0]}', '{values[1]}')
             """
 
 #################### DELETERS ####################
@@ -356,4 +372,14 @@ def update_user(ID: int, Username: str, Email: str, Password: str, Is_Admin: boo
             UPDATE newsaggregator.users
             SET Username = '{Username}', Email = '{Email}', Password = '{Password}', Is_Admin = '{Is_Admin}'
             WHERE UID = {ID};
+            """
+
+def update_setting(Setting: str, Value: str) -> str:
+    """
+        UPDATE newsaggregator.settings
+    """
+    return f"""
+            UPDATE newsaggregator.settings
+            SET settingType = '{Setting}', value = '{Value}'
+            WHERE settingType = '{Setting}';
             """
