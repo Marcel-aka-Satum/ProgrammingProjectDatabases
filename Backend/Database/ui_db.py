@@ -590,15 +590,15 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getSettings(self) -> list:
+    def getSettings(self) -> dict:
         """
         @brief: get the table settings.
         """
         cursor = self.connection.cursor()
         cursor.execute(query_db.get_settings())
-        data = []
+        data = {}
         for i in cursor.fetchall():
-            data.append(i)
+            data[i[0]] = i[1]
         return data
 
     ############################################################

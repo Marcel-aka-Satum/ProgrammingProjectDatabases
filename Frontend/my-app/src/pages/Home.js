@@ -273,7 +273,7 @@ function GenreSection({
     return (
         <div className="genre-section">
             <h2>
-                {genre} {logged && usersession.user.isAdmin && (
+                {genre} {logged && usersession.user.isAdmin && usersession.user.debug && (
                 `(${filteredArticles.length})`
             )}
 

@@ -2,7 +2,6 @@ import datetime
 import json
 import os
 from functools import wraps
-import subprocess
 import threading
 import time
 
@@ -253,7 +252,7 @@ def deleteUser(id):
         return jsonify({"message": f"USER ({id}) Not Found", "status": 404})
     else:
         db.deleteUser(id)
-        logger.info(f"User deleted: username={user[1]['Username']} | email={user[1]['Email']}")
+        logger.info(f"User deleted: id={id}")
         return jsonify({"message": f"USER ({id}) Deleted Successfully", "status": 200})
 
 
@@ -421,6 +420,20 @@ def deleteAllFavored():
         return jsonify({"message": message_db, "status": 401})
 
 
+################# VISITORS/TOPICS #################
+@app.route('/api/visitors', methods=['GET'])
+@cross_origin()
+def visitors():
+    visitors_list = db.getVisitors()[1]
+    return jsonify({'visitors': visitors_list})
+
+
+@app.route('/api/topics', methods=['GET'])
+@cross_origin()
+def topics():
+    topics_list = db.getTopics()[1]
+    return jsonify({'topics': topics_list})
+
 ################# OTHERS #################
 @app.errorhandler(404)
 @app.errorhandler(500)
@@ -429,23 +442,25 @@ def error_handler():
     return render_template('errors/404.html'), 404
 
 
-@app.route('/api/settings/change', methods=['POST'])
-@token_required
+@app.route('/api/update_settings', methods=['POST'])
+@cross_origin()
 def ChangeSetting():
     data = request.get_json()
     setting, value = data['setting'], data['value']
     if setting == "" or value == "":
-        return "please give the setting you want to change and the new value."
+        return jsonify({"message": "Setting or value cannot be empty", "status": 401})
     val = db.updateSetting(setting, value)
     if val[1][0]:
-        return f"{setting} is set to: {value}"
-    return val[1][1]
+        return jsonify({"message": "Setting updated successfully", "status": 200})
+    else:
+        return jsonify({"message": val[1][1], "status": 401})
 
 
-@app.route('/api/settings/get', methods=['GET'])
-@token_required
+@app.route('/api/settings', methods=['GET'])
+@cross_origin()
 def GetSettings():
-    return jsonify(db.getSettings)
+    return jsonify(db.getSettings()[1])
+
 
 
 #################### DATABASE TABLES ####################
@@ -492,6 +507,7 @@ def DBFavored():
 
 @app.route('/db/settings')
 def DBSettings():
+    print('settings2:', db.getSettings()[1])
     return jsonify(db.getSettings()[1])
 
 
@@ -510,14 +526,11 @@ def articlesPerGenre():
 
 
 def start_scraper():
-    scraper()
     while True:
         data = db.getSettings()[1]
-        for i in data:
-            if i[0] == "scraperTimer":
-                scraper()
-                time.sleep(int(i[1]))
-                break
+        scraped_time = int(data["scraperTimer"])
+        scraper()
+        time.sleep(scraped_time)
 
 
 scraper_thread = threading.Thread(target=start_scraper)

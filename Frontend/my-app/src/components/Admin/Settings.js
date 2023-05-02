@@ -3,14 +3,26 @@ import {SUCCESS, ERROR} from "../Helpers/custom_alert";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './tool.css'
 import {userSession} from "../../App";
+import axios from "axios";
 
 export default function Settings() {
     // User session
     let usersession = useContext(userSession);
 
     // Scraper settings
-    const [selectedUpdateInterval, setSelectedUpdateInterval] = useState('1440');
+    const [selectedUpdateInterval, setSelectedUpdateInterval] = useState("0");
+    useEffect(() => {
+        async function fetchSettings() {
+            const r_settings = await fetch('http://localhost:4444/api/settings')
+            const data = await r_settings.json();
+            const updateInterval = data.scraperTimer
+            setSelectedUpdateInterval(updateInterval);
+        }
+
+        fetchSettings();
+    }, []);
     const [currentSelectedUpdateInterval, setCurrentSelectedUpdateInterval] = useState(selectedUpdateInterval);
+
 
     // Rss settings
 
@@ -24,22 +36,35 @@ export default function Settings() {
     }, [selectedUpdateInterval]);
 
     const applySettings = async () => {
-        if (isNaN(currentSelectedUpdateInterval) || currentSelectedUpdateInterval < 1 || currentSelectedUpdateInterval > 10080) {
+        if (isNaN(currentSelectedUpdateInterval) || currentSelectedUpdateInterval < 1 || currentSelectedUpdateInterval > 86400) {
             setCurrentSelectedUpdateInterval(selectedUpdateInterval);
-            ERROR("Update interval must be a number between 1 and 10080");
+            ERROR("Update interval must be a number between 1 and 86400");
             return;
         }
         setSelectedUpdateInterval(currentSelectedUpdateInterval);
 
+        fetch('http://localhost:4444/api/update_settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                setting: 'scraperTimer',
+                value: currentSelectedUpdateInterval,
+            }),
+        })
+
+
         setSelectedDebug(currentSelectedDebug);
+        console.log('debug state:',currentSelectedDebug)
         usersession.user.updateUserInfo(
             usersession.user.getUsername(),
             usersession.user.getEmail(),
             usersession.user.getUid(),
             usersession.user.getIsAdmin(),
-            selectedDebug
+            currentSelectedDebug
         )
-        console.log(usersession.user.printUserInfo())
+        // console.log(usersession.user.printUserInfo())
 
         SUCCESS("Settings applied");
     }
@@ -70,12 +95,12 @@ export default function Settings() {
                                                     value={currentSelectedUpdateInterval}
                                                     onChange={(e) => setCurrentSelectedUpdateInterval(e.target.value)}/>
 
-                                            } minutes
-                                            {currentSelectedUpdateInterval >= 1440 ? ` (${Math.floor(currentSelectedUpdateInterval / 1440)} days and ${Math.floor((currentSelectedUpdateInterval % 1440) / 60)} hours)` :
-                                                currentSelectedUpdateInterval >= 60 ? ` (${Math.floor(currentSelectedUpdateInterval / 60)} hours and ${currentSelectedUpdateInterval % 60} minutes)` : ''}
+                                            } seconds
+                                            {currentSelectedUpdateInterval >= 3600 ? ` (${Math.floor(currentSelectedUpdateInterval / 3600)} hours and ${Math.floor((currentSelectedUpdateInterval % 3600) / 60)} minutes)` :
+                                            currentSelectedUpdateInterval >= 60 ? ` (${Math.floor(currentSelectedUpdateInterval / 60)} minutes and ${currentSelectedUpdateInterval % 60} seconds)` : ` (${currentSelectedUpdateInterval} seconds)`}
 
-                                            <b className="float-end">Current: {selectedUpdateInterval} minutes</b>
-                                            <input type="range" className="form-range" min="1" max="10080" step="1"
+                                            <b className="float-end">Current: {selectedUpdateInterval} seconds</b>
+                                            <input type="range" className="form-range" min="1" max="86400" step="1"
                                                    value={currentSelectedUpdateInterval}
                                                    onChange={(e) => setCurrentSelectedUpdateInterval(e.target.value)}/>
                                         </div>

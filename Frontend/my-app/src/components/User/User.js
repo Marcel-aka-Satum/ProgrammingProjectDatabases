@@ -1,3 +1,5 @@
+import {userSession} from "../../App";
+
 export class User {
     constructor() {
         this.isLogged = false;
@@ -17,6 +19,7 @@ export class User {
             this.username = userdata["username"]
             this.email = userdata["email"]
             this.uid = userdata["uid"]
+            this.debug = userdata["debug"]
             console.log("constructor of User class called")
         }
     }
@@ -46,11 +49,12 @@ export class User {
     }
 
     getDebug() {
+        console.log('return of debug:', this.debug)
         return this.debug
     }
 
     setDebug(debug) {
-
+        this.debug = debug
     }
 
 
