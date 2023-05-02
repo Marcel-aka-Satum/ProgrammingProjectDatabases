@@ -2,12 +2,16 @@ import datetime
 import json
 import os
 from functools import wraps
+import subprocess
+import threading
+import time
 
 import bcrypt
 import jwt
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS, cross_origin
 
+from Database.scraper import scraper
 from Database.ui_db import DBConnection
 from Helpers import helpers as h
 from Helpers.ErrorDetectionRoutes import *
@@ -19,7 +23,7 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 
-drop_db = False
+drop_db = True
 if drop_db:
     db.redefine()
     db.populate()
@@ -108,6 +112,7 @@ def register_user():
     return jsonify({"message": f"Welcome {username}",
                     "token": encoded_jwt}), 200
 
+
 @app.route("/api/login", methods=["POST"])
 @cross_origin()
 def login_user():
@@ -145,6 +150,7 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
+
 @app.route("/api/change_password", methods=["POST"])
 @cross_origin()
 def change_password():
@@ -153,7 +159,6 @@ def change_password():
     new_password = request.json["NewPassword"]
     confirm_password = request.json["ConfirmPassword"]
     user_exists = db.getUser(email)[1]
-
 
     if email == "" or old_password == "" or new_password == "" or confirm_password == "":
         return jsonify({"message": "please fill in all fields", "status": 401})
@@ -423,6 +428,26 @@ def deleteAllFavored():
 def error_handler():
     return render_template('errors/404.html'), 404
 
+
+@app.route('/api/settings/change', methods=['POST'])
+@token_required
+def ChangeSetting():
+    data = request.get_json()
+    setting, value = data['setting'], data['value']
+    if setting == "" or value == "":
+        return "please give the setting you want to change and the new value."
+    val = db.updateSetting(setting, value)
+    if val[1][0]:
+        return f"{setting} is set to: {value}"
+    return val[1][1]
+
+
+@app.route('/api/settings/get', methods=['GET'])
+@token_required
+def GetSettings():
+    return jsonify(db.getSettings)
+
+
 #################### DATABASE TABLES ####################
 
 @app.route('/db')
@@ -462,12 +487,18 @@ def DBHasClicked():
 
 @app.route('/db/favored')
 def DBFavored():
-    return jsonify(db.getFavored())
+    return jsonify(db.getFavored()[1])
+
+
+@app.route('/db/settings')
+def DBSettings():
+    return jsonify(db.getSettings()[1])
 
 
 @app.route('/db/backup')
 def Backup():
     return db.createBackup()[1]
+
 
 @app.route('/db/topics')
 def Topics():
@@ -477,6 +508,20 @@ def Topics():
 def articlesPerGenre():
     return db.getArticlesDict()[1]
 
+
+def start_scraper():
+    scraper()
+    while True:
+        data = db.getSettings()[1]
+        for i in data:
+            if i[0] == "scraperTimer":
+                scraper()
+                time.sleep(int(i[1]))
+                break
+
+
+scraper_thread = threading.Thread(target=start_scraper)
+scraper_thread.start()
 
 if __name__ == '__main__':
     app.run(port=4444)
