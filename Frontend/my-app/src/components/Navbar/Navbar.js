@@ -79,6 +79,9 @@ const Navbar = () => {
                         <NavLink to="/">Home</NavLink>
                     </li>
                     <li>
+                        <NavLink to="/about-us">About Us</NavLink>
+                    </li>
+                    <li>
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 

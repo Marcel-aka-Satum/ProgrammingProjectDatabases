@@ -1,17 +1,16 @@
-import React, {useEffect, useState, useContext} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {useLocation} from 'react-router-dom'
 import "./Home.css"
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {
-    formatTitle,
+    extractBaseUrl,
     formatDate,
     formatSummary,
+    formatTitle,
     handleClipboard,
-    handleHideArticle,
     PrintNewspaper,
-    shares,
-    extractBaseUrl
+    shares
 } from "../components/Helpers/general"
 
 import {CopyToClipboard} from 'react-copy-to-clipboard';
@@ -266,8 +265,6 @@ const Home = () => {
     const [sortOption, setSortOption] = useState("newest");
 
     let usersession = useContext(userSession);
-
-    console.log("genre " + genre)
 
     useEffect(() => {
         const fetchArticles = async () => {
