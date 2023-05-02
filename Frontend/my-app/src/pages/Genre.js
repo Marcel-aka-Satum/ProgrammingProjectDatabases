@@ -209,15 +209,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
                         {(logged) ?
                             <>
-                                <button
-                                    className="btn btn-outline-warning me-2 hide-btn"
-                                    data-toggle="tooltip"
-                                    data-placement="top"
-                                    title="I don't like this"
-                                    onClick={handleHideArticle}
-                                >
-                                    <i className="far fa-thumbs-down"></i>
-                                </button>
 
                                 {favorites.includes(article.URL) ?
                                     <>
