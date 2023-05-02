@@ -266,7 +266,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 }
 
 const Home = () => {
-    const genre = useLocation().pathname.split('/')[2];
+    const genre = useLocation().pathname.split('/')[2].replace(/-/g, " ");
     const [articles, setArticles] = useState([])
     const [numDisplayedArticles, setNumDisplayedArticles] = useState(20);
     const [favorites, setFavorites] = useState([])
@@ -275,6 +275,8 @@ const Home = () => {
     const [sortOption, setSortOption] = useState("newest");
 
     let usersession = useContext(userSession);
+
+    console.log("genre " + genre)
 
     useEffect(() => {
         const fetchArticles = async () => {
