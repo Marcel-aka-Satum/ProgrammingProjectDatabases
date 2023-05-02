@@ -159,7 +159,6 @@ class DBConnection:
         c = []
         for i in data:
             c.append(i[0])
-            print(i[0])
         return c
 
     @func.is_connected
@@ -333,6 +332,15 @@ class DBConnection:
         try:
             cursor = self.connection.cursor()
             cursor.execute(query_db.delete_favored(UID, URL))
+            return True, "success"
+        except Exception as e:
+            return False, f"An unexpected error occurred: {e}"
+
+    @func.is_connected
+    def deleteAllFavored(self, UID: str) -> tuple:
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.delete_all_favored(UID))
             return True, "success"
         except Exception as e:
             return False, f"An unexpected error occurred: {e}"

@@ -22,7 +22,7 @@ const Navbar = () => {
     function GenreF({genre}) {
         const formattedGenre = genre.replace(/\s+/g, '-');
         return (
-            <li><NavLink to={`genre/${formattedGenre}`} target='_blank'>{formattedGenre}</NavLink></li>
+            <li><NavLink to={`genre/${formattedGenre}`}>{formattedGenre}</NavLink></li>
         );
     }
 
@@ -107,7 +107,10 @@ const Navbar = () => {
                                      aria-labelledby="profileDropdown">
                                     <ul className="list-unstyled p-2 px-3 py-2">
                                         <li>
-                                            <NavLink to="/account"><i className="fas fa-user me-2"></i>Account</NavLink>
+                                            <NavLink to="/favorites"><i className="fas fa-heart me-2"></i>Favorites</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/settings"><i className="fas fa-cog me-2"></i>Settings</NavLink>
                                         </li>
                                         <li>
                                             <NavLink to="/login" onClick={handleLogOut}><i

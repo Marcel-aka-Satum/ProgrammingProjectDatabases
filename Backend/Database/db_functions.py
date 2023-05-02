@@ -8,16 +8,16 @@ def is_connected(func):
 
     def wrapper_func(self, *args) -> tuple:
         if self.connection is None:
-            print("Database is not connected\nConnecting to database")
+            print("Database is not connected")
+            print("Trying to connect ...")
             try:
                 self.connect()
                 if self.connection is None:
                     raise Exception("Database is not connected")
             except Exception as e:
-                print("Can not connect to database")
-                print(e)
+                print(f"Cannot connect to database: {e}")
                 return False, f"{e}"
-            print("Database is connected")
+            print("Database connected successfully")
         try:
             result = func(self, *args)
         except Exception as e:

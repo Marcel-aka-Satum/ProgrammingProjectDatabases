@@ -5,6 +5,7 @@ export class User {
         this.isAdmin = false;
         this.email = "";
         this.uid = -1;
+        this.debug = false;
         this.username = "";
         if ((sessionStorage.getItem("token") !== null) && (sessionStorage.getItem("user") !== null)) {
             this.isLogged = true;
@@ -21,7 +22,6 @@ export class User {
     }
 
     getUsername(){
-        console.log(this.username)
         return this.username
     }
 
@@ -36,6 +36,23 @@ export class User {
     getToken() {
         return this.token
     }
+
+    getEmail() {
+        return this.email
+    }
+
+    getUid() {
+        return this.uid
+    }
+
+    getDebug() {
+        return this.debug
+    }
+
+    setDebug(debug) {
+
+    }
+
 
     logout() {
         this.isLogged = false
@@ -69,6 +86,25 @@ export class User {
         console.log("isLogged:", this.isLogged)
         console.log("isAdmin:", this.isAdmin)
         console.log("token:", this.token)
+        console.log("uid:", this.uid)
+        console.log("debug:", this.debug)
+    }
+
+    updateUserInfo(username, email, token, isAdmin, debug){
+        this.username = username
+        this.email = email
+        this.token = token
+        this.isAdmin = isAdmin
+        sessionStorage.setItem("token", token)
+        sessionStorage.setItem("user",
+            JSON.stringify({
+                "username":username,
+                "email":email,
+                "isAdmin":isAdmin,
+                "uid":this.uid,
+                "debug":debug
+            })
+        )
     }
 
 }

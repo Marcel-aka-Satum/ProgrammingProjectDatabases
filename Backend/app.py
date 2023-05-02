@@ -12,17 +12,21 @@ from Database.ui_db import DBConnection
 from Helpers import helpers as h
 from Helpers.ErrorDetectionRoutes import *
 
+from log import logger
+
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 
-drop_db = True
+drop_db = False
 if drop_db:
     db.redefine()
     db.populate()
     # db.loadBackup("230417_19_36.txt")
     # scraper()
+    # clear logger file
+    logger.warning("Database dropped and redefined")
 
 # Set up the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = os.environ.get('JWT_SECRET_KEY', 'sample key')
@@ -100,9 +104,9 @@ def register_user():
 
     # access_token = create_access_token(identity=email)
 
+    logger.info(f"Successful registration: email={email}")
     return jsonify({"message": f"Welcome {username}",
                     "token": encoded_jwt}), 200
-
 
 @app.route("/api/login", methods=["POST"])
 @cross_origin()
@@ -115,12 +119,14 @@ def login_user():
         return jsonify({"message": "please fill in all fields"}), 401
 
     if user_exists[0] in [None, False]:
+        logger.info(f"Failed login attempt: email={email} | password={password}, reason=user does not exist")
         return jsonify({"message": "user does not exist."}), 401
 
     # check if password is correct compared to hashed password in db
     result = bcrypt.checkpw(password.encode('utf-8'), user_exists[1]["Password"].encode('utf-8'))
 
     if not result:
+        logger.info(f"Failed login attempt: email={email} | password={password}, reason=incorrect password")
         return jsonify({"message": "password is incorrect"}), 401
     else:
         # jwt token
@@ -129,7 +135,7 @@ def login_user():
                                       datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
                                  app.config["JWT_SECRET_KEY"])
         # access_token = create_access_token(identity=email)
-
+        logger.info(f"Successful login: email={email}")
         return jsonify({
             "message": f"Authorized > Welcome Back",
             "UID": user_exists[1]['UID'],
@@ -139,21 +145,41 @@ def login_user():
             "isAdmin": user_exists[1]['Is_Admin']
         }), 200
 
+@app.route("/api/change_password", methods=["POST"])
+@cross_origin()
+def change_password():
+    email = request.json["Email"]
+    old_password = request.json["OldPassword"]
+    new_password = request.json["NewPassword"]
+    confirm_password = request.json["ConfirmPassword"]
+    user_exists = db.getUser(email)[1]
 
-################# FAVORITES #################
 
-# @app.route("/api/favorites", methods=["POST"])
-# def setFavorites():
-#    Url = request.json["Url"]
-#    Cookie = request.json["Cookie"]
-#    status, message = db.addFavorite(Cookie, Url)
-#    return jsonify(message[1])
+    if email == "" or old_password == "" or new_password == "" or confirm_password == "":
+        return jsonify({"message": "please fill in all fields", "status": 401})
 
+    if user_exists[0] in [None, False]:
+        return jsonify({"message": "user does not exist.", "status": 401})
 
-# @app.route('/api/getfavorites', methods=['POST'])
-# def getFavorites():
-#    Cookie = request.json["Cookie"]
-#    return jsonify(db.getFavorites(Cookie)[1])
+    # check if password is correct compared to hashed password in db
+    result = bcrypt.checkpw(old_password.encode('utf-8'), user_exists[1]["Password"].encode('utf-8'))
+
+    if not result:
+        return jsonify({"message": "old password is incorrect", "status": 401})
+    else:
+        message_pwd_val, status_pwd_val = validate_pwd(new_password)
+
+        if status_pwd_val == 401:
+            return jsonify({"message": message_pwd_val, "status": 401})
+
+        if new_password != confirm_password:
+            return jsonify({"message": "passwords do not match", "status": 401})
+
+        logger.info(f"Password changed: email={email}")
+        return jsonify({
+            "message": f"Password matched", "status": 200
+        })
+
 
 ################# USER ROUTES #################
 @app.route('/api/users', methods=['GET'])
@@ -192,6 +218,7 @@ def addUser():
     elif status_pwd_val == 200:
         status_db, message_db = db.addUser(db.generateUID()[1], username, email, h.create_hash(password), is_admin)[1]
         if status_db:
+            logger.info(f"User added: username={username} | email={email}")
             return jsonify({"message": "User added successfully", "status": 200})
         else:
             return jsonify({"message": message_db, "status": 401})
@@ -205,8 +232,9 @@ def updateUser(id):
     data = request.get_json()
     username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
 
-    status, message = db.updateUser(id, username, email, password, is_admin)[1]
+    status, message = db.updateUser(id, username, email, h.create_hash(password), is_admin)[1]
     if status:
+        logger.info(f"User updated: username={username} | email={email}")
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
     else:
         return jsonify({"message": message, "status": 401})
@@ -220,6 +248,7 @@ def deleteUser(id):
         return jsonify({"message": f"USER ({id}) Not Found", "status": 404})
     else:
         db.deleteUser(id)
+        logger.info(f"User deleted: username={user[1]['Username']} | email={user[1]['Email']}")
         return jsonify({"message": f"USER ({id}) Deleted Successfully", "status": 200})
 
 
@@ -266,6 +295,7 @@ def updateRSSFeed():
 
     status_db, message_db = db.updateRSSFeed(url, publisher, topic)[1]
     if status_db:
+        logger.info(f"RSS Feed updated: url={url} | publisher={publisher} | topic={topic}")
         return jsonify({"message": "RSS Feed updated successfully", "status": 200})
     else:
         return jsonify({"message": message_db, "status": 401})
@@ -277,6 +307,7 @@ def deleteRSSFeed():
     data = request.get_json()
     status_db, message_db = db.deleteRSSFeed(data['URL'])[1]
     if status_db:
+        logger.info(f"RSS Feed deleted: url={data['URL']}")
         return jsonify({"message": "RSS Feed deleted successfully", "status": 200})
     else:
         return jsonify({"message": message_db, "status": 401})
@@ -297,7 +328,7 @@ def checkRSSFeed():
 
 
 ################# NEWS ARTICLE ROUTES #################
-@app.route('/api/articles', methods=['GET'])
+@app.route('/api/articles', methods=['GET'], strict_slashes=False)
 @cross_origin()
 def articles():
     articles_list = db.getNewsArticles()[1]
@@ -325,10 +356,12 @@ def getTotalArticles():
     totalarticles = db.getNewsArticles()[1]
     return jsonify({'totalArticles': len(totalarticles)})
 
+
 @app.route('/api/articles/genres', methods=['GET'])
 @cross_origin()
 def getTopics():
     return jsonify(db.getTopics()[1])
+
 
 @app.route('/api/articles/genre', methods=['POST'])
 @cross_origin()
@@ -352,7 +385,6 @@ def favorites():
 def addFavored():
     data = request.get_json()
     user_id, article_url = data['UID'], data['article_url']
-    print('addFavored: ', user_id, article_url)
     status_db, message_db = db.addFavored(user_id, article_url)[1]
     if status_db:
         return jsonify({"message": "Article added to favorites", "status": 200})
@@ -365,7 +397,6 @@ def addFavored():
 def deleteFavored():
     data = request.get_json()
     user_id, article_url = data['UID'], data['article_url']
-    print('deleteFavored: ', user_id, article_url)
     status_db, message_db = db.deleteFavored(user_id, article_url)[1]
     if status_db:
         return jsonify({"message": "Article deleted from favorites", "status": 200})
@@ -373,12 +404,24 @@ def deleteFavored():
         return jsonify({"message": message_db, "status": 401})
 
 
+@app.route('/api/delete_all_favored', methods=['POST'])
+@cross_origin()
+def deleteAllFavored():
+    data = request.get_json()
+    user_id = data['UID']
+    status_db, message_db = db.deleteAllFavored(user_id)[1]
+    if status_db:
+        return jsonify({"message": "All Articles deleted from favorites", "status": 200})
+    else:
+        return jsonify({"message": message_db, "status": 401})
 
+
+################# OTHERS #################
 @app.errorhandler(404)
 @app.errorhandler(500)
+@app.errorhandler(429)
 def error_handler():
     return render_template('errors/404.html'), 404
-
 
 #################### DATABASE TABLES ####################
 

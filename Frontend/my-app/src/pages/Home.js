@@ -20,9 +20,9 @@ import {userSession} from '../App'
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
 
-    console.log(article.Image)
     const addFavorite = async (URL) => {
         try {
             const response = await axios.post('http://localhost:4444/api/addFavored', {
@@ -67,12 +67,11 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         }
     }
 
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
-
-    const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const handleImageLoad = () => {
         setIsLoading(false);
     };
@@ -246,6 +245,17 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
 function GenreSection({articles, filterText, onFilterTextChange, logged, uid, favorites, setFavorites}) {
 
+function GenreSection({
+                          genre,
+                          articles,
+                          filterText,
+                          onFilterTextChange,
+                          logged,
+                          uid,
+                          favorites,
+                          setFavorites,
+                          usersession
+                      }) {
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
     }
@@ -255,21 +265,23 @@ function GenreSection({articles, filterText, onFilterTextChange, logged, uid, fa
         const summary = article.Summary.toLowerCase();
         const url = extractBaseUrl(article.URL);
         const filter = filterText.toLowerCase();
-        console.log(filter)
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
 
     if (filteredArticles.length === 0) {
-    return null;
+        return null; // return null to skip rendering this component
     }
-
 
     return (
         <div className="genre-section">
             <h2>
-                {articles[0]}{' '}
-                <a href={`genre/${addDashes(articles[0])}`} rel='noreferrer'>
-                    <button className="btn btn-outline-secondary">Show All</button>
+                {genre} {logged && usersession.user.isAdmin && (
+                `(${filteredArticles.length})`
+            )}
+
+
+                <a href={`genre/${addDashes(genre)}`} rel='noreferrer'>
+                    <button className="btn btn-outline-secondary ms-3">Show All</button>
                 </a>
             </h2>
             <ul className="articles-row">
@@ -290,7 +302,7 @@ const Home = () => {
         const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
-        const [sortOption, setSortOption] = useState("Sort By");
+        const [sortOption, setSortOption] = useState("newest");
 
         let usersession = useContext(userSession);
 
@@ -331,18 +343,65 @@ const Home = () => {
         useEffect(() => {
             function compareDatesNewest(a, b) {
                 return new Date(b.Published) - new Date(a.Published);
+            function compareDatesNewest(a, b) {
+                return new Date(b.Published) - new Date(a.Published);
             }
 
             function compareDatesOldest(a, b) {
                 return new Date(a.Published) - new Date(b.Published);
             }
 
-            if (sortOption === "newest") {
-                setArticles((prevArticles) => [...prevArticles].sort(compareDatesNewest));
-            } else if (sortOption === "oldest") {
-                setArticles((prevArticles) => [...prevArticles].sort(compareDatesOldest));
+            function sortArticlesByDate(articles, sortOption) {
+                if (sortOption === "newest") {
+                    return articles.sort(compareDatesNewest);
+                } else if (sortOption === "oldest") {
+                    return articles.sort(compareDatesOldest);
+                } else {
+                    return articles;
+                }
             }
-        }, [sortOption]);
+
+            function fetchGenres(sortedArticles) {
+                const uniqueGenres = new Set();
+                const grouped = {};
+
+                for (const article of sortedArticles) {
+                    uniqueGenres.add(article.Topic);
+
+                    if (!grouped[article.Topic]) {
+                        grouped[article.Topic] = [];
+                    }
+                    grouped[article.Topic].push(article);
+                }
+
+                // Sort each genre's articles by date
+                for (const genre in grouped) {
+                    grouped[genre] = sortArticlesByDate(grouped[genre], sortOption);
+                }
+
+                // Sort the genres by the date of the latest article in each genre
+                const sortedGenres = Array.from(uniqueGenres).sort((a, b) => {
+                    const latestA = grouped[a][0].Published;
+                    const latestB = grouped[b][0].Published;
+                    return new Date(latestB) - new Date(latestA);
+                });
+
+                // Reverse the order so that the genres with the latest articles are first
+                if (sortOption === "oldest") {
+                    sortedGenres.reverse();
+                }
+                setGenres(sortedGenres);
+
+                setArticlesGenre(grouped);
+            }
+
+            if (articles.length > 0) {
+                // Sort all articles by date before grouping them by genre
+                const sortedArticles = sortArticlesByDate([...articles], sortOption);
+                fetchGenres(sortedArticles);
+            }
+        }, [articles, sortOption]);
+
 
         const handleSortChange = (e) => {
             setSortOption(e.target.value);
@@ -355,7 +414,7 @@ const Home = () => {
 
         return (
             <div className="container-lg pt-5">
-                <div className="form-group w-50 pb-3 d-flex justify-content-between">
+                <div className="form-group w-auto pb-3 d-flex justify-content-between">
                     <input
                         type="text"
                         className="form-control"
@@ -377,7 +436,7 @@ const Home = () => {
                     <div className="dropdown ps-2">
                         <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {sortOption ? sortOption : 'Sort By'}
+                            {sortOption ? sortOption : 'newest'}
                         </button>
                         <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li>
@@ -392,8 +451,13 @@ const Home = () => {
                             </li>
                         </ul>
                     </div>
-                </div>
+                    <a href="/genre/recommended">
+                        <button className="btn btn-outline-secondary d-inline-flex align-items-center">
+                            <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
+                        </button>
+                    </a>
 
+                </div>
                 <div className="row">
                   {Object.keys(articles).map(key => (
                     <GenreSection key={key} articles={articles[key]} filterText={filterText}

@@ -45,7 +45,7 @@ export default function Registerform() {
     }
 
     function redirectToAccount() {
-        window.location.href = "/account"
+        window.location.href = "/"
     }
 
     const checkPasswordStrength = (password) => {

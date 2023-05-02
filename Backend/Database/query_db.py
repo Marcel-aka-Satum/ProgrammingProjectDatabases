@@ -341,6 +341,15 @@ def delete_favored(UID, URL: str) -> str:
             WHERE _User = {UID} AND Article = '{URL}';
             """
 
+def delete_all_favored(UID: str) -> str:
+    """
+    DELETE FROM newsaggregator.favored
+    WHERE _User = {User}
+    """
+    return f"""
+            DELETE FROM newsaggregator.favored
+            WHERE _User = {UID};
+            """
 
 #################### UPDATERS ####################
 def update_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
