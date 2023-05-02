@@ -60,6 +60,7 @@ function ArticleCard({article, onFilterTextChange, logged}) {
         setIsLoading(false);
     };
 
+    console.log(article)
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
@@ -217,12 +218,17 @@ const Home = () => {
 
     useEffect(() => {
         const fetchArticles = async () => {
-            const response = await axios.get('http://localhost:4444/api/articles');
-            const filteredArticles = response.data.filter(article => article.Topic === formatTitle(genre));
-            setArticles(filteredArticles);
+            await axios.post('http://localhost:4444/api/articles/genre', {
+                genre: genre,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                        setArticles(response.data);
+                    });
         };
         fetchArticles();
-    }, [genre]);
+    }, []);
 
 
     useEffect(() => {

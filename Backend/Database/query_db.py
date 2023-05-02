@@ -168,10 +168,10 @@ def insert_rssfeed(values: list) -> str:
 
 def insert_newsarticle(values: list) -> str:
     """
-        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic)
     """
     query = f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image_URL, RSS_URL, Topic)
+            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic)
             VALUES (%s,%s,%s,%s,%s,%s,%s);
             """
     return query, (values[0],values[1],values[2],values[3],values[4],values[5],values[6])
@@ -326,14 +326,14 @@ def update_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
             """
 
 
-def update_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image_URL: str, RSS_URL: str,
+def update_newsarticle(URL: str, Title: str, Summary: str, Published: str, Image: str, RSS_URL: str,
                        Topic: str) -> str:
     """
         UPDATE newsaggregator.newsarticles
     """
     return f"""
             UPDATE newsaggregator.newsarticles
-            SET Title = '{Title}', Summary = '{Summary}', Published = '{Published}', Image_URL = '{Image_URL}',
+            SET Title = '{Title}', Summary = '{Summary}', Published = '{Published}', Image = '{Image}',
              Topic = '{Topic}', RSS_URL = '{RSS_URL}'
             WHERE URL = '{URL}';
             """

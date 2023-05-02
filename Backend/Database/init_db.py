@@ -32,7 +32,7 @@ def initialize_db(cur):
                 Title varchar, 
                 Summary varchar,
                 Published varchar,
-                Image_URL varchar,
+                Image varchar,
                 Topic varchar,
                 RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE);
                 

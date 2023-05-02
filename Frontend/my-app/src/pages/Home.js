@@ -22,6 +22,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     const [show, setShow] = useState(false);
     const text = formatSummary(article.Summary);
 
+    console.log(article.Image)
     const addFavorite = async (URL) => {
         try {
             const response = await axios.post('http://localhost:4444/api/addFavored', {
@@ -65,7 +66,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
             ERROR(err)
         }
     }
-
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -244,28 +244,31 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         ;
 }
 
-function GenreSection({genre, articles, filterText, onFilterTextChange, logged, uid, favorites, setFavorites}) {
+function GenreSection({articles, filterText, onFilterTextChange, logged, uid, favorites, setFavorites}) {
+
     function addDashes(str) {
         return str.replace(/\s+/g, '-');
     }
-
-    const filteredArticles = articles.filter((article) => {
+    const filteredArticles = articles[1].filter((article) => {
+        console.log(article.Image)
         const title = article.Title.toLowerCase();
         const summary = article.Summary.toLowerCase();
         const url = extractBaseUrl(article.URL);
         const filter = filterText.toLowerCase();
+        console.log(filter)
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
 
     if (filteredArticles.length === 0) {
-        return null; // return null to skip rendering this component
+    return null;
     }
+
 
     return (
         <div className="genre-section">
             <h2>
-                {genre}{' '}
-                <a href={`genre/${addDashes(genre)}`} rel='noreferrer'>
+                {articles[0]}{' '}
+                <a href={`genre/${addDashes(articles[0])}`} rel='noreferrer'>
                     <button className="btn btn-outline-secondary">Show All</button>
                 </a>
             </h2>
@@ -284,7 +287,6 @@ function GenreSection({genre, articles, filterText, onFilterTextChange, logged, 
 const Home = () => {
         const [articles, setArticles] = useState([])
         const [genres, setGenres] = useState(new Set())
-        const [articlesGenre, setArticlesGenre] = useState([])
         const [favorites, setFavorites] = useState([])
 
         const [filterText, setFilterText] = useState("");
@@ -293,14 +295,15 @@ const Home = () => {
         let usersession = useContext(userSession);
 
         useEffect(() => {
-            const fetchArticles = async () => {
-                const response = await axios.get('http://localhost:4444/api/articles');
-                // const limitedArticles = response.data.slice(0, 500);
-                if (response.data !== "tuple index out of range") {
-                    setArticles(response.data);
-                }
-            };
-            fetchArticles();
+          const fetchArticles = async () => {
+            const response = await axios.get('http://localhost:4444/api/articlesDict');
+            console.log(response.data)
+            setArticles(response.data);
+
+          };
+
+          fetchArticles();
+
         }, []);
 
         useEffect(() => {
@@ -317,27 +320,13 @@ const Home = () => {
         }, []);
 
         useEffect(() => {
-            const fetchGenres = () => {
-                const uniqueGenres = new Set();
-                const grouped = {};
-
-                for (const article of articles) {
-                    uniqueGenres.add(article.Topic);
-
-                    if (!grouped[article.Topic]) {
-                        grouped[article.Topic] = [];
-                    }
-                    grouped[article.Topic].push(article);
-                }
-
-                setGenres(uniqueGenres);
-                setArticlesGenre(grouped);
+            const fetchGenres = async () => {
+                const response = await axios.get('http://localhost:4444/api/articles/genres');
+                // const limitedArticles = response.data.slice(0, 500);
+                setGenres(response.data);
             };
-
-            if (articles.length > 0) {
-                fetchGenres();
-            }
-        }, [articles]);
+            fetchGenres();
+        }, []);
 
         useEffect(() => {
             function compareDatesNewest(a, b) {
@@ -406,12 +395,14 @@ const Home = () => {
                 </div>
 
                 <div className="row">
-                    {Array.from(genres).map((genre) => (
-                        <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
-                                      onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
-                                      uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
-                        />
-                    ))}
+                  {Object.keys(articles).map(key => (
+                    <GenreSection key={key} articles={articles[key]} filterText={filterText}
+                                  onFilterTextChange={handleFilterTextChange}
+                                  logged={usersession.user.isLogged}
+                                  uid={usersession.user.uid} favorites={favorites}
+                                  setFavorites={setFavorites}
+                    />
+                  ))}
                 </div>
             </div>
 

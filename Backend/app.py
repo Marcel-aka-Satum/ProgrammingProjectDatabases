@@ -322,9 +322,7 @@ def getTotalArticles():
 @app.route('/api/articles/genres', methods=['GET'])
 @cross_origin()
 def getTopics():
-    Topics = db.getTopics()
-    print(Topics)
-    return jsonify(Topics[1])
+    return jsonify(db.getTopics()[1])
 
 @app.route('/api/articles/genre', methods=['POST'])
 @cross_origin()
@@ -425,6 +423,10 @@ def Backup():
 @app.route('/db/topics')
 def Topics():
     return db.getTopics()[1]
+
+@app.route('/db/articlesgenres')
+def articlesPerGenre():
+    return db.getArticlesDict()[1]
 
 
 if __name__ == '__main__':
