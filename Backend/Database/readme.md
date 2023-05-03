@@ -1,3 +1,61 @@
+# Database Description
+
+<img src="database.png" alt="The Newsaggregator Database" width="400"/>
+
+
+<div style="display: flex; justify-content: space-between;">
+
+<div style="width: 45%;">
+
+**`rssfeeds`**
+
+This table stores information about the different RSS feeds that the system is aggregating. The `URL` is the primary key, meaning it's unique for each RSS feed. The `Publisher` and `Genre` provide more details about the source of the feed.
+
+**`newsarticles`**
+
+This table is the heart of the application. It contains all the news articles fetched from the various RSS feeds. Each article has a unique `URL`, `Title`, `Summary`, `Published` date, an `Image` URL and a `Topic`. The `RSS_URL` is a foreign key linking back to the `rssfeeds` table, so we know which feed an article came from. The `ON DELETE CASCADE` clause ensures that if a feed is deleted, all related articles will also be deleted.
+
+**`relatedcluster`**
+
+This table is used to group similar articles together. It references the `newsarticles` table and assigns a `Cluster_ID` to similar articles. This helps in reducing redundancy and showing only one version of similar articles.
+
+**`visitors`**
+
+This table records all the unique visitors to the website. The `UID` is an automatically incrementing serial number that uniquely identifies each visitor.
+
+</div>
+
+<div style="width: 45%;">
+
+**`users`**
+
+The `users` table contains detailed information about registered users. It includes their `Username`, `Email`, `Password`, and an `Is_Admin` flag to denote admin users. The `UID` is a foreign key linking back to the `visitors` table, making sure every user is also a visitor.
+
+**`cookies`**
+
+The `cookies` table is used for session management. It stores a unique `cookie` for each `UID`, helping in maintaining state between different user sessions.
+
+**`hasclicked`**
+
+The `hasclicked` table is a relation table that tracks which user has clicked on which article. This data is crucial for the recommender system to determine article relevance for each user.
+
+**`favored`**
+
+The `favored` table also relates to users and articles. It keeps track of users' favorite articles. This data could be used to enhance the performance of the recommender system by giving more weight to favored articles.
+
+**`settings`**
+
+Finally, the `settings` table stores different configurable settings for the application. The `settingType` is the primary key and `value` is the value of that setting.
+
+</div>
+
+</div>
+
+These tables help in storing, managing and processing the data needed for running the news aggregator app effectively. The relationships between the tables ensure data integrity and aid in implementing the necessary functionalities of the application.
+
+---
+---
+
 # Database Solution
 
 This suite of Python code is designed to provide a comprehensive news aggregator solution with a PostgreSQL database backend. The codebase consists of several modules that enable the initialization of the database, population with RSS feeds, insertion of news articles scraped from the feeds, and retrieval of data from the database. The codebase is modularized, well-documented, and designed to be easily extensible, making it an excellent starting point for a more complex news aggregator solution. With the ability to connect to and interface with the database, this codebase provides a simple but powerful interface to the database, enabling users to define, populate, and query the database with ease.
