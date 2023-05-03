@@ -23,7 +23,7 @@ const Navbar = () => {
     function GenreF({genre}) {
         const formattedGenre = genre.replace(/\s+/g, '-');
         return (
-            <li><NavLink to={`genre/${formattedGenre}`}>{formattedGenre}</NavLink></li>
+            <li><NavLink to={`genre/${formattedGenre}`} onClick={colConCollapse}>{formattedGenre}</NavLink></li>
         );
     }
 
@@ -37,6 +37,11 @@ const Navbar = () => {
     const [Open, setOpen] = useState(false)
     const refIn = useRef(null)
 
+
+    function handleClick() {
+      colConCollapse();
+      handleLogOut();
+    }
     function colConCollapse() {
         const colCon = document.querySelector(".container-fluid");
         setOpen(!Open)
@@ -49,6 +54,7 @@ const Navbar = () => {
                 const colCon = document.querySelector(".container-fluid");
                 colCon.classList.toggle("collapse")
                 setOpen(!Open)
+                console.log("out")
             }
         }
     }
@@ -76,10 +82,10 @@ const Navbar = () => {
                 </div>
                 <ul className="nav navbar-nav allign-items-center mr-4">
                     <li>
-                        <NavLink to="/">Home</NavLink>
+                        <NavLink to="/" onClick={colConCollapse}>Home</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/about-us">About Us</NavLink>
+                        <NavLink to="/about-us" onClick={colConCollapse}>About Us</NavLink>
                     </li>
                     <li>
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
@@ -96,7 +102,7 @@ const Navbar = () => {
                     </li>
                     {(usersession.user.isLogged && usersession.user.token !== false && usersession.user.isAdmin) ?
                         <li>
-                            <NavLink to="/admin/dashboard">Dashboard</NavLink>
+                            <NavLink to="/admin/dashboard" onClick={colConCollapse}>Dashboard</NavLink>
                         </li>
                         : (<p></p>)
                     }
@@ -111,19 +117,19 @@ const Navbar = () => {
                                      aria-labelledby="profileDropdown">
                                     <ul className="list-unstyled p-2 px-3 py-2">
                                         <li>
-                                            <NavLink to="/favorites"><i className="fas fa-heart me-2"></i>Favorites</NavLink>
+                                            <NavLink to="/favorites"><i className="fas fa-heart me-2" onClick={colConCollapse}></i>Favorites</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/settings"><i className="fas fa-cog me-2"></i>Settings</NavLink>
+                                            <NavLink to="/settings"><i className="fas fa-cog me-2" onClick={colConCollapse}></i>Settings</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/login" onClick={handleLogOut}><i
+                                            <NavLink to="/login" onClick={handleClick}><i
                                                 className="fas fa-sign-out-alt me-2"></i>Logout</NavLink>
                                         </li>
                                     </ul>
                                 </div>
                             </>
-                            : (<NavLink to="/login"><i
+                            : (<NavLink to="/login" onClick={colConCollapse}><i
                                 className="fas fa-sign-out-alt me-2"></i>Login</NavLink>)
                         }
                     </li>
