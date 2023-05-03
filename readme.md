@@ -12,7 +12,6 @@ project is to create a news aggregator app that collects and displays news from 
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [Contributing](#contributing)
-6. [License](#license)
 
 ## Introduction
 The project is a team effort to develop a software product that applies the principles of the "Introduction to Databases" course. The objectives of the project include converting theory into practice, working independently in teams, planning work and distributing tasks, problem-solving skills, clear reporting on progress and choices, and developing high-quality software with a focus on usability, efficiency, and expandability.
@@ -42,11 +41,11 @@ The following technologies are used for the project:
 ## Installation
 To install the project, clone the repository from Github and install the required dependencies.
 
-## Documentation
-*[Link to Backend README](./Backend/readme.md) Here you can find more about our backend architecture.<br>
-*[Link to Backend Database README](./Backend/Database/readme.md) Here you can find more about our database engineering.<br>
-*[Link to Frontend components README](./Frontend/my-app/src/components/readme.md) This contains information abour our used component on the Frontend side.<br>
-*[Link to Frontend Admin README](./Frontend/my-app/src/components/Admin/readme.md) This contains all the information about admin pages.<br>
+## Technical Documentation
+* [Link to Backend API References README](./Backend/readme.md) Here you can find more about our backend architecture.<br>
+* [Link to Backend Database README](./Backend/Database/readme.md) Here you can find more about our database engineering.<br>
+* [Link to Frontend Login/Register README](./Frontend/my-app/src/components/readme.md) This contains information about Login/Register, used on the Frontend side.<br>
+* [Link to Frontend Admin README](./Frontend/my-app/src/components/Admin/readme.md) This contains all the information about admin pages.<br>
 
 ```
 git clone https://github.com/Marcel-aka-Satum/ProgrammingProjectDatabases.git
@@ -60,8 +59,6 @@ python run.py
 ## Usage
 * Database: Please find the extended documentation within the README at Backend/Database/
 * Frontend: Please find the extended documentation within the README at Frontend 
-## Contributing
-Soon to be added.
 
-## License
-Soon to be added.
+## Contributing
+Nabil El Ouaamari, Marceli Wilczynski, Pim Van den Bosch, Simon Olivier, Robbe Teughels.
