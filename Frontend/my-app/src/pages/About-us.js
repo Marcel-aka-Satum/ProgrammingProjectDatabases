@@ -11,6 +11,7 @@ const teamMembers = [
     {
         name: 'Simon Olivier',
         github: 'https://github.com/Sisooli4',
+        mail: 'mailto:sisoolivier@gmail.com'
     },
     {
         name: 'Robbe Teughels',
