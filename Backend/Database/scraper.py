@@ -1,7 +1,17 @@
 import feedparser
+
 from . import ui_db
 import json
 import requests
+import spacy
+from bs4 import BeautifulSoup
+
+# Load English model
+en_nlp = spacy.load('en_core_web_sm')
+
+# Load Dutch model
+nl_nlp = spacy.load('nl_core_news_sm')
+
 
 # def scraper():
 #     # Initialize DB object
@@ -55,14 +65,48 @@ class BaseFeedScraper:
 
     def get_image(self, entry):
         try:
-            for lnk in entry['links']:
-                if lnk['type'] in ['image/jpeg']:
-                    return lnk['href']
+            if 'media_content' in entry:
+                for lnk in entry['media_content']:
+                    if 'type' in lnk:
+                        if lnk['type'] in ['image/jpeg']:
+                            return lnk['url']
+                    elif 'medium' in lnk:
+                        if lnk['medium'] in ['image']:
+                            return lnk['url']
+                    elif 'url' in lnk:
+                        return lnk['url']
+
+            elif 'links' in entry:
+                for lnk in entry['links']:
+                    if lnk['type'] in ['image/jpeg']:
+                        return lnk['href']
         except:
             return 'None'
 
+    #       if 'media_content' in entry :
+    #            return entry['media_content']['url']
+    #
+    #      elif 'links' in entry:
+    #         for lnk in entry['links']:
+    #            if lnk['type'] in ['image/jpeg']:
+    #               return lnk['href']
+    #
+    #      else:
+    #         print("hello")
+    #         return 'None'
+
     def get_summary(self, entry):
         return entry['summary']
+
+    def get_image_none(self, url):
+        r = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data, features="lxml")
+        for link in soup.find_all('img'):
+            img_src = link.get('src')
+            return img_src
+
+        return None  # return None if no images found
 
     def scrape_entry(self, entry, rss_url, topic):
         link = entry['link']
@@ -70,6 +114,14 @@ class BaseFeedScraper:
         summary = self.get_summary(entry)
         publisher = entry['published']
         image = self.get_image(entry)
+        if image == None and "www.tijd" in link:
+            image = None
+        elif image == None:
+            image = self.get_image_none(link)
+
+        if image == None:
+            print("hey")
+
         status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
         if not message[0]:
             if "duplicate key value" not in message[1]:
@@ -91,82 +143,12 @@ class BaseFeedScraper:
             return
 
     def get_scraper_for_url(self, url):
-        if 'foxnews.com' in url:
-            return FoxNewsScraper(self.DB)
-            """
-        elif 'cnn.com' in url:
-            return CNNNewsScraper(self.DB)
-            """
-        elif 'nytimes.com' in url:
-            return NYTimesNewsScraper(self.DB)
-        else:
-            return self
+        return self
 
     def scrape_all_feeds(self):
         rss_info = self.parse_rss_feeds()
         for rss in rss_info:
             self.scrape_feed(rss['URL'], rss['Topic'])
-
-
-class FoxNewsScraper(BaseFeedScraper):
-    def __init__(self, db):
-        super().__init__()
-        self.DB = db
-    def scrape_entry(self, entry, rss_url, topic):
-        link = entry['link']
-        title = entry['title']
-        summary = self.get_summary(entry)
-        publisher = entry['published']
-        image = self.get_image(entry)
-        status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
-        if not message[0]:
-            if "duplicate key value" not in message[1]:
-                print('error:', message[1], 'link:', rss_url)
-
-    # foxnews has the image in a different place
-    def get_image(self, entry):
-        try:
-            for lnk in entry['media_content']:
-                if lnk['type'] in ['image/jpeg']:
-                    return lnk['url']
-        except:
-            return 'None'
-
-    def get_summary(self, entry):
-        for content in entry['content']:
-            if content['type'] == 'text/html':
-                return content['value']
-
-class NYTimesNewsScraper(BaseFeedScraper):
-    def __init__(self, db):
-        super().__init__()
-        self.DB = db
-
-    def scrape_entry(self, entry, rss_url, topic):
-        try:
-            link = entry['link']
-            title = entry['title']
-            summary = self.get_summary(entry)
-            publisher = entry['published']
-            image = self.get_image(entry)
-            status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
-
-        except Exception as e:
-            print('error:', e)
-
-    # foxnews has the image in a different place
-    def get_image(self, entry):
-        try:
-            for lnk in entry['media_content']:
-                if lnk['medium'] in ['image']:
-                    return lnk['url']
-        except:
-            return 'None'
-
-    def get_summary(self, entry):
-        return entry['summary']
-
-
 
 
 def scraper():
