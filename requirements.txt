@@ -17,7 +17,7 @@ gensim~=4.3.1
 beautifulsoup4~=4.11.1
 plotly~=5.14.1
 matplotlib~=3.7.1
-
+newspaper3k
 bcrypt~=3.2.0
 PyJWT~=2.6.0
 requests~=2.25.1
