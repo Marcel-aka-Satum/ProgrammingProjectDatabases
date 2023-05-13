@@ -1,10 +1,12 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import "../css/login_register_form.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {userSession} from '../App'
 import {SUCCESS, ERROR} from "./Helpers/custom_alert"
 import axios from 'axios'
 import zxcvbn from 'zxcvbn';
+import {GoogleLogin} from 'react-google-login';
+import {gapi} from "gapi-script";
 
 
 export default function Registerform() {
@@ -43,6 +45,36 @@ export default function Registerform() {
             ERROR(err.response.data.message)
         }
     }
+
+    useEffect(() => {
+        function start() {
+            gapi.client.init({
+                clientId: "413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com",
+                scope: 'email',
+            });
+        }
+
+        gapi.load('client:auth2', start);
+    }, []);
+
+    const handleSuccess = async (response) => {
+        let email = response.profileObj.email;
+        let username = response.profileObj.name;
+
+        // replace any spaces with underscores in username
+        username = username.replace(/\s/g, '_');
+
+        setEmail(email);
+        setUsername(username);
+
+        // mention that it should now fill in the password field
+        SUCCESS("Please fill in the password to complete the registration")
+    }
+
+    const handleError = (error) => {
+        console.log('Google error:', error);
+        ERROR(error.details);
+    };
 
     function redirectToAccount() {
         window.location.href = "/"
@@ -103,8 +135,6 @@ export default function Registerform() {
     };
 
 
-
-
     return (
         <div className="container">
             {(usersession.user.isLogged && usersession.user.token !== false) ?
@@ -157,7 +187,8 @@ export default function Registerform() {
 
                                     <div
                                         className={`input-group mb-3 ${password && checkPasswordStrength(password).score <= 2 ? 'pb-3' : ''}`}>
-                                        <div className="input-group-text clickable" onClick={() => setShowPassword(!showPassword)}>
+                                        <div className="input-group-text clickable"
+                                             onClick={() => setShowPassword(!showPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
                                                 <path
@@ -180,8 +211,10 @@ export default function Registerform() {
                                         </div>
                                     </div>
 
-                                    <div className={`input-group mb-3 ${ confirmPassword && checkPasswordStrength(password).score <= 2 ? 'pb-3' : '' }`}>
-                                        <div className="input-group-text clickable" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                    <div
+                                        className={`input-group mb-3 ${confirmPassword && checkPasswordStrength(password).score <= 2 ? 'pb-3' : ''}`}>
+                                        <div className="input-group-text clickable"
+                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                  fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
                                                 <path
@@ -196,7 +229,8 @@ export default function Registerform() {
                                                    id="confirmPassword" placeholder="Confirm Password"/>
                                             <label htmlFor="confirmPassword">Confirm Password</label>
                                             {confirmPassword && confirmPassword !== password && (
-                                                <div className="invalid-feedback ps-2 position-absolute w-100">Passwords do not match</div>
+                                                <div className="invalid-feedback ps-2 position-absolute w-100">Passwords
+                                                    do not match</div>
                                             )}
                                         </div>
                                     </div>
@@ -210,6 +244,16 @@ export default function Registerform() {
                                     <div id="emailHelp" className="form-text text-center mb-5 text-dark">Already have an
                                         account? <a
                                             href="/login" className="text-dark fw-bold">Log in</a></div>
+                                    <div className="text-center float-end">
+                                        <GoogleLogin
+                                            className="btn btn-outline-secondary btn-animation rounded rounded-2"
+                                            clientId="413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com"
+                                            buttonText="Register with Google"
+                                            onSuccess={handleSuccess}
+                                            onFailure={handleError}
+                                            cookiePolicy={'single_host_origin'}
+                                        />
+                                    </div>
                                 </form>
                             </div>
                         </div>

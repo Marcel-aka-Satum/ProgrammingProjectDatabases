@@ -5,6 +5,8 @@ import axios from 'axios';
 import {userSession} from "../App"
 import {SUCCESS, ERROR} from "./Helpers/custom_alert";
 import ReCAPTCHA from 'react-google-recaptcha';
+import {GoogleLogin} from 'react-google-login';
+import {gapi} from "gapi-script";
 
 export default function Loginform() {
     const [email, setEmail] = useState("");
@@ -48,6 +50,50 @@ export default function Loginform() {
         //     ERROR("Please complete the CAPTCHA verification");
         // }
     }
+    useEffect(() => {
+        function start() {
+            gapi.client.init({
+                clientId: "413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com",
+                scope: 'email',
+            });
+        }
+
+        gapi.load('client:auth2', start);
+    }, []);
+
+    const handleSuccess = async (response) => {
+        let email = response.profileObj.email;
+        console.log('user email:', email);
+        setTimeout(() => {
+        }, 1000);
+
+        try {
+            await axios.post('http://localhost:4444/api/google/login', {
+                Email: email,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.status === 200) {
+                    SUCCESS(response.data.message)
+                    localStorage.setItem("token", response.data.token);
+                    usersession.user.login(response.data.UID, response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
+                    localStorage.setItem("user", JSON.stringify(usersession.user))
+                    window.location.reload()
+                } else {
+                    console.log(response.data.message)
+                    ERROR(response.data.message)
+                }
+            })
+        } catch (err) {
+            console.log('response:', err.response.data.message)
+            ERROR(err.response.data.message)
+        }
+    };
+    const handleError = (error) => {
+        console.log('Google error:', error);
+        ERROR(error.details);
+    };
 
     function redirectToAccount() {
         window.location.href = "/"
@@ -122,11 +168,21 @@ export default function Loginform() {
                                         <button type="submit" onClick={handleLogIn}
                                                 className="btn btn-outline-secondary px-5 mb-5 w-100 btn-animation">Login
                                         </button>
-
                                     </div>
+
                                     <div id="emailHelp" className="form-text text-center mb-5 text-dark">Not
-                                        Registered? <a href="/register" className="text-dark fw-bold"> Create an
-                                            Account</a>
+                                        Registered?
+                                        <a href="/register" className="text-dark fw-bold"> Create an Account</a>
+                                    </div>
+                                    <div className="text-center float-end">
+                                        <GoogleLogin
+                                            className="btn btn-outline-secondary btn-animation rounded rounded-2"
+                                            clientId="413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com"
+                                            buttonText="Login with Google"
+                                            onSuccess={handleSuccess}
+                                            onFailure={handleError}
+                                            cookiePolicy={'single_host_origin'}
+                                        />
                                     </div>
                                 </form>
                             </div>

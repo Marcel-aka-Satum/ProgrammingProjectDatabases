@@ -72,7 +72,7 @@ const Navbar = () => {
             <div className="container-fluid m-2" ref={refIn}>
                 <div className="navbar-header">
                     <NavLink className="navbar-brand" to="/">
-                        <span className="p-2"><img src={Logo} width="30" height="30" alt=""/></span>
+                        <span className="p-2"><img src={Logo} width="50" height="50" alt=""/></span>
                         Newsaggregator
                     </NavLink>
                 </div>
