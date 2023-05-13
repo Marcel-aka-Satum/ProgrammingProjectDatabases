@@ -410,6 +410,16 @@ DBSCAN has two main parameters that can be tweaked to improve performance:
 - $\epsilon$: The maximum distance between two points for them to be considered as part of the same cluster. A smaller value will result in more clusters, while a larger value will result in fewer clusters.
 - min\_samples: The minimum number of points required to form a dense region. A higher value will make the algorithm more conservative in forming clusters, while a lower value will create more clusters.
 
+We use cosine similarity as a distance metric for clustering with DBSCAN, which is motivated by several factors:
+
+1. High-dimensional data: News articles' text data, once vectorized (e.g., using TF-IDF), usually results in high-dimensional feature spaces. Cosine similarity is a better metric for high-dimensional spaces compared to Euclidean distance, as it mitigates the "curse of dimensionality." In high-dimensional spaces, Euclidean distances tend to become inflated and less meaningful.
+
+2. Text data and sparsity: After vectorization, text data is often represented in sparse matrices where most values are zeros. Cosine similarity is particularly well-suited for sparse data, as it measures the angle between two vectors rather than their absolute distances. This characteristic makes it less sensitive to the magnitude of the vectors and more focused on their relative orientations, which is useful for text data.
+
+3. Interpretability: Cosine similarity values range from -1 to 1, where 1 indicates that the vectors are identical, 0 means they are orthogonal (completely unrelated), and -1 implies they are diametrically opposed. This interpretable range is beneficial when analyzing the relationships between text documents, as it allows for an intuitive understanding of how similar or dissimilar the documents are.
+
+4. Robustness to document length: Cosine similarity measures the angle between two vectors, not their magnitude. Therefore, it is less affected by the difference in document lengths. This is important when clustering news articles, as the length of articles can vary greatly.
+
 ## Visualizing Clusters
 
 `visualize_clusters()` uses the t-SNE algorithm for 3D visualization of the clusters. t-SNE is suitable for visualizing high-dimensional data in lower-dimensional spaces, providing an intuitive understanding of the clustering results.
