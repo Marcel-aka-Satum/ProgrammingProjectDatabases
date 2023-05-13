@@ -226,3 +226,17 @@ p {
   100% { transform: rotate(360deg); }
 }
 
+@media only screen and (max-width: 767px) {
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+
+    .form-group .filter-bar{
+        display: flex;
+        padding-bottom: 15px;
+        margin-right: 5px;
+        justify-content: center;
+    }
+}

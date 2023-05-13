@@ -3,15 +3,11 @@ import feedparser
 from . import ui_db
 import json
 import requests
-import spacy
 from bs4 import BeautifulSoup
-
-# Load English model
-en_nlp = spacy.load('en_core_web_sm')
-
-# Load Dutch model
-nl_nlp = spacy.load('nl_core_news_sm')
-
+import random
+import time
+from fake_useragent import UserAgent
+from newspaper import Article
 
 # def scraper():
 #     # Initialize DB object
@@ -52,6 +48,8 @@ nl_nlp = spacy.load('nl_core_news_sm')
 class BaseFeedScraper:
     def __init__(self):
         self.DB = ui_db.DBConnection()
+        self.user_agent = UserAgent()
+        self.headers = {'User-Agent': self.user_agent.random}
 
     def connect_to_database(self):
         if not self.DB.connect():
@@ -83,30 +81,60 @@ class BaseFeedScraper:
         except:
             return 'None'
 
-    #       if 'media_content' in entry :
-    #            return entry['media_content']['url']
-    #
-    #      elif 'links' in entry:
-    #         for lnk in entry['links']:
-    #            if lnk['type'] in ['image/jpeg']:
-    #               return lnk['href']
-    #
-    #      else:
-    #         print("hello")
-    #         return 'None'
-
     def get_summary(self, entry):
         return entry['summary']
 
     def get_image_none(self, url):
-        r = requests.get(url)
-        data = r.text
-        soup = BeautifulSoup(data, features="lxml")
-        for link in soup.find_all('img'):
-            img_src = link.get('src')
-            return img_src
+        # Use a legitimate user agent
+        user_agent_list = [
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36 Edge/16.16299",
+            "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; AS; rv:11.0) like Gecko",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/15.15063"
+        ]
+        headers = {'User-Agent': random.choice(user_agent_list)}
 
-        return None  # return None if no images found
+        # Use a random delay between requests, but add a small random variation
+        # in the delay to make the requests less predictable
+        delay = random.uniform(2, 4)
+        time.sleep(delay + random.uniform(-1, 1))
+
+        # Use a session object to reuse the same TCP connection for multiple requests
+        session = requests.Session()
+
+        # Set the maximum number of retries and retry on 5xx HTTP errors and timeouts
+        adapter = requests.adapters.HTTPAdapter(max_retries=3, pool_connections=1, pool_maxsize=1,
+                                                pool_block=True)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+
+        # Make the request with a timeout
+        try:
+            response = session.get(url, headers=headers, timeout=10)
+            response.raise_for_status()  # raise an exception for 4xx or 5xx status codes
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+            return None
+
+        # Parse the HTML with BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+        image = soup.find('img')
+        if image is not None:
+            return image['src']
+        else:
+            return None
+
+    def get_image_none_2(self, url):
+        try:
+            article = Article(url)
+            response = requests.get(url, timeout=5)
+            article.set_html(response.content)
+            article.parse()
+            return article.top_image
+        except:
+            return None
 
     def scrape_entry(self, entry, rss_url, topic):
         link = entry['link']
@@ -114,13 +142,11 @@ class BaseFeedScraper:
         summary = self.get_summary(entry)
         publisher = entry['published']
         image = self.get_image(entry)
-        if image == None and "www.tijd" in link:
-            image = None
-        elif image == None:
-            image = self.get_image_none(link)
+        if image is None and "www.tijd" in link:
+            image = self.get_image_none_2(link)
 
-        if image == None:
-            print("hey")
+        elif image is None:
+            image = self.get_image_none(link)
 
         status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
         if not message[0]:

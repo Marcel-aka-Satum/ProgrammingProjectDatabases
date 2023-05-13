@@ -412,6 +412,9 @@ const Home = () => {
                     >
                         X
                     </button>
+                    <div className="filter-bar">
+
+
                     <div className="dropdown ps-2">
                         <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -435,7 +438,7 @@ const Home = () => {
                             <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
                         </button>
                     </a>
-
+                    </div>
                 </div>
                 <div className="row">
                     {Array.from(genres).map((genre) => (
