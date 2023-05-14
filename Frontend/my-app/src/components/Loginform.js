@@ -165,9 +165,13 @@ export default function Loginform() {
                                     </div>
 
                                     <div id="emailHelp" className="form-text text-center mb-2 text-dark">Not
-                                        Registered?
-                                        <a href="/register" className="text-dark fw-bold"> Create an Account</a>
+                                        Registered? <a href="/register" className="text-dark fw-bold">Create an Account</a>
                                     </div>
+                                    <div className="text-center mb-2 text-dark">Or</div>
+                                    <div className="text-center mb-2">
+                                        <a href="/" className="text-dark fw-bold">Continue as a guest</a>
+                                    </div>
+
                                     <div className="text-center float-end">
                                         {/*it has to be verified first otherwise drop error*/}
                                         <GoogleLogin

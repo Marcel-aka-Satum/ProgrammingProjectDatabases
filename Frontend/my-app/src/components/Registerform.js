@@ -9,7 +9,6 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import {GoogleLogin} from 'react-google-login';
 import {gapi} from "gapi-script";
 
-
 export default function Registerform() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -209,7 +208,8 @@ export default function Registerform() {
                                         <div className="input-group-text clickable"
                                              onClick={() => setShowPassword(!showPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
+                                                 fill="currentColor" className="bi bi-key-fill"
+                                                 viewBox="0 0 16 16">
                                                 <path
                                                     d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                             </svg>
@@ -235,7 +235,8 @@ export default function Registerform() {
                                         <div className="input-group-text clickable"
                                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
+                                                 fill="currentColor" className="bi bi-key-fill"
+                                                 viewBox="0 0 16 16">
                                                 <path
                                                     d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                             </svg>
@@ -267,8 +268,13 @@ export default function Registerform() {
                                     </div>
                                     <div id="emailHelp" className="form-text text-center mb-2 text-dark">Already
                                         have an
-                                        account? <a
-                                            href="/login" className="text-dark fw-bold">Log in</a></div>
+                                        account? <a href="/login" className="text-dark fw-bold">Log in</a></div>
+                                    <div className="text-center mb-2 text-dark">Or</div>
+                                    <div className="text-center mb-2">
+                                        <a href="/" className="text-dark fw-bold">Continue as a guest</a>
+                                    </div>
+
+
                                     <div className="text-center float-end">
                                         <GoogleLogin
                                             className="btn btn-outline-secondary btn-animation rounded rounded-2"
@@ -281,6 +287,25 @@ export default function Registerform() {
                                     </div>
                                 </form>
                             </div>
+
+                            <div className="card my-4">
+                                <div className="card-body">
+                                    <h5 className="card-title">Advantages of Registering</h5>
+                                    <ul className="list-group list-group-flush">
+                                        <li className="list-group-item"><i className="fas fa-heart me-2"></i> Access to
+                                            favorites
+                                        </li>
+                                        <li className="list-group-item">
+                                            <i className="fas fa-fire me-2"></i>Even more recommended topics & articles
+                                        </li>
+                                        <li className="list-group-item"><i className="fas fa-comments me-2"></i> Leave
+                                            comments
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 )}

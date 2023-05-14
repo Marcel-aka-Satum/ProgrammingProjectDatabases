@@ -164,7 +164,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                         </div>
                                         <CopyToClipboard text={article.URL}>
                                             <button
-                                                className="btn "
+                                                className="btn"
                                                 style={{position: "absolute", right: "0"}}
                                                 title="Copy link"
                                                 onClick={handleClipboard}
@@ -415,29 +415,30 @@ const Home = () => {
                     <div className="filter-bar">
 
 
-                    <div className="dropdown ps-2">
-                        <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {sortOption ? sortOption : 'newest'}
-                        </button>
-                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <button className="dropdown-item" type="button" value="newest"
-                                        onClick={handleSortChange}>newest
-                                </button>
-                            </li>
-                            <li>
-                                <button className="dropdown-item" type="button" value="oldest"
-                                        onClick={handleSortChange}>oldest
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                    <a href="/genre/recommended">
-                        <button className="btn btn-outline-secondary d-inline-flex align-items-center">
-                            <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
-                        </button>
-                    </a>
+                        <div className="dropdown ps-2">
+                            <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {sortOption ? sortOption : 'newest'}
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <button className="dropdown-item" type="button" value="newest"
+                                            onClick={handleSortChange}>newest
+                                    </button>
+                                </li>
+                                <li>
+                                    <button className="dropdown-item" type="button" value="oldest"
+                                            onClick={handleSortChange}>oldest
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="/genre/recommended">
+                            <button className="btn btn-outline-secondary d-inline-flex align-items-center">
+                                <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
+                            </button>
+                        </a>
                     </div>
                 </div>
                 <div className="row">
