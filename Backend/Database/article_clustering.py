@@ -14,7 +14,6 @@ from sklearn.cluster import DBSCAN
 from sklearn.decomposition import TruncatedSVD
 from sklearn.manifold import TSNE
 
-from gensim.models import Word2Vec
 from bs4 import BeautifulSoup
 
 import re
@@ -29,6 +28,10 @@ try:
     from . import ui_db
 except ImportError:
     import ui_db
+
+from easynmt import EasyNMT
+
+import time
 
 class NewsClusterer:
     """
@@ -56,18 +59,48 @@ class NewsClusterer:
         clean_text = soup.get_text()
         clean_text = re.sub(r'\s+', ' ', clean_text).strip()
         return clean_text
+    
+
+    def translate_text(text):
+        try:
+            translations_df = pd.read_csv('translations.csv')
+        except FileNotFoundError:
+            translations_df = pd.DataFrame(columns=['Original Text', 'Translated Text'])
+
+        existing_translation = translations_df.loc[translations_df['Original Text'] == text, 'Translated Text']
+
+        if not existing_translation.empty:
+            translation = existing_translation.iloc[0]
+            print(f"Using precomputed translation for text: {text}")
+        else:
+            model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
+            print("Translating text: " + text)
+            try:
+                translation = model.translate(text, target_lang='en')
+            except:
+                translation = text
+            print("Translated text: " + translation)
+
+            # Append translations to the 'translations.csv' file
+            new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})
+            translations_df = translations_df.append(new_translation, ignore_index=True)
+            translations_df.to_csv('translations.csv', index=False)
+
+        return translation
+
 
     @staticmethod
     def preprocess_text(text):
         """
-        Preprocesses the input text by removing HTML tags, tokenizing, removing stop words, 
+        Preprocesses the input text by removing HTML tags, translating all articles into english, removing stop words 
         and lemmatizing the tokens.
 
         :param text: The input text to preprocess.
         :return: Preprocessed text.
         """
         text = NewsClusterer.remove_html_tags(text)
-        stop_words = set(stopwords.words('dutch'))
+        #text = NewsClusterer.translate_text(text)
+        stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
         tokens = word_tokenize(text)
         tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens if token.isalpha() and token not in stop_words]
@@ -109,6 +142,7 @@ class NewsClusterer:
         df = pd.DataFrame(DB.getNewsArticles()[1])
         return df
 
+    
     def preprocess_and_vectorize(self, df):
         """
         Preprocesses the input DataFrame by preprocessing the titles and summaries, 
@@ -120,6 +154,7 @@ class NewsClusterer:
         df['preprocessed'] = df['Title'].apply(self.preprocess_text) + " " + df['Summary'].apply(self.preprocess_text)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
         return X_tfidf
+
 
     def apply_svd(self, X_tfidf):
         """
@@ -174,6 +209,34 @@ class NewsClusterer:
             if not success:
                 print(f"Failed to insert cluster for URL '{url}': {message}")
 
+    def push_clusters_to_database(self, url_cluster_df):
+        """
+        Pushes the clustered data (URLs and cluster labels) to the database.
+
+        :param url_cluster_df: DataFrame containing article URLs and cluster labels.
+        """
+        db_connection = ui_db.DBConnection()
+        db_connection.connect()
+        for index, row in url_cluster_df.iterrows():
+            url = row['URL']
+            cluster_id = row['cluster']
+
+            # UPSERT operation
+            query = '''
+            INSERT INTO newsaggregator.relatedcluster (URL, Cluster_ID)
+            VALUES (%s, %s)
+            ON CONFLICT (URL)
+            DO UPDATE SET
+                Cluster_ID = EXCLUDED.Cluster_ID;
+            '''
+            try:
+                cursor = db_connection.connection.cursor()
+                cursor.execute(query, (url, cluster_id))
+                db_connection.connection.commit()
+            except Exception as e:
+                print(f"Failed to insert or update cluster for URL '{url}': {e}")
+
+
 
     def visualize_clusters(self, X_reduced, clusters, df):
         """
@@ -218,5 +281,5 @@ class NewsClusterer:
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=False)
+    news_clusterer.run(visualize=True)
 

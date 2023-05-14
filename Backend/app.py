@@ -27,6 +27,7 @@ drop_db = False
 if drop_db:
     db.redefine()
     db.populate()
+     
     # db.loadBackup("230417_19_36.txt")
     scraper()
     # clear logger file
@@ -578,7 +579,7 @@ def articlesPerGenre():
 def start_scraper():
     while True:
         data = db.getSettings()[1]
-        scraped_time = int(data["scraperTimer"])
+        scraped_time = int(600)
         scraper()
         time.sleep(scraped_time)
 

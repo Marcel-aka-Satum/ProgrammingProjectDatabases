@@ -39,7 +39,7 @@ def initialize_db(cur):
                 
 
             CREATE TABLE newsaggregator.relatedcluster (
-                URL varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
+                URL varchar PRIMARY KEY REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
                 Cluster_ID int);
 
 
