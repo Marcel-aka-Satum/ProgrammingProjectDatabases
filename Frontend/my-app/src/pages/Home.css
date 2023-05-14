@@ -221,6 +221,18 @@ p {
   animation: spin 2s linear infinite;
 }
 
+    .form-group {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 10px;
+    }
+
+    .form-group .filter-bar{
+        display: flex;
+        margin-right: 5px;
+        justify-content: center;
+    }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
