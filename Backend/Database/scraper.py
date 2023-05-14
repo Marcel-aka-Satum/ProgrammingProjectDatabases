@@ -149,10 +149,11 @@ class BaseFeedScraper:
         publisher = entry['published']
         image = self.get_image(entry)
         if image is None and "www.tijd" in link:
-            image = self.get_image_none_2(link)
-
+            #image = self.get_image_none_2(link)
+            image = None
         elif image is None:
-            image = self.get_image_none(link)
+            #image = self.get_image_none(link)
+            image = None
 
         status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
         if not message[0]:
