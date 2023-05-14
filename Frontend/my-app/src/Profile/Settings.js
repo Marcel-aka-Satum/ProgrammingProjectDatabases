@@ -33,7 +33,7 @@ export default function Settings() {
 
     const handleSaveProfile = async () => {
         console.log(username, email, oldPassword, newPassword, confirmPassword);
-        const check_password = await fetch('http://127.0.0.1:4444/api/change_password', {
+        const check_password = await fetch('http://127.0.0.1:4444/api/verify_password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ export default function Settings() {
         const data2 = await update_user.json();
         if (data2.status === 200) {
             SUCCESS("Profile updated successfully");
-            usersession.user.updateUserInfo(username, email, newPassword, usersession.user.isAdmin, usersession.user.getDebug());
+            usersession.user.updateUserInfo(username, email, usersession.user.token, usersession.user.isAdmin, usersession.user.getDebug());
             handleCloseModal();
         } else {
             ERROR("Update failed: " + data2.message);

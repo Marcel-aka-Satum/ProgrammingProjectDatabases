@@ -151,7 +151,7 @@ def login_user():
         }), 200
 
 
-@app.route("/api/change_password", methods=["POST"])
+@app.route("/api/verify_password", methods=["POST"])
 @cross_origin()
 def change_password():
     email = request.json["Email"]
@@ -235,9 +235,19 @@ def addUser():
 @cross_origin()
 def updateUser(id):
     data = request.get_json()
-    username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
+    username, email, password, is_admin = data['Username'], data['Email'], data.get('Password'), data['Is_Admin']
 
-    status, message = db.updateUser(id, username, email, h.create_hash(password), is_admin)[1]
+    print('update password:', password)
+
+    new_password = None
+    if password:
+        new_password = h.create_hash(password)
+    else:
+        user_exists = db.getUser(email)[1]
+        password = user_exists[1]["Password"]
+        new_password = password
+
+    status, message = db.updateUser(id, username, email, new_password, is_admin)[1]
     if status:
         logger.info(f"User updated: username={username} | email={email}")
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
@@ -435,6 +445,7 @@ def topics():
     topics_list = db.getTopics()[1]
     return jsonify({'topics': topics_list})
 
+
 ################# OTHERS #################
 @app.errorhandler(404)
 @app.errorhandler(500)
@@ -462,6 +473,43 @@ def ChangeSetting():
 def GetSettings():
     return jsonify(db.getSettings()[1])
 
+
+################# GOOGLE API CALLS #################
+
+@app.route('/api/google/login', methods=['POST'])
+@cross_origin()
+def GoogleLogin():
+    data = request.get_json()
+    email = data['Email']
+    user_exists = db.getUser(email)[1]
+
+    if user_exists[0] in [None, False]:
+        logger.info(f"Failed login attempt via google: email={email}, reason=user does not exist")
+        return jsonify({"message": "user does not exist."}), 401
+
+    uid = user_exists[1]["UID"]
+    username = user_exists[1]["Username"]
+    password = user_exists[1]["Password"]
+    is_admin = user_exists[1]["Is_Admin"]
+
+    print(f"Successful login via google: email={email}, uid={uid}, username={username}, password={password}, "
+          f"is_admin={is_admin}")
+
+    encoded_jwt = jwt.encode({"user": username, "isAdmin": is_admin,
+                              "email": email, 'exp':
+                                  datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
+                             app.config["JWT_SECRET_KEY"])
+
+    logger.info(f"Successful login: email={email}")
+
+    return jsonify({
+        "message": f"Authorized > Welcome Back",
+        "UID": uid,
+        "Email": email,
+        "token": encoded_jwt,
+        "Username": username,
+        "isAdmin": is_admin
+    }), 200
 
 
 #################### DATABASE TABLES ####################
@@ -520,6 +568,7 @@ def Backup():
 @app.route('/db/topics')
 def Topics():
     return db.getTopics()[1]
+
 
 @app.route('/db/articlesgenres')
 def articlesPerGenre():

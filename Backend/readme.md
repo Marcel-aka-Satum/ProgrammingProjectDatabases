@@ -71,9 +71,9 @@ On success, returns a `200` status code and a JSON response with the following f
 
 On failure, returns a `401` status code and a JSON response with a `message` field describing the error.
 
-### `POST /api/change_password`
+### `POST /api/verify_password`
 
-**Description:** _Changes the password for an existing user account._
+**Description:** _Verifies the password for an existing user account._
 
 ### Request Body
 

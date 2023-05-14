@@ -9,6 +9,7 @@ import time
 from fake_useragent import UserAgent
 from newspaper import Article
 
+
 # def scraper():
 #     # Initialize DB object
 #     DB = ui_db.DBConnection()
@@ -48,8 +49,13 @@ from newspaper import Article
 class BaseFeedScraper:
     def __init__(self):
         self.DB = ui_db.DBConnection()
-        self.user_agent = UserAgent()
-        self.headers = {'User-Agent': self.user_agent.random}
+        self.user_agent = None
+        self.headers = None
+        try:
+            self.user_agent = UserAgent()
+            self.headers = {'User-Agent': self.user_agent.random}
+        except:
+            pass
 
     def connect_to_database(self):
         if not self.DB.connect():

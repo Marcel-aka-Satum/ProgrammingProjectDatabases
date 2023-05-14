@@ -49,7 +49,6 @@ export class User {
     }
 
     getDebug() {
-        console.log('return of debug:', this.debug)
         return this.debug
     }
 
