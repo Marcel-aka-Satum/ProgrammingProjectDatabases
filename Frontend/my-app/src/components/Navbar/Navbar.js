@@ -83,6 +83,7 @@ const Navbar = () => {
                         <span><Hamburger toggled={Open} onToggle={colConCollapse}/></span>
                     </div>
                 </div>
+
                 <ul className="nav navbar-nav allign-items-center mr-4">
                     <li>
                         <NavLink to="/" onClick={colConCollapse}>Home</NavLink>
@@ -94,7 +95,7 @@ const Navbar = () => {
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div className="dropdown-menu articledrop m-0 fix-top"
+                        <div className="dropdown-menu articledrop fix-top"
                              aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4 p-0">
                                 {Array.from(genres).map((genre) => (
