@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {Pagination} from "react-bootstrap";
 import 'react-toastify/dist/ReactToastify.css';
 import {SUCCESS, ERROR, UNKNOWN_ERROR} from '../Helpers/custom_alert.js';
+import {request_headers, site_domain} from "../../globals";
 
 
 export default function Users() {
@@ -17,7 +18,7 @@ export default function Users() {
     useEffect(() => {
         async function fetchUsers() {
             try {
-                const response = await fetch('http://127.0.0.1:4444/api/users');
+                const response = await fetch(`${site_domain}/api/users`);
                 const data = await response.json();
                 setUsers(data);
             } catch (error) {
@@ -31,7 +32,7 @@ export default function Users() {
 
     useEffect(() => {
         async function fetchFavorites() {
-            const response = await fetch(`http://127.0.0.1:4444/api/favorites`);
+            const response = await fetch(`${site_domain}/api/favorites`);
             const data = await response.json();
             if (data) {
                 setFavorites(data.favorites);
@@ -44,18 +45,16 @@ export default function Users() {
     console.log('favorites', favorites)
 
     const refreshUsers = () => {
-        fetch('http://127.0.0.1:4444/api/users')
+        fetch(`${site_domain}/api/users`)
             .then(response => response.json())
             .then(data => setUsers(data))
             .catch(error => console.error(error));
     }
 
     const applyUserChanges = async (_id, new_username, new_email, new_password, new_is_admin, type) => {
-        const response = await fetch(`http://127.0.0.1:4444/api/update_user/${_id}`, {
+        const response = await fetch(`${site_domain}/api/update_user/${_id}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: request_headers,
             body: JSON.stringify({
                 Username: new_username,
                 Email: new_email,
@@ -76,11 +75,9 @@ export default function Users() {
         }
     };
     const applyDeleteUser = async (_id) => {
-        const reponse = await fetch(`http://127.0.0.1:4444/api/delete_user/${_id}`, {
+        const reponse = await fetch(`${site_domain}/api/delete_user/${_id}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: request_headers
         })
         const data = await reponse.json();
         if (data.status === 200) {
@@ -94,11 +91,9 @@ export default function Users() {
         e.preventDefault();
         try {
             if (username && email && password) {
-                const response = await fetch('http://localhost:4444/api/add_user', {
+                const response = await fetch(`${site_domain}/api/add_user`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: request_headers,
                     body: JSON.stringify({
                         Email: email,
                         Password: password,

@@ -510,8 +510,6 @@ def GoogleLogin():
         "Username": username,
         "isAdmin": is_admin
     }), 200
-
-
 #################### DATABASE TABLES ####################
 
 @app.route('/db')

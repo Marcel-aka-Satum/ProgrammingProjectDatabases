@@ -19,6 +19,7 @@ import UserSettings from './Profile/Settings';
 import ScrollToTop from "react-scroll-to-top";
 import { v4 as uuid } from 'uuid';
 import Cookies from 'js-cookie';
+import {site_domain} from "./globals";
 
 /////////////////// import css
 import "./components/Navbar/navbarStyle.css"
@@ -40,7 +41,7 @@ function App() {
         
         async function fetchCookie() {
             try {
-                const response = await fetch('http://127.0.0.1:4444/api/add_Visitor');
+                const response = await fetch(`${site_domain}/api/add_Visitor`);
                 const data = await response.json();
                 setCookies(data)
                 console.log(data)
