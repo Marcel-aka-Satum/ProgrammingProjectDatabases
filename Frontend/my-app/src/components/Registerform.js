@@ -5,6 +5,7 @@ import {userSession} from '../App'
 import {SUCCESS, ERROR} from "./Helpers/custom_alert"
 import axios from 'axios'
 import zxcvbn from 'zxcvbn';
+import ReCAPTCHA from 'react-google-recaptcha';
 import {GoogleLogin} from 'react-google-login';
 import {gapi} from "gapi-script";
 
@@ -16,33 +17,40 @@ export default function Registerform() {
     const [username, setUsername] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [verified, setVerified] = useState(false); // New state variable
     let usersession = useContext(userSession);
+    let sitekey = "6LdnigkmAAAAAGQ0GNWTghQYJi-KDZelFUFEe2K8"
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        try {
-            await axios.post('http://localhost:4444/api/register', {
-                Email: email,
-                Password: password,
-                ConfirmPassword: confirmPassword,
-                Username: username,
-                Is_Admin: false,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.status === 200) {
-                    SUCCESS(response.data.message)
-                    localStorage.setItem("token", response.data.token);
-                    usersession.user.register(true, response.data.token, false, email, username)
-                    localStorage.setItem("user", JSON.stringify(usersession.user))
-                    window.location.reload()
-                } else {
-                    ERROR(response.data.message)
-                }
-            })
-        } catch (err) {
-            ERROR(err.response.data.message)
+        if (verified) {
+
+            try {
+                await axios.post('http://localhost:4444/api/register', {
+                    Email: email,
+                    Password: password,
+                    ConfirmPassword: confirmPassword,
+                    Username: username,
+                    Is_Admin: false,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.status === 200) {
+                        SUCCESS(response.data.message)
+                        localStorage.setItem("token", response.data.token);
+                        usersession.user.register(true, response.data.token, false, email, username)
+                        localStorage.setItem("user", JSON.stringify(usersession.user))
+                        window.location.reload()
+                    } else {
+                        ERROR(response.data.message)
+                    }
+                })
+            } catch (err) {
+                ERROR(err.response.data.message)
+            }
+        } else {
+            ERROR("Please verify that you are not a robot")
         }
     }
 
@@ -58,17 +66,21 @@ export default function Registerform() {
     }, []);
 
     const handleSuccess = async (response) => {
-        let email = response.profileObj.email;
-        let username = response.profileObj.name;
+        if (verified) {
+            let email = response.profileObj.email;
+            let username = response.profileObj.name;
 
-        // replace any spaces with underscores in username
-        username = username.replace(/\s/g, '_');
+            // replace any spaces with underscores in username
+            username = username.replace(/\s/g, '_');
 
-        setEmail(email);
-        setUsername(username);
+            setEmail(email);
+            setUsername(username);
 
-        // mention that it should now fill in the password field
-        SUCCESS("Please fill in the password to complete the registration")
+            // mention that it should now fill in the password field
+            SUCCESS("Please fill in the password to complete the registration")
+        } else {
+            ERROR("Please verify that you are not a robot")
+        }
     }
 
     const handleError = (error) => {
@@ -78,6 +90,12 @@ export default function Registerform() {
 
     function redirectToAccount() {
         window.location.href = "/"
+    }
+
+    function onChange(value) {
+        console.log("Captcha value:", value);
+        setVerified(true)
+
     }
 
     const checkPasswordStrength = (password) => {
@@ -144,14 +162,14 @@ export default function Registerform() {
                 : (
                     <div className="row">
                         <div className="col-md-6 offset-md-3">
-                            <h2 className="text-center text-dark mt-5">Registration Form</h2>
-                            <div className="card my-5">
-                                <form className="card-body cardbody-color p-lg-5">
-
+                            <h2 className="text-center text-dark mt-5">Register</h2>
+                            <div className="card my-4">
+                                <form className="card-body cardbody-color p-lg-4">
                                     <div className="input-group mb-3">
                                         <div className="input-group-text">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 fill="currentColor" className="bi bi-person-fill" viewBox="0 0 16 16">
+                                                 fill="currentColor" className="bi bi-person-fill"
+                                                 viewBox="0 0 16 16">
                                                 <path
                                                     d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
                                             </svg>
@@ -178,7 +196,8 @@ export default function Registerform() {
                                             </svg>
                                         </div>
                                         <div className="form-floating">
-                                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                                            <input type="email" value={email}
+                                                   onChange={(e) => setEmail(e.target.value)}
                                                    className="form-control" id="floatingInput"
                                                    placeholder="Email"/>
                                             <label htmlFor="floatingInput">Email</label>
@@ -229,19 +248,25 @@ export default function Registerform() {
                                                    id="confirmPassword" placeholder="Confirm Password"/>
                                             <label htmlFor="confirmPassword">Confirm Password</label>
                                             {confirmPassword && confirmPassword !== password && (
-                                                <div className="invalid-feedback ps-2 position-absolute w-100">Passwords
+                                                <div
+                                                    className="invalid-feedback ps-2 position-absolute w-100">Passwords
                                                     do not match</div>
                                             )}
                                         </div>
                                     </div>
 
-
+                                    <ReCAPTCHA
+                                        className="mb-3 d-flex justify-content-start"
+                                        sitekey={sitekey}
+                                        onChange={onChange}
+                                    />
                                     <div className="text-center">
                                         <button type="submit" onClick={handleRegister}
-                                                className="btn btn-outline-secondary px-5 mb-5 w-100">Register
+                                                className="btn btn-outline-secondary px-5 mb-3 w-100">Register
                                         </button>
                                     </div>
-                                    <div id="emailHelp" className="form-text text-center mb-5 text-dark">Already have an
+                                    <div id="emailHelp" className="form-text text-center mb-2 text-dark">Already
+                                        have an
                                         account? <a
                                             href="/login" className="text-dark fw-bold">Log in</a></div>
                                     <div className="text-center float-end">

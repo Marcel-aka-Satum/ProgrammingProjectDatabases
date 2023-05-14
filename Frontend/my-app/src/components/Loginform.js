@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext, useEffect, useRef} from "react";
 import "../css/login_register_form.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios';
@@ -11,44 +11,39 @@ import {gapi} from "gapi-script";
 export default function Loginform() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [captchaValue, setCaptchaValue] = useState(null);
+    const [verified, setVerified] = useState(false); // New state variable
     let usersession = useContext(userSession);
-
-    // TODO: enable this to test
-    // const recaptchaRef = React.createRef();
+    let sitekey = "6LdnigkmAAAAAGQ0GNWTghQYJi-KDZelFUFEe2K8"
 
     const handleLogIn = async (e) => {
         e.preventDefault();
-        //TODO: Enable this to test
-        // if (captchaValue) {
-        try {
-            await axios.post('http://localhost:4444/api/login', {
-                Email: email,
-                Password: password,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.status === 200) {
-                    SUCCESS(response.data.message)
-                    localStorage.setItem("token", response.data.token);
-                    usersession.user.login(response.data.UID, response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
-                    localStorage.setItem("user", JSON.stringify(usersession.user))
-                    window.location.reload()
-                } else {
-                    console.log(response.data.message)
-                    ERROR(response.data.message)
-                }
-            })
-        } catch (err) {
-            console.log('response', err.response.data.message)
-            ERROR(err.response.data.message)
+        if (verified) {
+            try {
+                await axios.post('http://localhost:4444/api/login', {
+                    Email: email,
+                    Password: password,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.status === 200) {
+                        SUCCESS(response.data.message)
+                        localStorage.setItem("token", response.data.token);
+                        usersession.user.login(response.data.UID, response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
+                        localStorage.setItem("user", JSON.stringify(usersession.user))
+                        window.location.reload()
+                    } else {
+                        console.log(response.data.message)
+                        ERROR(response.data.message)
+                    }
+                })
+            } catch (err) {
+                console.log('response', err.response.data.message)
+                ERROR(err.response.data.message)
+            }
+        } else {
+            ERROR("Please verify that you are not a robot")
         }
-        // TODO: enable this to test
-        // }
-        // else {
-        //     ERROR("Please complete the CAPTCHA verification");
-        // }
     }
     useEffect(() => {
         function start() {
@@ -62,32 +57,33 @@ export default function Loginform() {
     }, []);
 
     const handleSuccess = async (response) => {
-        let email = response.profileObj.email;
-        console.log('user email:', email);
-        setTimeout(() => {
-        }, 1000);
-
-        try {
-            await axios.post('http://localhost:4444/api/google/login', {
-                Email: email,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.status === 200) {
-                    SUCCESS(response.data.message)
-                    localStorage.setItem("token", response.data.token);
-                    usersession.user.login(response.data.UID, response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
-                    localStorage.setItem("user", JSON.stringify(usersession.user))
-                    window.location.reload()
-                } else {
-                    console.log(response.data.message)
-                    ERROR(response.data.message)
-                }
-            })
-        } catch (err) {
-            console.log('response:', err.response.data.message)
-            ERROR(err.response.data.message)
+        if (verified) {
+            let email = response.profileObj.email;
+            console.log('user email:', email);
+            try {
+                await axios.post('http://localhost:4444/api/google/login', {
+                    Email: email,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.status === 200) {
+                        SUCCESS(response.data.message)
+                        localStorage.setItem("token", response.data.token);
+                        usersession.user.login(response.data.UID, response.data.Username, response.data.Email, response.data.token, response.data.isAdmin)
+                        localStorage.setItem("user", JSON.stringify(usersession.user))
+                        window.location.reload()
+                    } else {
+                        console.log(response.data.message)
+                        ERROR(response.data.message)
+                    }
+                })
+            } catch (err) {
+                console.log('response:', err.response.data.message)
+                ERROR(err.response.data.message)
+            }
+        } else {
+            ERROR("Please verify that you are not a robot")
         }
     };
     const handleError = (error) => {
@@ -100,7 +96,9 @@ export default function Loginform() {
     }
 
     function onChange(value) {
-        setCaptchaValue(value);
+        console.log("Captcha value:", value);
+        setVerified(true)
+
     }
 
     return (
@@ -113,10 +111,9 @@ export default function Loginform() {
                 (
                     <div className="row">
                         <div className="col-md-6 offset-md-3">
-                            <h2 className="text-center text-dark mt-5">Login Form</h2>
-                            <div className="card my-5">
-                                <form className="card-body cardbody-color p-lg-5">
-
+                            <h2 className="text-center text-dark mt-5">Login</h2>
+                            <div className="card my-4">
+                                <form className="card-body cardbody-color p-lg-4">
                                     <div className="input-group mb-3">
                                         <div className="input-group-text">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -155,28 +152,26 @@ export default function Loginform() {
                                         </div>
                                     </div>
 
-                                    {/*TODO: Enable this to test*/}
-                                    {/*<div className="text-center mb-3">*/}
-                                    {/*    <ReCAPTCHA*/}
-                                    {/*        ref={recaptchaRef}*/}
-                                    {/*        sitekey="6Lei_c4lAAAAAJnoVDCICmLZqRnqrehQfeYAmXht"*/}
-                                    {/*        onChange={onChange}*/}
-                                    {/*    />*/}
-                                    {/*</div>*/}
+                                    <ReCAPTCHA
+                                        className="mb-3 d-flex justify-content-start"
+                                        sitekey={sitekey}
+                                        onChange={onChange}
+                                    />
 
                                     <div className="text-center">
                                         <button type="submit" onClick={handleLogIn}
-                                                className="btn btn-outline-secondary px-5 mb-5 w-100 btn-animation">Login
+                                                className="btn btn-outline-secondary px-5 mb-3 w-100 btn-animation">Login
                                         </button>
                                     </div>
 
-                                    <div id="emailHelp" className="form-text text-center mb-5 text-dark">Not
+                                    <div id="emailHelp" className="form-text text-center mb-2 text-dark">Not
                                         Registered?
                                         <a href="/register" className="text-dark fw-bold"> Create an Account</a>
                                     </div>
                                     <div className="text-center float-end">
+                                        {/*it has to be verified first otherwise drop error*/}
                                         <GoogleLogin
-                                            className="btn btn-outline-secondary btn-animation rounded rounded-2"
+                                            className="btn btn-outline-secondary rounded rounded-2"
                                             clientId="413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com"
                                             buttonText="Login with Google"
                                             onSuccess={handleSuccess}
