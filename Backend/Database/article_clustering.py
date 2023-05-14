@@ -26,9 +26,9 @@ import plotly.graph_objs as go
 import plotly.express as px
 
 try:
-    from . import DBConnection
-except:
-    from ui_db import DBConnection
+    from . import ui_db
+except ImportError:
+    import ui_db
 
 class NewsClusterer:
     """
@@ -104,23 +104,33 @@ class NewsClusterer:
 
         :return: DataFrame containing news articles.
         """
-        DB = DBConnection()
+        DB = ui_db.DBConnection()
         DB.connect()
         df = pd.DataFrame(DB.getNewsArticles()[1])
         return df
 
-    def process_data(self, df):
+    def preprocess_and_vectorize(self, df):
         """
-        Processes the input DataFrame by preprocessing the titles and summaries, 
-        and applying TF-IDF vectorization and dimensionality reduction using SVD.
+        Preprocesses the input DataFrame by preprocessing the titles and summaries, 
+        and applying TF-IDF vectorization.
 
         :param df: The input DataFrame containing news articles.
-        :return: Reduced feature matrix after applying SVD.
+        :return: TF-IDF feature matrix.
         """
         df['preprocessed'] = df['Title'].apply(self.preprocess_text) + " " + df['Summary'].apply(self.preprocess_text)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
+        return X_tfidf
+
+    def apply_svd(self, X_tfidf):
+        """
+        Applies dimensionality reduction using SVD on the input TF-IDF matrix.
+
+        :param X_tfidf: The input TF-IDF feature matrix.
+        :return: Reduced feature matrix after applying SVD.
+        """
         X_reduced = self.svd.fit_transform(X_tfidf)
         return X_reduced
+
 
     def cluster_data(self, X_reduced):
         """
@@ -132,6 +142,39 @@ class NewsClusterer:
         clusters = self.dbscan.fit_predict(X_reduced)
         return clusters
     
+
+    def create_url_cluster_dataframe(self, df, clusters):
+        """
+        Creates a DataFrame containing article URLs and cluster labels.
+
+        :param df: The input DataFrame containing news articles.
+        :param clusters: Cluster labels for each data point.
+        :return: DataFrame with URLs and cluster labels.
+        """
+        df_with_clusters = df.copy()
+        df_with_clusters['cluster'] = clusters
+        url_cluster_df = df_with_clusters[['URL', 'cluster']]
+        return url_cluster_df
+    
+
+    def push_clusters_to_database(self, url_cluster_df):
+        """
+        Pushes the clustered data (URLs and cluster labels) to the database.
+
+        :param url_cluster_df: DataFrame containing article URLs and cluster labels.
+        :param db_connection: A connected instance of the database connection class.
+        """
+        db_connection = ui_db.DBConnection()
+        db_connection.connect()
+        for index, row in url_cluster_df.iterrows():
+            url = row['URL']
+            cluster_id = row['cluster']
+            success, message = db_connection.addArticleCluster(url, cluster_id)
+
+            if not success:
+                print(f"Failed to insert cluster for URL '{url}': {message}")
+
+
     def visualize_clusters(self, X_reduced, clusters, df):
         """
         Visualizes the clusters using 3D t-SNE.
@@ -156,17 +199,24 @@ class NewsClusterer:
 
         fig_3d.show()
 
-    def run(self):
+    def run(self, visualize:bool):
         """
         Executes the full news clustering pipeline.
+
+        :param db_connection: A connected instance of the database connection class.
         """
         df = self.load_data()
-        X_reduced = self.process_data(df)
+        X_tfidf = self.preprocess_and_vectorize(df)
+        X_reduced = self.apply_svd(X_tfidf)
         clusters = self.cluster_data(X_reduced)
         df['cluster'] = clusters
-        self.visualize_clusters(X_reduced, clusters, df)
+        url_cluster_df = self.create_url_cluster_dataframe(df, clusters)
+        self.push_clusters_to_database(url_cluster_df)
+        if visualize:
+            self.visualize_clusters(X_reduced, clusters, df)
+
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run()
+    news_clusterer.run(visualize=False)
 
