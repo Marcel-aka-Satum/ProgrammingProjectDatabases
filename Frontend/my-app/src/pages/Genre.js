@@ -17,6 +17,7 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
+import {request_headers, site_domain} from "../globals";
 
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
@@ -26,12 +27,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const addFavorite = async (URL) => {
         try {
-            const response = await axios.post('http://localhost:4444/api/addFavored', {
+            const response = await axios.post(`${site_domain}/api/addFavored`, {
                 UID: uid,
                 article_url: URL,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: request_headers
             })
             if (response.data.status === 200) {
                 SUCCESS(response.data.message)
@@ -49,12 +48,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const removeFavorite = async (URL) => {
         try {
-            const response = await axios.post('http://localhost:4444/api/delete_favored', {
+            const response = await axios.post(`${site_domain}/api/delete_favored`, {
                 UID: uid,
                 article_url: URL,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: request_headers
             })
             if (response.data.status === 200) {
                 SUCCESS(response.data.message)
@@ -268,11 +265,9 @@ const Home = () => {
 
     useEffect(() => {
         const fetchArticles = async () => {
-            await axios.post('http://localhost:4444/api/articles/genre', {
+            await axios.post(`${site_domain}/api/articles/genre`, {
                 genre: genre,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: request_headers
             }).then(response => {
                         setArticles(response.data);
                     });
@@ -283,7 +278,7 @@ const Home = () => {
 
     useEffect(() => {
         async function fetchFavorites() {
-            const r_favorites = await fetch('http://localhost:4444/api/favorites')
+            const r_favorites = await fetch(`${site_domain}/api/favorites`)
             const data = await r_favorites.json();
             const data_user = data.favorites[usersession.user.uid]
             if (data_user) {

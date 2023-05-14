@@ -3,6 +3,7 @@ import {useState, useEffect} from 'react';
 import {SUCCESS, ERROR, UNKNOWN_ERROR} from "../Helpers/custom_alert";
 import "./admin.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
+import {site_domain} from "../../globals";
 
 export default function Articles() {
     const [articles, setArticles] = useState([]);
@@ -16,7 +17,7 @@ export default function Articles() {
 
     useEffect(() => {
         async function fetchData() {
-            const r_articles = await fetch('http://localhost:4444/api/articles')
+            const r_articles = await fetch(`${site_domain}/api/articles`)
             const data = await r_articles.json();
             if (data) {
                 SUCCESS("Articles loaded successfully!");

@@ -5,6 +5,7 @@ import './navbarStyle.css'
 import {userSession} from '../../App'
 import axios from 'axios'
 import {Squash as Hamburger} from 'hamburger-react'
+import {site_domain} from "../../globals";
 
 
 const Navbar = () => {
@@ -12,7 +13,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const fetchGenres = async () => {
-            const response = await axios.get('http://localhost:4444/api/articles/genres');
+            const response = await axios.get(`${site_domain}/api/articles/genres`);
             // const limitedArticles = response.data.slice(0, 500);
             console.log(response.data)
             setGenres(response.data);

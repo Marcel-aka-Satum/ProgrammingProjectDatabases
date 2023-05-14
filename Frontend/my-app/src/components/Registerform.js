@@ -8,6 +8,7 @@ import zxcvbn from 'zxcvbn';
 import ReCAPTCHA from 'react-google-recaptcha';
 import {GoogleLogin} from 'react-google-login';
 import {gapi} from "gapi-script";
+import {site_domain, google_login_client_id, captcha_sitekey, request_headers} from "../globals";
 
 export default function Registerform() {
     const [email, setEmail] = useState("");
@@ -18,22 +19,19 @@ export default function Registerform() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [verified, setVerified] = useState(false); // New state variable
     let usersession = useContext(userSession);
-    let sitekey = "6LdnigkmAAAAAGQ0GNWTghQYJi-KDZelFUFEe2K8"
 
     const handleRegister = async (e) => {
         e.preventDefault();
         if (verified) {
 
             try {
-                await axios.post('http://localhost:4444/api/register', {
+                await axios.post(`${site_domain}/api/register`, {
                     Email: email,
                     Password: password,
                     ConfirmPassword: confirmPassword,
                     Username: username,
                     Is_Admin: false,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: request_headers
                 }).then(response => {
                     if (response.status === 200) {
                         SUCCESS(response.data.message)
@@ -56,7 +54,7 @@ export default function Registerform() {
     useEffect(() => {
         function start() {
             gapi.client.init({
-                clientId: "413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com",
+                clientId: google_login_client_id,
                 scope: 'email',
             });
         }
@@ -258,7 +256,7 @@ export default function Registerform() {
 
                                     <ReCAPTCHA
                                         className="mb-3 d-flex justify-content-start"
-                                        sitekey={sitekey}
+                                        sitekey={captcha_sitekey}
                                         onChange={onChange}
                                     />
                                     <div className="text-center">
@@ -278,7 +276,7 @@ export default function Registerform() {
                                     <div className="text-center float-end">
                                         <GoogleLogin
                                             className="btn btn-outline-secondary btn-animation rounded rounded-2"
-                                            clientId="413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com"
+                                            clientId={google_login_client_id}
                                             buttonText="Register with Google"
                                             onSuccess={handleSuccess}
                                             onFailure={handleError}

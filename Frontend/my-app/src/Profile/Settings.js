@@ -3,6 +3,7 @@ import './profileStyle.css'
 import {Button, Modal, Form} from 'react-bootstrap';
 import {userSession} from "../App";
 import {SUCCESS, ERROR} from "../components/Helpers/custom_alert";
+import {request_headers, site_domain} from "../globals";
 
 export default function Settings() {
     const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -33,11 +34,9 @@ export default function Settings() {
 
     const handleSaveProfile = async () => {
         console.log(username, email, oldPassword, newPassword, confirmPassword);
-        const check_password = await fetch('http://127.0.0.1:4444/api/verify_password', {
+        const check_password = await fetch(`${site_domain}/api/verify_password`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: request_headers,
             body: JSON.stringify({
                 Email: email,
                 OldPassword: oldPassword,
@@ -51,11 +50,9 @@ export default function Settings() {
             return;
         }
 
-        const update_user = await fetch(`http://127.0.0.1:4444/api/update_user/${usersession.user.uid}`, {
+        const update_user = await fetch(`${site_domain}/api/update_user/${usersession.user.uid}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: request_headers,
             body: JSON.stringify({
                 Username: username,
                 Email: email,
@@ -76,7 +73,7 @@ export default function Settings() {
 
     useEffect(() => {
         async function fetchFavorites() {
-            const r_favorites = await fetch('http://localhost:4444/api/favorites')
+            const r_favorites = await fetch(`${site_domain}/api/favorites`)
             const data = await r_favorites.json();
             const data_user = data.favorites[usersession.user.uid]
             if (data_user) {
@@ -90,11 +87,9 @@ export default function Settings() {
     const handleClearFavorites = () => {
         // send clear favorites request to the server
         async function clearFavorites() {
-            const r_clear_favorites = await fetch('http://localhost:4444/api/delete_all_favored', {
+            const r_clear_favorites = await fetch(`${site_domain}/api/delete_all_favored`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: request_headers,
                 body: JSON.stringify({UID: usersession.user.uid}),
             });
             const data = await r_clear_favorites.json();

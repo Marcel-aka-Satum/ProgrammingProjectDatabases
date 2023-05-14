@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {useState, useEffect} from 'react';
 import {SUCCESS, ERROR, UNKNOWN_ERROR} from "../Helpers/custom_alert";
 import 'react-toastify/dist/ReactToastify.css';
+import {request_headers, site_domain} from "../../globals";
 
 export default function Rss() {
     const [feeds, setFeeds] = useState([]);
@@ -13,7 +14,7 @@ export default function Rss() {
     let [publisher, setPublisher] = useState('');
 
     const fetchFeeds = () => {
-        fetch('http://localhost:4444/api/rssfeeds')
+        fetch(`${site_domain}/api/rssfeeds`)
             .then(response => response.json())
             .then(data => {
                 setFeeds(data);
@@ -64,11 +65,9 @@ export default function Rss() {
         publisher = publisher.trim();
 
         try {
-            const response = await fetch('http://127.0.0.1:4444/api/add_rssfeed', {
+            const response = await fetch(`${site_domain}/api/add_rssfeed`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: request_headers,
                 body: JSON.stringify({
                         URL: url,
                         Topic: topic,
@@ -103,11 +102,9 @@ export default function Rss() {
         }
     }
     const DeleteFeed = async (_url) => {
-        const response = await fetch(`http://127.0.0.1:4444/api/delete_rssfeed`, {
+        const response = await fetch(`${site_domain}/api/delete_rssfeed`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: request_headers,
             body: JSON.stringify({
                 URL: _url
             })
@@ -121,11 +118,9 @@ export default function Rss() {
         }
     };
     const EditFeed = async (_url, _topic, _publisher) => {
-        const response = await fetch('http://127.0.0.1:4444/api/update_rssfeed', {
+        const response = await fetch(`${site_domain}/api/update_rssfeed`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: request_headers,
             body: JSON.stringify({
                     URL: _url,
                     Topic: _topic,
@@ -157,11 +152,9 @@ export default function Rss() {
     }
     const refreshFeed = async (_url) => {
         try {
-            const response = await fetch("http://127.0.0.1:4444/api/check_rssfeed", {
+            const response = await fetch(`${site_domain}/api/check_rssfeed`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: request_headers,
                 body: JSON.stringify({URL: _url})
             });
             const data = await response.json();
