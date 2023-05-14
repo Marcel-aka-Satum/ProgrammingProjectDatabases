@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './tool.css'
 import {userSession} from "../../App";
 import axios from "axios";
+import {request_headers, site_domain} from "../../globals";
 
 export default function Settings() {
     // User session
@@ -13,7 +14,7 @@ export default function Settings() {
     const [selectedUpdateInterval, setSelectedUpdateInterval] = useState("0");
     useEffect(() => {
         async function fetchSettings() {
-            const r_settings = await fetch('http://localhost:4444/api/settings')
+            const r_settings = await fetch(`${site_domain}/api/settings`)
             const data = await r_settings.json();
             const updateInterval = data.scraperTimer
             setSelectedUpdateInterval(updateInterval);
@@ -43,11 +44,9 @@ export default function Settings() {
         }
         setSelectedUpdateInterval(currentSelectedUpdateInterval);
 
-        fetch('http://localhost:4444/api/update_settings', {
+        fetch(`${site_domain}/api/update_settings`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: request_headers,
             body: JSON.stringify({
                 setting: 'scraperTimer',
                 value: currentSelectedUpdateInterval,

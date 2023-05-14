@@ -16,7 +16,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
-
+import {site_domain, request_headers} from "../globals";
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
@@ -25,12 +25,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const addFavorite = async (URL) => {
         try {
-            const response = await axios.post('http://localhost:4444/api/addFavored', {
+            const response = await axios.post(`${site_domain}/api/addFavored`, {
                 UID: uid,
                 article_url: URL,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: request_headers
             })
             if (response.data.status === 200) {
                 SUCCESS(response.data.message)
@@ -48,12 +46,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const removeFavorite = async (URL) => {
         try {
-            const response = await axios.post('http://localhost:4444/api/delete_favored', {
+            const response = await axios.post(`${site_domain}/api/delete_favored`, {
                 UID: uid,
                 article_url: URL,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: request_headers
             })
             if (response.data.status === 200) {
                 SUCCESS(response.data.message)
@@ -164,7 +160,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                         </div>
                                         <CopyToClipboard text={article.URL}>
                                             <button
-                                                className="btn "
+                                                className="btn"
                                                 style={{position: "absolute", right: "0"}}
                                                 title="Copy link"
                                                 onClick={handleClipboard}
@@ -298,7 +294,7 @@ const Home = () => {
 
         useEffect(() => {
             const fetchArticles = async () => {
-                const response = await axios.get('http://localhost:4444/api/articles');
+                const response = await axios.get(`${site_domain}/api/articles`);
                 // const limitedArticles = response.data.slice(0, 500);
                 if (response.data !== "tuple index out of range") {
                     setArticles(response.data);
@@ -310,7 +306,7 @@ const Home = () => {
 
         useEffect(() => {
             async function fetchFavorites() {
-                const r_favorites = await fetch('http://localhost:4444/api/favorites')
+                const r_favorites = await fetch(`${site_domain}/api/favorites`)
                 const data = await r_favorites.json();
                 const data_user = data.favorites[usersession.user.uid]
                 if (data_user) {
@@ -415,29 +411,30 @@ const Home = () => {
                     <div className="filter-bar">
 
 
-                    <div className="dropdown ps-2">
-                        <button className="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {sortOption ? sortOption : 'newest'}
-                        </button>
-                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <button className="dropdown-item" type="button" value="newest"
-                                        onClick={handleSortChange}>newest
-                                </button>
-                            </li>
-                            <li>
-                                <button className="dropdown-item" type="button" value="oldest"
-                                        onClick={handleSortChange}>oldest
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                    <a href="/genre/recommended">
-                        <button className="btn btn-outline-secondary d-inline-flex align-items-center">
-                            <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
-                        </button>
-                    </a>
+                        <div className="dropdown ps-2">
+                            <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {sortOption ? sortOption : 'newest'}
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <button className="dropdown-item" type="button" value="newest"
+                                            onClick={handleSortChange}>newest
+                                    </button>
+                                </li>
+                                <li>
+                                    <button className="dropdown-item" type="button" value="oldest"
+                                            onClick={handleSortChange}>oldest
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="/genre/recommended">
+                            <button className="btn btn-outline-secondary d-inline-flex align-items-center">
+                                <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
+                            </button>
+                        </a>
                     </div>
                 </div>
                 <div className="row">

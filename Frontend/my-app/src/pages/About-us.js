@@ -33,7 +33,7 @@ export default function AboutUs() {
         <Container>
             <Row className="justify-content-center">
                 <Col md={8}>
-                    <h1 className="text-center mt-3">About Us</h1>
+                    <h1 className="text-center mt-5">About Us</h1>
                     <h2>The Purpose</h2>
                     <p className="lead">
                         Our team was formed for the purpose of completing the programming project databases, a
@@ -100,8 +100,6 @@ export default function AboutUs() {
                             </div>
                         ))}
                     </div>
-
-
                 </Col>
             </Row>
         </Container>

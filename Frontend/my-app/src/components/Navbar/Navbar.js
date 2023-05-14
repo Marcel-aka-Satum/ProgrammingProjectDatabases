@@ -5,6 +5,7 @@ import './navbarStyle.css'
 import {userSession} from '../../App'
 import axios from 'axios'
 import {Squash as Hamburger} from 'hamburger-react'
+import {site_domain} from "../../globals";
 
 
 const Navbar = () => {
@@ -12,7 +13,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const fetchGenres = async () => {
-            const response = await axios.get('http://localhost:4444/api/articles/genres');
+            const response = await axios.get(`${site_domain}/api/articles/genres`);
             // const limitedArticles = response.data.slice(0, 500);
             console.log(response.data)
             setGenres(response.data);
@@ -21,9 +22,10 @@ const Navbar = () => {
     }, []);
 
     function GenreF({genre}) {
-        const formattedGenre = genre.replace(/\s+/g, '-');
+        const formattedGenre_url = genre.replace(/\s+/g, '-');
+
         return (
-            <li><NavLink to={`genre/${formattedGenre}`} onClick={colConCollapse}>{formattedGenre}</NavLink></li>
+            <li><NavLink to={`genre/${formattedGenre_url}`} onClick={colConCollapse}>{genre}</NavLink></li>
         );
     }
 
@@ -81,6 +83,7 @@ const Navbar = () => {
                         <span><Hamburger toggled={Open} onToggle={colConCollapse}/></span>
                     </div>
                 </div>
+
                 <ul className="nav navbar-nav allign-items-center mr-4">
                     <li>
                         <NavLink to="/" onClick={colConCollapse}>Home</NavLink>
@@ -92,7 +95,7 @@ const Navbar = () => {
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
                                  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
 
-                        <div className="dropdown-menu articledrop m-0 fix-top"
+                        <div className="dropdown-menu articledrop fix-top"
                              aria-labelledby="articlesDropdown">
                             <ul className="list-inline mx-4 p-0">
                                 {Array.from(genres).map((genre) => (

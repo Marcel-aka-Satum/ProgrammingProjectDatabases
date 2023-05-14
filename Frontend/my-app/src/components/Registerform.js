@@ -8,7 +8,7 @@ import zxcvbn from 'zxcvbn';
 import ReCAPTCHA from 'react-google-recaptcha';
 import {GoogleLogin} from 'react-google-login';
 import {gapi} from "gapi-script";
-
+import {site_domain, google_login_client_id, captcha_sitekey, request_headers} from "../globals";
 
 export default function Registerform() {
     const [email, setEmail] = useState("");
@@ -19,22 +19,19 @@ export default function Registerform() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [verified, setVerified] = useState(false); // New state variable
     let usersession = useContext(userSession);
-    let sitekey = "6LdnigkmAAAAAGQ0GNWTghQYJi-KDZelFUFEe2K8"
 
     const handleRegister = async (e) => {
         e.preventDefault();
         if (verified) {
 
             try {
-                await axios.post('http://localhost:4444/api/register', {
+                await axios.post(`${site_domain}/api/register`, {
                     Email: email,
                     Password: password,
                     ConfirmPassword: confirmPassword,
                     Username: username,
                     Is_Admin: false,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: request_headers
                 }).then(response => {
                     if (response.status === 200) {
                         SUCCESS(response.data.message)
@@ -57,7 +54,7 @@ export default function Registerform() {
     useEffect(() => {
         function start() {
             gapi.client.init({
-                clientId: "413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com",
+                clientId: google_login_client_id,
                 scope: 'email',
             });
         }
@@ -209,7 +206,8 @@ export default function Registerform() {
                                         <div className="input-group-text clickable"
                                              onClick={() => setShowPassword(!showPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
+                                                 fill="currentColor" className="bi bi-key-fill"
+                                                 viewBox="0 0 16 16">
                                                 <path
                                                     d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                             </svg>
@@ -235,7 +233,8 @@ export default function Registerform() {
                                         <div className="input-group-text clickable"
                                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 fill="currentColor" className="bi bi-key-fill" viewBox="0 0 16 16">
+                                                 fill="currentColor" className="bi bi-key-fill"
+                                                 viewBox="0 0 16 16">
                                                 <path
                                                     d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                                             </svg>
@@ -257,7 +256,7 @@ export default function Registerform() {
 
                                     <ReCAPTCHA
                                         className="mb-3 d-flex justify-content-start"
-                                        sitekey={sitekey}
+                                        sitekey={captcha_sitekey}
                                         onChange={onChange}
                                     />
                                     <div className="text-center">
@@ -267,12 +266,17 @@ export default function Registerform() {
                                     </div>
                                     <div id="emailHelp" className="form-text text-center mb-2 text-dark">Already
                                         have an
-                                        account? <a
-                                            href="/login" className="text-dark fw-bold">Log in</a></div>
+                                        account? <a href="/login" className="text-dark fw-bold">Log in</a></div>
+                                    <div className="text-center mb-2 text-dark">Or</div>
+                                    <div className="text-center mb-2">
+                                        <a href="/" className="text-dark fw-bold">Continue as a guest</a>
+                                    </div>
+
+
                                     <div className="text-center float-end">
                                         <GoogleLogin
                                             className="btn btn-outline-secondary btn-animation rounded rounded-2"
-                                            clientId="413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com"
+                                            clientId={google_login_client_id}
                                             buttonText="Register with Google"
                                             onSuccess={handleSuccess}
                                             onFailure={handleError}
@@ -281,6 +285,25 @@ export default function Registerform() {
                                     </div>
                                 </form>
                             </div>
+
+                            <div className="card my-4">
+                                <div className="card-body">
+                                    <h5 className="card-title">Advantages of Registering</h5>
+                                    <ul className="list-group list-group-flush">
+                                        <li className="list-group-item"><i className="fas fa-heart me-2"></i> Access to
+                                            favorites
+                                        </li>
+                                        <li className="list-group-item">
+                                            <i className="fas fa-fire me-2"></i>Even more recommended topics & articles
+                                        </li>
+                                        <li className="list-group-item"><i className="fas fa-comments me-2"></i> Leave
+                                            comments
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                 )}

@@ -7,24 +7,22 @@ import {SUCCESS, ERROR} from "./Helpers/custom_alert";
 import ReCAPTCHA from 'react-google-recaptcha';
 import {GoogleLogin} from 'react-google-login';
 import {gapi} from "gapi-script";
+import {request_headers, captcha_sitekey, google_login_client_id, site_domain} from "../globals";
 
 export default function Loginform() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [verified, setVerified] = useState(false); // New state variable
     let usersession = useContext(userSession);
-    let sitekey = "6LdnigkmAAAAAGQ0GNWTghQYJi-KDZelFUFEe2K8"
 
     const handleLogIn = async (e) => {
         e.preventDefault();
         if (verified) {
             try {
-                await axios.post('http://localhost:4444/api/login', {
+                await axios.post(`${site_domain}/api/login`, {
                     Email: email,
                     Password: password,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: request_headers
                 }).then(response => {
                     if (response.status === 200) {
                         SUCCESS(response.data.message)
@@ -48,7 +46,7 @@ export default function Loginform() {
     useEffect(() => {
         function start() {
             gapi.client.init({
-                clientId: "413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com",
+                clientId: google_login_client_id,
                 scope: 'email',
             });
         }
@@ -61,11 +59,9 @@ export default function Loginform() {
             let email = response.profileObj.email;
             console.log('user email:', email);
             try {
-                await axios.post('http://localhost:4444/api/google/login', {
+                await axios.post(`${site_domain}/api/google/login`, {
                     Email: email,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: request_headers
                 }).then(response => {
                     if (response.status === 200) {
                         SUCCESS(response.data.message)
@@ -154,7 +150,7 @@ export default function Loginform() {
 
                                     <ReCAPTCHA
                                         className="mb-3 d-flex justify-content-start"
-                                        sitekey={sitekey}
+                                        sitekey={captcha_sitekey}
                                         onChange={onChange}
                                     />
 
@@ -165,14 +161,18 @@ export default function Loginform() {
                                     </div>
 
                                     <div id="emailHelp" className="form-text text-center mb-2 text-dark">Not
-                                        Registered?
-                                        <a href="/register" className="text-dark fw-bold"> Create an Account</a>
+                                        Registered? <a href="/register" className="text-dark fw-bold">Create an
+                                            Account</a>
                                     </div>
+                                    <div className="text-center mb-2 text-dark">Or</div>
+                                    <div className="text-center mb-2">
+                                        <a href="/" className="text-dark fw-bold">Continue as a guest</a>
+                                    </div>
+
                                     <div className="text-center float-end">
-                                        {/*it has to be verified first otherwise drop error*/}
                                         <GoogleLogin
                                             className="btn btn-outline-secondary rounded rounded-2"
-                                            clientId="413917910550-s7o23ccuqdnhak2i86otedlu7m8850k5.apps.googleusercontent.com"
+                                            clientId={google_login_client_id}
                                             buttonText="Login with Google"
                                             onSuccess={handleSuccess}
                                             onFailure={handleError}

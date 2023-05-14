@@ -72,7 +72,7 @@ class BaseFeedScraper:
             if 'media_content' in entry:
                 for lnk in entry['media_content']:
                     if 'type' in lnk:
-                        if lnk['type'] in ['image/jpeg']:
+                        if lnk['type'] in ['image/jpeg', 'image/png', 'image/jpg']:
                             return lnk['url']
                     elif 'medium' in lnk:
                         if lnk['medium'] in ['image']:
@@ -82,7 +82,7 @@ class BaseFeedScraper:
 
             elif 'links' in entry:
                 for lnk in entry['links']:
-                    if lnk['type'] in ['image/jpeg']:
+                    if lnk['type'] in ['image/jpeg', 'image/png', 'image/jpg']:
                         return lnk['href']
         except:
             return 'None'
@@ -148,11 +148,13 @@ class BaseFeedScraper:
         summary = self.get_summary(entry)
         publisher = entry['published']
         image = self.get_image(entry)
-        if image is None and "www.tijd" in link:
-            image = self.get_image_none_2(link)
 
+        if image is None and "www.tijd" in link:
+            # image = self.get_image_none_2(link)
+            image = None
         elif image is None:
-            image = self.get_image_none(link)
+            # image = self.get_image_none(link)
+            image = None
 
         status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
         if not message[0]:

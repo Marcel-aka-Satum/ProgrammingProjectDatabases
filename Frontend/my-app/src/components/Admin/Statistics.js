@@ -2,6 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {useEffect} from "react";
 import {SUCCESS, INFO} from "../Helpers/custom_alert";
+import {site_domain} from "../../globals";
 
 
 export default function Statistics() {
@@ -14,23 +15,23 @@ export default function Statistics() {
 
     useEffect(() => {
             async function fetchData() {
-                const r_user = await fetch('http://localhost:4444/api/users/totalusers')
+                const r_user = await fetch(`${site_domain}/api/users/totalusers`)
                 const d_user = await r_user.json();
                 setTotalUsers(d_user.totalUsers);
 
-                const r_visitor = await fetch('http://localhost:4444/api/visitors')
+                const r_visitor = await fetch(`${site_domain}/api/visitors`)
                 const d_visitor = await r_visitor.json();
                 setTotalVisitors(d_visitor.visitors.length);
 
-                const r_article = await fetch('http://localhost:4444/api/articles/totalarticles')
+                const r_article = await fetch(`${site_domain}/api/articles/totalarticles`)
                 const d_article = await r_article.json();
                 setTotalArticles(d_article.totalArticles);
 
-                const r_rss = await fetch('http://localhost:4444/api/rssfeeds/totalrssfeeds')
+                const r_rss = await fetch(`${site_domain}/api/rssfeeds/totalrssfeeds`)
                 const d_rss = await r_rss.json();
                 setTotalRSS(d_rss.totalRSSFeeds);
 
-                const r_favorites = await fetch('http://localhost:4444/api/favorites')
+                const r_favorites = await fetch(`${site_domain}/api/favorites`)
                 const d_favorites = await r_favorites.json();
                 let total = 0;
 
@@ -41,7 +42,7 @@ export default function Statistics() {
                 }
                 setTotalFavorites(total);
 
-                const r_topics = await fetch('http://localhost:4444/api/topics')
+                const r_topics = await fetch(`${site_domain}/api/topics`)
                 const d_topics = await r_topics.json();
                 setTotalTopics(d_topics.topics.length);
             }
@@ -52,23 +53,23 @@ export default function Statistics() {
 
 
     const refreshStats = async () => {
-        const r_users = await fetch('http://localhost:4444/api/users/totalusers')
+        const r_users = await fetch(`${site_domain}/api/users/totalusers`)
         const d_users = await r_users.json();
         const total_users = d_users.totalUsers;
 
-        const r_visitors = await fetch('http://localhost:4444/api/visitors')
+        const r_visitors = await fetch(`${site_domain}/api/visitors`)
         const d_visitors = await r_visitors.json();
         const total_visitors = d_visitors.visitors.length;
 
-        const r_articles = await fetch('http://localhost:4444/api/articles/totalarticles')
+        const r_articles = await fetch(`${site_domain}/api/articles/totalarticles`)
         const d_articles = await r_articles.json();
         const total_articles = d_articles.totalArticles;
 
-        const r_rss = await fetch('http://localhost:4444/api/rssfeeds/totalrssfeeds')
+        const r_rss = await fetch(`${site_domain}/api/rssfeeds/totalrssfeeds`)
         const d_rss = await r_rss.json();
         const total_rss = d_rss.totalRSSFeeds;
 
-        const r_favorites = await fetch('http://localhost:4444/api/favorites')
+        const r_favorites = await fetch(`${site_domain}/api/favorites`)
         const d_favorites = await r_favorites.json();
         let total = 0;
         if (d_favorites.favorites) {
@@ -78,7 +79,7 @@ export default function Statistics() {
         }
         const total_favorites = total;
 
-        const r_topics = await fetch('http://localhost:4444/api/topics')
+        const r_topics = await fetch(`${site_domain}/api/topics`)
         const d_topics = await r_topics.json();
         const total_topics = d_topics.topics.length;
 
@@ -109,15 +110,13 @@ export default function Statistics() {
 
         if (totalfavorites === total_favorites) {
             INFO("Total Favorites same as before.")
-        }
-        else {
+        } else {
             SUCCESS("Total Favorites Updated from " + totalfavorites + " to " + total_favorites)
         }
 
         if (totaltopics === total_topics) {
             INFO("Total Topics same as before.")
-        }
-        else {
+        } else {
             SUCCESS("Total Topics Updated from " + totaltopics + " to " + total_topics)
         }
 

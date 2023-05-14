@@ -4,7 +4,7 @@ import {SUCCESS, ERROR} from "../components/Helpers/custom_alert";
 import {formatDate, formatSummary, formatTitle, PrintNewspaper, extractBaseUrl} from "../components/Helpers/general";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {userSession} from "../App";
-
+import {site_domain, request_headers} from "../globals";
 
 function ArticleCard({article, removeFavorite, filterText}) {
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
@@ -77,7 +77,7 @@ export default function Account() {
 
     useEffect(() => {
         async function fetchFavorites() {
-            const r_favorites = await fetch('http://localhost:4444/api/favorites')
+            const r_favorites = await fetch(`${site_domain}/api/favorites`)
             const data = await r_favorites.json();
             const data_user = data.favorites[usersession.user.uid]
             if (data_user) {
@@ -94,11 +94,9 @@ export default function Account() {
                 //     loop over favorites and do a fetch for each article
                 for (let i = 0; i < favorites.length; i++) {
                     let a_url = favorites[i]
-                    const r_article = await fetch('http://localhost:4444/api/get_article', {
+                    const r_article = await fetch(`${site_domain}/api/get_article`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: request_headers,
                         body: JSON.stringify({article_url: a_url}),
                     });
                     const data = await r_article.json();
@@ -151,11 +149,9 @@ export default function Account() {
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
     const removeFavorite = (url) => async () => {
-        const response = await fetch('http://localhost:4444/api/delete_favored', {
+        const response = await fetch(`${site_domain}/api/delete_favored`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: request_headers,
             body: JSON.stringify({article_url: url, UID: usersession.user.uid}),
         });
         const data = await response.json();
