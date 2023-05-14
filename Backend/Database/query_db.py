@@ -130,6 +130,16 @@ def get_favorites(URL: str) -> str:
         );
     """
 
+def get_cluster(Cluster_ID: int) -> str:
+    """
+        SELECT * FROM newsaggregator.relatedcluster
+        WHERE Cluster_ID = '{Cluster_ID}';
+    """
+    return f"""
+            SELECT * FROM newsaggregator.relatedcluster
+            WHERE Cluster_ID = {Cluster_ID};
+            """
+
 
 #################### TABLE GETTERS ####################
 
@@ -274,10 +284,10 @@ def insert_favorite(values: list) -> str:
 
 def insert_cluster(URL: str, cluster: int) -> str:
     """
-        INSERT INTO newsaggregator.relatedcluster (URL, Cluster)
+        INSERT INTO newsaggregator.relatedcluster (URL, Cluster_ID)
     """
     return f"""
-            INSERT INTO newsaggregator.relatedcluster (URL, Cluster)
+            INSERT INTO newsaggregator.relatedcluster (URL, Cluster_ID)
             VALUES ('{URL}', '{cluster}');
             """
 

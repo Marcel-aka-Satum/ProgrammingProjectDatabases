@@ -12,6 +12,7 @@ from flask_cors import CORS, cross_origin
 
 from Database.scraper import scraper
 from Database.ui_db import DBConnection
+from Database.article_clustering import NewsClusterer
 from Helpers import helpers as h
 from Helpers.ErrorDetectionRoutes import *
 
@@ -584,6 +585,15 @@ def start_scraper():
 
 scraper_thread = threading.Thread(target=start_scraper)
 scraper_thread.start()
+
+def start_clustering():
+    news_clusterer = NewsClusterer()
+    while True:
+        news_clusterer.run(visualize=False)
+        time.sleep(600)
+
+#clustering_thread = threading.Thread(target=start_clustering)
+#clustering_thread.start()
 
 if __name__ == '__main__':
     app.run(port=4444)

@@ -236,6 +236,35 @@ class DBConnection:
             "RSS_URL": data[5],
             "Topic": data[6]
         }
+    
+    @func.is_connected
+    def getCluster(self, cluster_id: int) -> tuple:
+        """
+        @brief: get the articles from the database with a specific cluster_id, if exists return True, else False
+        """
+        cursor = self.connection.cursor()
+        query = query_db.get_cluster(cluster_id)
+        cursor.execute(query)
+        data = cursor.fetchall()
+        if data is None:
+            return False, ""
+
+        # return True and dict with article data
+        return True, data
+    
+    @func.is_connected
+    def getAllClusters(self) -> tuple:
+        """
+        @brief: get all records from the relatedcluster table
+        """
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM newsaggregator.relatedcluster;")
+        data = cursor.fetchall()
+
+        if data is None:
+            return False, ""
+
+        return True, data
 
     ########################## UPDATE ##########################
 
@@ -486,6 +515,22 @@ class DBConnection:
             return True, "success"
         except Exception as e:
             return False, str(e)
+        
+   #@func.is_connected
+    def addArticleCluster(self, URL: str, Cluster_ID: int) -> tuple:
+        """
+        @brief: add an article to a cluster in the database.
+        """
+        try:
+            cursor = self.connection.cursor()
+            query = query_db.insert_cluster(URL, Cluster_ID)
+            cursor.execute(query)  
+            query_db.insert_cluster(URL, Cluster_ID)
+            self.connection.commit()  
+            return True, "success"
+        except Exception as e:
+            return False, str(e)
+
 
     ######################### GetTables ########################
 
