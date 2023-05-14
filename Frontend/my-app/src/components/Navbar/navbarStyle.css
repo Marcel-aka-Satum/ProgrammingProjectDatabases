@@ -199,5 +199,10 @@ li .dropdown-menu.articledrop {
 .dropdown-menu a:hover {
     color: rgba(255, 195, 0, 1);
 }
+
+.navbar-brand img {
+    width: 30px;
+    height: 30px;
+  }
 }
 
