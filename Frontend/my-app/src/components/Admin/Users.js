@@ -59,7 +59,6 @@ export default function Users() {
             body: JSON.stringify({
                 Username: new_username,
                 Email: new_email,
-                Password: new_password,
                 Is_Admin: new_is_admin
             })
         })

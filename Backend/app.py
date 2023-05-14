@@ -150,7 +150,7 @@ def login_user():
         }), 200
 
 
-@app.route("/api/change_password", methods=["POST"])
+@app.route("/api/verify_password", methods=["POST"])
 @cross_origin()
 def change_password():
     email = request.json["Email"]
@@ -234,9 +234,19 @@ def addUser():
 @cross_origin()
 def updateUser(id):
     data = request.get_json()
-    username, email, password, is_admin = data['Username'], data['Email'], data['Password'], data['Is_Admin']
+    username, email, password, is_admin = data['Username'], data['Email'], data.get('Password'), data['Is_Admin']
 
-    status, message = db.updateUser(id, username, email, h.create_hash(password), is_admin)[1]
+    print('update password:', password)
+
+    new_password = None
+    if password:
+        new_password = h.create_hash(password)
+    else:
+        user_exists = db.getUser(email)[1]
+        password = user_exists[1]["Password"]
+        new_password = password
+
+    status, message = db.updateUser(id, username, email, new_password, is_admin)[1]
     if status:
         logger.info(f"User updated: username={username} | email={email}")
         return jsonify({"message": f"USER ({id}) Updated Successfully", "status": 200})
