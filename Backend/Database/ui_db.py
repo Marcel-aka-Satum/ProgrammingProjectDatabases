@@ -474,14 +474,19 @@ class DBConnection:
             return False, str(e)
 
     @func.is_connected
-    def addHasClickedCookie(self, Cookie: str, URL: str) -> tuple:
+    def addHasClickedCookie(self, URL: str, Cookie: str) -> tuple:
         """
         @brief: add a user interaction to the database.
         """
         try:
             cursor = self.connection.cursor()
-            cursor.execute(query_db.insert_hasclicked([URL, Cookie]))
+            cursor.execute(query_db.insert_hasclickedcookie([URL, Cookie]))
             return True, "success"
+        except psycopg2.errors.UniqueViolation as e:
+            if "hasclicked_pkey" in str(e):
+                return False, f"User has already clicked on this article"
+            else:
+                return False, f"A unique constraint violation occurred: {e}"
         except Exception as e:
             return False, str(e)
 

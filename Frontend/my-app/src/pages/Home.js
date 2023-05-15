@@ -17,11 +17,13 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
+import Cookies from 'js-cookie';
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
+
 
     const addFavorite = async (URL) => {
         try {
@@ -63,6 +65,19 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         }
     }
 
+    const handleClick = async (URL) => {
+        try {
+            console.log('Clicked:', URL);
+            console.log('Cookie:', Cookies.get('user'));
+            await axios.post(`${site_domain}/api/addhasclicked`, {
+                URL: URL,
+                Cookie: Cookies.get('user'),
+            });
+        } catch (err) {
+            console.log('Error:', err);
+        }
+    };
+
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -72,28 +87,27 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         setIsLoading(false);
     };
 
-    function showImage(){
-        if(article.Image.includes('logo')){
-            return(
-                <img
-                                src={article.Image}
-                                onError={(e) => e.target.style.display = 'none'}
-                                alt=''
-                                className="rounded-top logo"
-                                onLoad={handleImageLoad}
-                            />
-
-            );
-        }
-        else{
+    function showImage() {
+        if (article.Image.includes('logo')) {
             return (
                 <img
-                                src={article.Image}
-                                onError={(e) => e.target.style.display = 'none'}
-                                alt=''
-                                className="img-fluid rounded-top"
-                                onLoad={handleImageLoad}
-                            />
+                    src={article.Image}
+                    onError={(e) => e.target.style.display = 'none'}
+                    alt=''
+                    className="rounded-top logo"
+                    onLoad={handleImageLoad}
+                />
+
+            );
+        } else {
+            return (
+                <img
+                    src={article.Image}
+                    onError={(e) => e.target.style.display = 'none'}
+                    alt=''
+                    className="img-fluid rounded-top"
+                    onLoad={handleImageLoad}
+                />
             );
         }
     }
@@ -101,7 +115,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
-                <a href={article.URL} target="_blank" rel="noreferrer">
+                <a href={article.URL} target="_blank" rel="noreferrer" onClick={(e) => handleClick(article.URL)}>
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}

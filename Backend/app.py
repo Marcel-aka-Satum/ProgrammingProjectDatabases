@@ -27,7 +27,7 @@ drop_db = False
 if drop_db:
     db.redefine()
     db.populate()
-     
+
     # db.loadBackup("230417_19_36.txt")
     scraper()
     # clear logger file
@@ -202,13 +202,18 @@ def getTotalUsers():
     return jsonify({"totalUsers": len(json.loads(users))})
 
 
-@app.route('/api/add_Visitor', methods=['GET'])
+@app.route('/api/add_Visitor', methods=['POST'])
 def addVisitor():
+    data = request.get_json()
     uid = db.generateUID()[1]
-    cookie = db.generateCookie()[1]
+
+    # cookie = db.generateCookie()[1]
+    cookie = data['Cookie']
+
     db.addVisitor(uid)
     db.addCookie(cookie, uid)
-    return jsonify(cookie)
+
+    return jsonify({"message": "Visitor added successfully", "status": 200})
 
 
 @app.route('/api/add_user', methods=['POST'])
@@ -237,8 +242,6 @@ def addUser():
 def updateUser(id):
     data = request.get_json()
     username, email, password, is_admin = data['Username'], data['Email'], data.get('Password'), data['Is_Admin']
-
-    print('update password:', password)
 
     new_password = None
     if password:
@@ -474,15 +477,20 @@ def ChangeSetting():
 def GetSettings():
     return jsonify(db.getSettings()[1])
 
+
 @app.route('/api/addhasclicked', methods=['POST'])
 @cross_origin()
 def AddHasClicked():
     data = request.get_json()
-    URL, cookie = data['URL'], data['cookie']
-    x = db.addHasClickedCookie(cookie, URL)[1]
-    if x[0]:
-        return jsonify({"message": "Setting updated successfully", "status": 200})
-    return jsonify({"message": x[1]})
+    URL, Cookie = data['URL'], data['Cookie']
+
+    result = db.addHasClickedCookie(URL, Cookie)[1]
+
+    if result[0]:
+        return jsonify({"message": "success", "status": 200})
+
+    return jsonify({"message": result[1], "status": 401})
+
 
 @app.route('/api/addcomment', methods=['POST'])
 @cross_origin()
@@ -513,9 +521,6 @@ def GoogleLogin():
     password = user_exists[1]["Password"]
     is_admin = user_exists[1]["Is_Admin"]
 
-    print(f"Successful login via google: email={email}, uid={uid}, username={username}, password={password}, "
-          f"is_admin={is_admin}")
-
     encoded_jwt = jwt.encode({"user": username, "isAdmin": is_admin,
                               "email": email, 'exp':
                                   datetime.datetime.utcnow() + datetime.timedelta(minutes=600)},
@@ -531,6 +536,8 @@ def GoogleLogin():
         "Username": username,
         "isAdmin": is_admin
     }), 200
+
+
 #################### DATABASE TABLES ####################
 
 @app.route('/db')
@@ -566,7 +573,6 @@ def DBCookies():
 @app.route('/db/hasclicked')
 def DBHasClicked():
     x = db.getHasClicked()
-    print(x)
     return jsonify(db.getHasClicked()[1])
 
 
@@ -577,7 +583,6 @@ def DBFavored():
 
 @app.route('/db/settings')
 def DBSettings():
-    print('settings2:', db.getSettings()[1])
     return jsonify(db.getSettings()[1])
 
 
@@ -607,14 +612,16 @@ def start_scraper():
 scraper_thread = threading.Thread(target=start_scraper)
 scraper_thread.start()
 
+
 def start_clustering():
     news_clusterer = NewsClusterer()
     while True:
         news_clusterer.run(visualize=False)
         time.sleep(600)
 
-#clustering_thread = threading.Thread(target=start_clustering)
-#clustering_thread.start()
+
+# clustering_thread = threading.Thread(target=start_clustering)
+# clustering_thread.start()
 
 if __name__ == '__main__':
     app.run(port=4444)
