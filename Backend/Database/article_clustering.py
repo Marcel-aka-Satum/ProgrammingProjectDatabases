@@ -89,8 +89,10 @@ class NewsClusterer:
         return translation
 
 
-    @staticmethod
-    def preprocess_text(text):
+    def remove_non_alphanumeric(text):
+        return ''.join(char for char in text if char.isalnum() or char.isspace())
+
+    def preprocess_text(self, text):
         """
         Preprocesses the input text by removing HTML tags, translating all articles into english, removing stop words 
         and lemmatizing the tokens.
@@ -99,11 +101,16 @@ class NewsClusterer:
         :return: Preprocessed text.
         """
         text = NewsClusterer.remove_html_tags(text)
-        #text = NewsClusterer.translate_text(text)
+        text = NewsClusterer.remove_non_alphanumeric(text)
+        text = NewsClusterer.translate_text(text)
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
         tokens = word_tokenize(text)
-        tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens if token.isalpha() and token not in stop_words]
+        tokens = [
+            lemmatizer.lemmatize(token.lower()) 
+            for token in tokens 
+            if token.lower() not in stop_words
+        ]
         return " ".join(tokens)
 
     @staticmethod
@@ -151,7 +158,8 @@ class NewsClusterer:
         :param df: The input DataFrame containing news articles.
         :return: TF-IDF feature matrix.
         """
-        df['preprocessed'] = df['Title'].apply(self.preprocess_text) + " " + df['Summary'].apply(self.preprocess_text)
+        df['preprocessed'] = df['Title']+ " " + df['Summary']
+        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
         return X_tfidf
 
