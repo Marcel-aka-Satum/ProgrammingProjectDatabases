@@ -301,30 +301,6 @@ def insert_favorite(values: list) -> str:
             );
             """
 
-
-def insert_comments(values: list) -> str:
-    """
-        INSERT INTO newsaggregator.comments (Article, Username, Comment, Published)
-    """
-    return f"""
-            INSERT INTO newsaggregator.comments (Article, Username, Text)
-            VALUES ('{values[0]}',(
-                SELECT Username 
-                FROM newsaggregator.users 
-                WHERE UID = (SELECT UID FROM newsaggregator.cookies WHERE cookie = '{values[1]}')),
-        '{values[2]}');
-            """
-
-
-def get_comments(values: list) -> str:
-    """
-        SELECT * FROM newsaggregator.comments where Article = '{URL}'
-    """
-    return f"""
-            SELECT * FROM newsaggregator.comments where Article = '{values[0]}';
-            """
-
-
 def insert_cluster(URL: str, cluster: int) -> str:
     """
         INSERT INTO newsaggregator.relatedcluster (URL, Cluster_ID)

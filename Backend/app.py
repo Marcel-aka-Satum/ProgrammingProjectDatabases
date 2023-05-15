@@ -259,7 +259,7 @@ def updateUser(id):
         return jsonify({"message": message, "status": 401})
 
 
-@app.route('/api/delete_user/<id>', methods=['POST'])
+@app.route('/api/delete_user/<id>', methods=['DELETE'])
 @cross_origin()
 def deleteUser(id):
     user = db.getUser(id)[1]
@@ -498,35 +498,6 @@ def AddHasClicked():
     # print('result:', result)
     if result[0]:
         return jsonify({"message": "success", "status": 200})
-
-    return jsonify({"message": result[1], "status": 401})
-
-################# COMMENTS #################
-@app.route('/api/addcomment', methods=['POST'])
-@cross_origin()
-def AddComment():
-    data = request.get_json()
-    URL, cookie, text = data['URL'], data['Cookie'], data['Comment']
-
-    result = db.addComment(URL, cookie, text)[1]
-
-    if result[0]:
-        return jsonify({"message": "Comment posted !", "status": 200})
-
-    return jsonify({"message": result[1], "status": 401})
-
-
-@app.route('/api/getcomments', methods=['POST'])
-@cross_origin()
-def GetComments():
-    data = request.get_json()
-    URL = data['URL']
-
-    result = db.getComments(URL)[1]
-    print('result comment:', result)
-
-    if result[0]:
-        return jsonify({"message": result[1], "status": 200})
 
     return jsonify({"message": result[1], "status": 401})
 
