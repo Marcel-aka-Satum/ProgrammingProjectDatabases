@@ -40,8 +40,6 @@ function App() {
 
         async function postCookie() {
             try {
-                console.log('posting cookie:', Cookies.get('user'))
-
                 await axios.post(`${site_domain}/api/add_Visitor`, {
                     Cookie: Cookies.get('user'),
                 });
@@ -63,7 +61,6 @@ function App() {
 
     document.title = "PPDBT8"
     let [user, setUser] = useState(new User());
-    console.log(user.getIsAdmin())
     //if user is not an admin he should not be able to see pages with admin perms
     if (!user.getIsAdmin()) {
         return (

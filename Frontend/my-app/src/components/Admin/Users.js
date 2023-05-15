@@ -42,8 +42,6 @@ export default function Users() {
         fetchFavorites();
     }, [users]);
 
-    console.log('favorites', favorites)
-
     const refreshUsers = () => {
         fetch(`${site_domain}/api/users`)
             .then(response => response.json())

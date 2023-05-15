@@ -55,7 +55,6 @@ export default function Settings() {
 
 
         setSelectedDebug(currentSelectedDebug);
-        console.log('debug state:',currentSelectedDebug)
         usersession.user.updateUserInfo(
             usersession.user.getUsername(),
             usersession.user.getEmail(),

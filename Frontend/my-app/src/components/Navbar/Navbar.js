@@ -15,7 +15,6 @@ const Navbar = () => {
         const fetchGenres = async () => {
             const response = await axios.get(`${site_domain}/api/articles/genres`);
             // const limitedArticles = response.data.slice(0, 500);
-            console.log(response.data)
             setGenres(response.data);
         };
         fetchGenres();
@@ -57,7 +56,6 @@ const Navbar = () => {
                 const colCon = document.querySelector(".container-fluid");
                 colCon.classList.toggle("collapse")
                 setOpen(!Open)
-                console.log("out")
             }
         }
     }

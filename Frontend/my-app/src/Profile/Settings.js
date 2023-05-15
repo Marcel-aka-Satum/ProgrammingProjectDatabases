@@ -33,7 +33,6 @@ export default function Settings() {
     }
 
     const handleSaveProfile = async () => {
-        console.log(username, email, oldPassword, newPassword, confirmPassword);
         const check_password = await fetch(`${site_domain}/api/verify_password`, {
             method: 'POST',
             headers: request_headers,

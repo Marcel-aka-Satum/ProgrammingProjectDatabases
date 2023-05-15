@@ -55,7 +55,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
             })
             if (response.data.status === 200) {
                 SUCCESS(response.data.message)
-                console.log(response.data)
                 setFavorites(favorites.filter(favorite => favorite !== URL)) // Update the favorites state immediately
             } else {
                 ERROR(response.data.message)

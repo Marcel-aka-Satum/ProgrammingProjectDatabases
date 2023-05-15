@@ -67,8 +67,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const handleClick = async (URL) => {
         try {
-            console.log('Clicked:', URL);
-            console.log('Cookie:', Cookies.get('user'));
             await axios.post(`${site_domain}/api/addhasclicked`, {
                 URL: URL,
                 Cookie: Cookies.get('user'),

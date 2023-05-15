@@ -57,7 +57,6 @@ export default function Loginform() {
     const handleSuccess = async (response) => {
         if (verified) {
             let email = response.profileObj.email;
-            console.log('user email:', email);
             try {
                 await axios.post(`${site_domain}/api/google/login`, {
                     Email: email,
@@ -92,9 +91,7 @@ export default function Loginform() {
     }
 
     function onChange(value) {
-        console.log("Captcha value:", value);
         setVerified(true)
-
     }
 
     return (

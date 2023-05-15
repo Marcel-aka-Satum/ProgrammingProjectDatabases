@@ -90,9 +90,7 @@ export default function Registerform() {
     }
 
     function onChange(value) {
-        console.log("Captcha value:", value);
         setVerified(true)
-
     }
 
     const checkPasswordStrength = (password) => {
