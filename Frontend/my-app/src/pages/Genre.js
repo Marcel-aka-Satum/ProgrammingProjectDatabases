@@ -18,7 +18,7 @@ import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 import {request_headers, site_domain} from "../globals";
-
+import Cookies from "js-cookie";
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
@@ -66,7 +66,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
 
 
     const handleImageLoad = () => {
@@ -263,15 +262,29 @@ const Home = () => {
     let usersession = useContext(userSession);
 
     useEffect(() => {
-        const fetchArticles = async () => {
-            await axios.post(`${site_domain}/api/articles/genre`, {
-                genre: genre,
-                headers: request_headers
-            }).then(response => {
-                        setArticles(response.data);
-                    });
-        };
-        fetchArticles();
+        if (genre === 'recommended') {
+            ////TODO: fix this
+            // const fetchArticles = async () => {
+            //     await axios.post(`${site_domain}/api/articles/recommended`, {
+            //         Cookie: Cookies.get('user'),
+            //         headers: request_headers
+            //     }).then(response      => {
+            //         setArticles(response.data);
+            //     });
+            // };
+            // fetchArticles();
+
+        } else {
+            const fetchArticles = async () => {
+                await axios.post(`${site_domain}/api/articles/genre`, {
+                    genre: genre,
+                    headers: request_headers
+                }).then(response => {
+                    setArticles(response.data);
+                });
+            };
+            fetchArticles();
+        }
     }, [genre]);
 
 
