@@ -483,9 +483,9 @@ def GetSettings():
 def AddHasClicked():
     data = request.get_json()
     URL, Cookie = data['URL'], data['Cookie']
-
+    # print('addhasclicked:', URL,' | Cookie:', Cookie)
     result = db.addHasClickedCookie(URL, Cookie)[1]
-
+    # print('result:', result)
     if result[0]:
         return jsonify({"message": "success", "status": 200})
 

@@ -217,12 +217,13 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const handleClick = async (URL) => {
         try {
+            // console.log('URL clicked:', URL);
             await axios.post(`${site_domain}/api/addhasclicked`, {
                 URL: URL,
                 Cookie: Cookies.get('user'),
             });
         } catch (err) {
-            console.log('Error:', err);
+            console.log('Error clicking:', err);
         }
     };
 
@@ -265,17 +266,24 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
-                <a href={article.URL} target="_blank" rel="noreferrer" onClick={(e) => handleClick(article.URL)}>
+                <a
+                    href={article.URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => handleClick(article.URL)}
+                    onAuxClick={(e) => handleClick(article.URL)}
+                    onTouchEnd={(e) => handleClick(article.URL)}
+                >
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}
                             {showImage()}
-
                         </>
                     ) : (
                         <div className="no-image"></div>
                     )}
                 </a>
+
                 <div className="bottom-0">
                     <button
                         className='background-newspaper text-decoration-none'
