@@ -72,6 +72,32 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         setIsLoading(false);
     };
 
+    function showImage(){
+        if(article.Image.includes('logo')){
+            return(
+                <img
+                                src={article.Image}
+                                onError={(e) => e.target.style.display = 'none'}
+                                alt=''
+                                className="rounded-top logo"
+                                onLoad={handleImageLoad}
+                            />
+
+            );
+        }
+        else{
+            return (
+                <img
+                                src={article.Image}
+                                onError={(e) => e.target.style.display = 'none'}
+                                alt=''
+                                className="img-fluid rounded-top"
+                                onLoad={handleImageLoad}
+                            />
+            );
+        }
+    }
+
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
@@ -79,13 +105,8 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}
-                            <img
-                                src={article.Image}
-                                onError={(e) => e.target.style.display = 'none'}
-                                alt=''
-                                className="img-fluid rounded-top"
-                                onLoad={handleImageLoad}
-                            />
+                            {showImage()}
+
                         </>
                     ) : (
                         <div className="no-image"></div>

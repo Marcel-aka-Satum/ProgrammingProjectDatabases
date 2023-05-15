@@ -233,6 +233,12 @@ p {
         justify-content: center;
     }
 
+    .logo{
+        width: 100%;
+        object-fit: cover;
+        height: auto;
+    }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
