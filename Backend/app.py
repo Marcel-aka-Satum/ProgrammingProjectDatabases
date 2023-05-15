@@ -474,6 +474,26 @@ def ChangeSetting():
 def GetSettings():
     return jsonify(db.getSettings()[1])
 
+@app.route('/api/addhasclicked', methods=['POST'])
+@cross_origin()
+def AddHasClicked():
+    data = request.get_json()
+    URL, cookie = data['URL'], data['cookie']
+    x = db.addHasClickedCookie(cookie, URL)[1]
+    if x[0]:
+        return jsonify({"message": "Setting updated successfully", "status": 200})
+    return jsonify({"message": x[1]})
+
+@app.route('/api/addcomment', methods=['POST'])
+@cross_origin()
+def AddComment():
+    data = request.get_json()
+    URL, cookie, comment = data['URL'], data['cookie'], data['comment']
+    x = db.addComment(cookie, URL)[1]
+    if x[0]:
+        return jsonify({"message": "Setting updated successfully", "status": 200})
+    return jsonify({"message": x[1]}), 401
+
 
 ################# GOOGLE API CALLS #################
 
@@ -545,6 +565,8 @@ def DBCookies():
 
 @app.route('/db/hasclicked')
 def DBHasClicked():
+    x = db.getHasClicked()
+    print(x)
     return jsonify(db.getHasClicked()[1])
 
 

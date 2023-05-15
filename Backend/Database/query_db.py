@@ -259,6 +259,18 @@ def insert_hasclicked(values: list) -> str:
             INSERT INTO newsaggregator.hasclicked (_User, Article)
             VALUES ('{values[0]}', '{values[1]}');
             """
+def insert_hasclickedcookie(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.hasclicked (_User, Article)
+    """
+    return f"""
+            INSERT INTO newsaggregator.hasclicked (_User, Article)
+            SELECT v.UID, n.URL
+            FROM newsaggregator.cookies c
+            JOIN newsaggregator.visitors v ON c.UID = v.UID
+            JOIN newsaggregator.newsarticles n ON n.URL = '{values[0]}'
+            WHERE c.cookie = '{values[1]}';
+            """
 
 
 def insert_favored(values: list) -> str:
@@ -281,6 +293,22 @@ def insert_favorite(values: list) -> str:
                 '{values[1]}'
             );
             """
+
+def insert_comments(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.comments (Article, Username, Text)
+    """
+    return f"""
+            INSERT INTO newsaggregator.comments (Article, Username, Text)
+            VALUES ('{values[0]}',(
+                SELECT Username 
+                FROM newsaggregator.users 
+                WHERE UID = (SELECT UID FROM newsaggregator.cookies WHERE cookie = '{values[1]}')),
+        '{values[2]}');
+            """
+
+
+
 
 def insert_cluster(URL: str, cluster: int) -> str:
     """

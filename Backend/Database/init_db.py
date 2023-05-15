@@ -73,7 +73,13 @@ def initialize_db(cur):
                 
             CREATE TABLE newsaggregator.settings (
                 settingType varchar PRIMARY KEY,
-                value varchar
+                value varchar);
+                
+            CREATE TABLE newsaggregator.comments (
+                Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
+                Username varchar REFERENCES newsaggregator.users(Username) ON DELETE CASCADE,
+                Text varchar,
+                PRIMARY KEY (Article, Username)
             );
             ''')
 
