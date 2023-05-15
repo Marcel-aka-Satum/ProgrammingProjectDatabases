@@ -391,6 +391,16 @@ def getArticlesTopic():
     return jsonify(articles[1])
 
 
+@app.route('/api/articles/recommended', methods=['POST'])
+@cross_origin()
+def getRecommendedArticles():
+    data = request.get_json()
+    cookie = data['Cookie']
+    # articles = db.getRecommendedArticles(cookie)
+    # return jsonify(articles[1])
+    return jsonify({"message": "Not implemented yet", "status": 501})
+
+
 ################# Favorite ROUTES #################
 @app.route('/api/favorites', methods=['GET'])
 @cross_origin()
