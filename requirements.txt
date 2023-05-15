@@ -6,6 +6,8 @@ flask-jwt-extended
 flask-cors
 redis
 flask-session
+easynmt
+fake_useragent
 flask-migrate
 psycopg2-binary
 feedparser~=6.0.10
