@@ -3,6 +3,7 @@ import {SUCCESS, ERROR} from "../components/Helpers/custom_alert";
 import {
     formatTitle,
     formatDate,
+    getTimeAgo,
     formatSummary,
     handleClipboard,
     PrintNewspaper,
@@ -18,9 +19,158 @@ import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
+import {faker} from '@faker-js/faker';
+
+// function Comments({article}) {
+//     const [sortBy, setSortBy] = useState('newest');
+//     const [currentPage, setCurrentPage] = useState(1);
+//     const commentsPerPage = 5;
+//     const generateRandomComments = (count) => {
+//         const comments = [];
+//
+//         for (let i = 0; i < count; i++) {
+//             const comment = {
+//                 user: faker.internet.userName(),
+//                 date: faker.date.past().toISOString(),
+//                 message: faker.lorem.sentence(),
+//             };
+//
+//             comments.push(comment);
+//         }
+//
+//         return comments;
+//     };
+//
+//     const comments = generateRandomComments(80);
+//
+//     // Sort comments based on the selected sorting option
+//     const sortedComments = comments.sort((a, b) => {
+//         if (sortBy === 'newest') {
+//             return new Date(b.date) - new Date(a.date);
+//         } else {
+//             return new Date(a.date) - new Date(b.date);
+//         }
+//     });
+//     const handlePageChange = (page) => {
+//         setCurrentPage(page);
+//     };
+//     // Paginate comments based on the current page
+//     const indexOfLastComment = currentPage * commentsPerPage;
+//     const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+//     const currentComments = sortedComments.slice(indexOfFirstComment, indexOfLastComment);
+//
+//     const handleSortChange = (event) => {
+//         setSortBy(event.target.value);
+//         setCurrentPage(1);
+//     };
+//     const renderPagination = () => {
+//         const totalPages = Math.ceil(comments.length / commentsPerPage);
+//         const pageRange = 2; // Number of pages to show before and after the current page
+//         const pagination = [];
+//
+//         if (totalPages <= 1) {
+//             return null; // No need to render pagination if there's only one page
+//         }
+//
+//         const addPage = (pageNumber) => {
+//             pagination.push(
+//                 <button
+//                     key={pageNumber}
+//                     className={`page-number ${currentPage === pageNumber ? 'active' : ''}`}
+//                     onClick={() => handlePageChange(pageNumber)}
+//                 >
+//                     {pageNumber}
+//                 </button>
+//             );
+//         };
+//
+//         // Add "<<" pagination link
+//         if (currentPage > 1) {
+//             pagination.push(
+//                 <button
+//                     key="first"
+//                     className="page-number"
+//                     onClick={() => handlePageChange(1)}
+//                 >
+//                     <i className="fas fa-angle-double-left"></i>
+//                 </button>
+//             );
+//         }
+//
+//         // Add pages before the current page
+//         for (let i = currentPage - pageRange; i < currentPage; i++) {
+//             if (i > 0) {
+//                 addPage(i);
+//             }
+//         }
+//
+//         // Add the current page
+//         addPage(currentPage);
+//
+//         // Add pages after the current page
+//         for (let i = currentPage + 1; i <= currentPage + pageRange; i++) {
+//             if (i <= totalPages) {
+//                 addPage(i);
+//             }
+//         }
+//
+//         // Add ">>" pagination link
+//         if (currentPage < totalPages) {
+//             pagination.push(
+//                 <button
+//                     key="last"
+//                     className="page-number"
+//                     onClick={() => handlePageChange(totalPages)}
+//                 >
+//                     <i className="fas fa-angle-double-right"></i>
+//                 </button>
+//             );
+//         }
+//
+//         return (
+//             <div className="pagination">
+//                 {pagination}
+//             </div>
+//         );
+//     };
+//
+//     return (
+//         <div className="comments">
+//             <div className="sorting">
+//                 <label htmlFor="sort-select" className="sort-label">
+//                     Sort By:
+//                 </label>
+//                 <select id="sort-select" className="sort-select" value={sortBy} onChange={handleSortChange}>
+//                     <option value="newest" className="sort-option">
+//                         Newest
+//                     </option>
+//                     <option value="oldest" className="sort-option">
+//                         Oldest
+//                     </option>
+//                 </select>
+//             </div>
+//             {currentComments.map((comment, index) => (
+//                 <div className="comment" key={index}>
+//                     <div className="comment-body">
+//                         <div className="comment-body-header">
+//                             <div className="comment-user-name">{comment.user}</div>
+//                             <div className="comment-date">{getTimeAgo(formatDate(comment.date))}</div>
+//                         </div>
+//                         <div className="comment-text">
+//                             <p>{comment.message}</p>
+//                         </div>
+//                     </div>
+//                 </div>
+//             ))}
+//             {renderPagination()}
+//         </div>
+//     );
+// }
+
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
+    const [showCommentsModal, setShowCommentsModal] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
 
@@ -80,6 +230,8 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const openCommentsModal = () => setShowCommentsModal(true);
+    const closeCommentsModal = () => setShowCommentsModal(false);
 
     const handleImageLoad = () => {
         setIsLoading(false);
@@ -145,15 +297,25 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                      dangerouslySetInnerHTML={{__html: text[0]}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
-
                     <div className="container mt-3">
-
-                        <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow}
+                        <button className='btn btn-outline-primary me-2 ms-1 hide-btn' onClick={handleShow}
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Share">
                             <i className="far fa-share-square"></i>
                         </button>
+                        {/*<button*/}
+                        {/*    className='btn btn-outline-primary'*/}
+                        {/*    data-toggle="tooltip"*/}
+                        {/*    data-placement="top"*/}
+                        {/*    title="Message"*/}
+                        {/*    onClick={openCommentsModal}*/}
+                        {/*>*/}
+                        {/*    <i className="far fa-comment-dots"></i>*/}
+                        {/*    <span className="badge text-custom-dark text-custom-light">0</span>*/}
+                        {/*</button>*/}
+
+
                         <Modal
                             show={show}
                             onHide={handleClose}
@@ -213,6 +375,27 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                 </button>
                             </Modal.Footer>
                         </Modal>
+                        {/*<Modal*/}
+                        {/*    show={showCommentsModal}*/}
+                        {/*    onHide={closeCommentsModal}*/}
+                        {/*    backdrop={true}*/}
+                        {/*    keyboard={true}*/}
+                        {/*>*/}
+                        {/*    <Modal.Header closeButton>*/}
+                        {/*        <Modal.Title>Comments</Modal.Title>*/}
+                        {/*    </Modal.Header>*/}
+
+                        {/*    /!*<Modal.Body>*!/*/}
+                        {/*    /!*    <Comments article={article}/>*!/*/}
+                        {/*    /!*</Modal.Body>*!/*/}
+                        {/*    */}
+                        {/*    <Modal.Footer>*/}
+                        {/*        <button className='btn btn-danger' onClick={closeCommentsModal}>*/}
+                        {/*            Close*/}
+                        {/*        </button>*/}
+                        {/*    </Modal.Footer>*/}
+                        {/*</Modal>*/}
+
 
                         {(logged) ?
                             <>
@@ -252,7 +435,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         }
 
 
-                        <span className="article-card-date float-end p-2 pb-4">
+                        <span className="article-card-date float-end">
                         <i>{formatDate(article.Published)}</i>
                     </span>
                     </div>

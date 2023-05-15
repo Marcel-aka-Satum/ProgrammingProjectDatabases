@@ -32,6 +32,30 @@ function formatDate(dateStr) {
     return `${day} ${month} ${year}, ${hours}:${minutes}`;
 }
 
+function getTimeAgo(dateStr) {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffSec = Math.floor(diffMs / 1000);
+
+    if (diffSec < 60) {
+        return `${diffSec} seconds ago`;
+    }
+
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) {
+        return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+    }
+
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) {
+        return `${diffHr} hour${diffHr > 1 ? 's' : ''} ago`;
+    }
+
+    const diffDays = Math.floor(diffHr / 24);
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+}
+
 function formatSummary(text, limit = 200) {
     if (text.length <= limit) {
         return [text, false];
@@ -108,6 +132,7 @@ function shares(article) {
 export {
     formatTitle,
     formatDate,
+    getTimeAgo,
     formatSummary,
     handleClipboard,
     handleHideArticle,

@@ -491,17 +491,34 @@ def AddHasClicked():
 
     return jsonify({"message": result[1], "status": 401})
 
-
+################# COMMENTS #################
 @app.route('/api/addcomment', methods=['POST'])
 @cross_origin()
 def AddComment():
     data = request.get_json()
-    URL, cookie, comment = data['URL'], data['cookie'], data['comment']
-    x = db.addComment(cookie, URL)[1]
-    if x[0]:
-        return jsonify({"message": "Setting updated successfully", "status": 200})
-    return jsonify({"message": x[1]}), 401
+    URL, cookie, text = data['URL'], data['Cookie'], data['Comment']
 
+    result = db.addComment(URL, cookie, text)[1]
+
+    if result[0]:
+        return jsonify({"message": "Comment posted !", "status": 200})
+
+    return jsonify({"message": result[1], "status": 401})
+
+
+@app.route('/api/getcomments', methods=['POST'])
+@cross_origin()
+def GetComments():
+    data = request.get_json()
+    URL = data['URL']
+
+    result = db.getComments(URL)[1]
+    print('result comment:', result)
+
+    if result[0]:
+        return jsonify({"message": result[1], "status": 200})
+
+    return jsonify({"message": result[1], "status": 401})
 
 ################# GOOGLE API CALLS #################
 

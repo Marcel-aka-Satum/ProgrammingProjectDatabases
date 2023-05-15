@@ -23,6 +23,7 @@ def get_visitor(UID: str) -> str:
             WHERE UID = {UID};
             """
 
+
 def get_topics() -> str:
     """
         SELECT DISTINCT Topic FROM newsaggregator.newsarticles
@@ -65,6 +66,7 @@ def get_newsarticle(URL: str) -> str:
             WHERE URL = '{URL}';
             """
 
+
 def get_ArticlesDict() -> str:
     """
                 SELECT Topic, JSON_AGG(json_build_object(
@@ -92,7 +94,6 @@ def get_ArticlesDict() -> str:
             """
 
 
-
 def get_newsarticlesTopic(Topic: str) -> str:
     """
         SELECT * FROM newsaggregator.newsarticles
@@ -102,6 +103,7 @@ def get_newsarticlesTopic(Topic: str) -> str:
             SELECT * FROM newsaggregator.newsarticles
             WHERE Topic = '{Topic}';
             """
+
 
 def get_favorites(URL: str) -> str:
     """SELECT * 
@@ -129,6 +131,7 @@ def get_favorites(URL: str) -> str:
             )
         );
     """
+
 
 def get_cluster(Cluster_ID: int) -> str:
     """
@@ -191,6 +194,7 @@ def get_favored() -> str:
     """
     return "SELECT * FROM newsaggregator.favored"
 
+
 def get_settings() -> str:
     """
         SELECT * FROM newsaggregator.settings
@@ -218,7 +222,7 @@ def insert_newsarticle(values: list) -> str:
             INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic)
             VALUES (%s,%s,%s,%s,%s,%s,%s);
             """
-    return query, (values[0],values[1],values[2],values[3],values[4],values[5],values[6])
+    return query, (values[0], values[1], values[2], values[3], values[4], values[5], values[6])
 
 
 def insert_visitor(values: list) -> str:
@@ -259,6 +263,8 @@ def insert_hasclicked(values: list) -> str:
             INSERT INTO newsaggregator.hasclicked (_User, Article)
             VALUES ('{values[0]}', '{values[1]}');
             """
+
+
 def insert_hasclickedcookie(values: list) -> str:
     """
         INSERT INTO newsaggregator.hasclicked (_User, Article)
@@ -282,6 +288,7 @@ def insert_favored(values: list) -> str:
             VALUES ('{values[0]}', '{values[1]}');
             """
 
+
 def insert_favorite(values: list) -> str:
     """
         INSERT INTO newsaggregator.favorite (_User, Article)
@@ -294,9 +301,10 @@ def insert_favorite(values: list) -> str:
             );
             """
 
+
 def insert_comments(values: list) -> str:
     """
-        INSERT INTO newsaggregator.comments (Article, Username, Text)
+        INSERT INTO newsaggregator.comments (Article, Username, Comment, Published)
     """
     return f"""
             INSERT INTO newsaggregator.comments (Article, Username, Text)
@@ -308,6 +316,13 @@ def insert_comments(values: list) -> str:
             """
 
 
+def get_comments(values: list) -> str:
+    """
+        SELECT * FROM newsaggregator.comments where Article = '{URL}'
+    """
+    return f"""
+            SELECT * FROM newsaggregator.comments where Article = '{values[0]}';
+            """
 
 
 def insert_cluster(URL: str, cluster: int) -> str:
@@ -328,6 +343,7 @@ def insert_setting(values: list) -> str:
             INSERT INTO newsaggregator.settings (settingType, value)
             VALUES ('{values[0]}', '{values[1]}')
             """
+
 
 #################### DELETERS ####################
 def delete_rssfeed(URL: str) -> str:
@@ -385,6 +401,7 @@ def delete_cookie(cookie: str) -> str:
             WHERE cookie = '{cookie}';
             """
 
+
 def delete_favored(UID, URL: str) -> str:
     """
     DELETE FROM newsaggregator.favored
@@ -395,6 +412,7 @@ def delete_favored(UID, URL: str) -> str:
             WHERE _User = {UID} AND Article = '{URL}';
             """
 
+
 def delete_all_favored(UID: str) -> str:
     """
     DELETE FROM newsaggregator.favored
@@ -404,6 +422,7 @@ def delete_all_favored(UID: str) -> str:
             DELETE FROM newsaggregator.favored
             WHERE _User = {UID};
             """
+
 
 #################### UPDATERS ####################
 def update_rssfeed(URL: str, Publisher: str, Topic: str) -> str:
@@ -439,6 +458,7 @@ def update_user(ID: int, Username: str, Email: str, Password: str, Is_Admin: boo
             SET Username = '{Username}', Email = '{Email}', Password = '{Password}', Is_Admin = '{Is_Admin}'
             WHERE UID = {ID};
             """
+
 
 def update_setting(Setting: str, Value: str) -> str:
     """

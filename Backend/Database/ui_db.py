@@ -510,13 +510,13 @@ class DBConnection:
             return False, str(e)
 
     @func.is_connected
-    def addComment(self, UID: str, Cookie: str, Text:str) -> tuple:
+    def addComment(self, URL:str, cookie: str, text: str) -> tuple:
         """
-        @brief: add a favored article of a user to the database.
+        @brief: add a comment of a user to the database.
         """
         try:
             cursor = self.connection.cursor()
-            cursor.execute(query_db.insert_comments([UID, Cookie, Text]))
+            cursor.execute(query_db.insert_comments([URL, cookie, text]))
             return True, "success"
 
         except psycopg2.errors.UniqueViolation as e:
@@ -524,6 +524,19 @@ class DBConnection:
                 return False, f"User has already commented this article"
             else:
                 return False, f"A unique constraint violation occurred: {e}"
+
+        except Exception as e:
+            return False, str(e)
+
+    @func.is_connected
+    def getComments(self, URL:str) -> tuple:
+        """
+        @brief: get comments of a article.
+        """
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query_db.get_comments([URL]))
+            return True, cursor.fetchall()
 
         except Exception as e:
             return False, str(e)

@@ -79,6 +79,7 @@ def initialize_db(cur):
                 Article varchar REFERENCES newsaggregator.newsarticles(URL) ON DELETE CASCADE,
                 Username varchar REFERENCES newsaggregator.users(Username) ON DELETE CASCADE,
                 Text varchar,
+                PublishDate timestamp DEFAULT current_timestamp,
                 PRIMARY KEY (Article, Username)
             );
             ''')
