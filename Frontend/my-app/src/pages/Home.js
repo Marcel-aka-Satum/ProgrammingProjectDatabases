@@ -136,16 +136,16 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                 </div>
             </a>
 
-            <div className="bottom-0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-    <button
-        className='background-newspaper text-decoration-none'
-        onClick={() => {
-            onFilterTextChange(PrintNewspaper({ url: article.URL }));
-        }}
-    >
-        <PrintNewspaper url={article.URL} />
-    </button>
-</div>
+            <div className="bottom-0" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <button
+                    className='background-newspaper text-decoration-none'
+                    onClick={() => {
+                        onFilterTextChange(PrintNewspaper({url: article.URL}));
+                    }}
+                >
+                    <PrintNewspaper url={article.URL}/>
+                </button>
+            </div>
 
 
             <div className="article-card-body pe-3 ps-3">
