@@ -3,6 +3,9 @@ import feedparser
 from . import ui_db
 import json
 import requests
+from .article_clustering import NewsClusterer
+import pickle
+
 
 class BaseFeedScraper:
     def __init__(self):
@@ -41,7 +44,6 @@ class BaseFeedScraper:
     def get_summary(self, entry):
         return entry['summary']
 
-
     def scrape_entry(self, entry, rss_url, topic, Image):
         link = entry['link']
         title = entry['title']
@@ -49,7 +51,7 @@ class BaseFeedScraper:
         publisher = entry['published']
         image = self.get_image(entry)
 
-        #if image is None and "www.tijd" in link:
+        # if image is None and "www.tijd" in link:
         #    image = self.get_image_none_2(link)
         #    image = None
         if image is None:
@@ -95,7 +97,15 @@ def scraper():
     _scraper = BaseFeedScraper()
     _scraper.connect_to_database()
     _scraper.scrape_all_feeds()
-    print("scraping done")
+    print('scraping done')
+
+    print("Starting clustering")
+    clusterer = NewsClusterer()
+    all_articles = clusterer.load_data()
+    X_tfidf = clusterer.preprocess_and_vectorize(all_articles, translate=False)
+    with open("tfidf_matrix.pkl", "wb") as f:
+        pickle.dump(X_tfidf, f)
+    print("Clustering done")
 
 
 if __name__ == '__main__':

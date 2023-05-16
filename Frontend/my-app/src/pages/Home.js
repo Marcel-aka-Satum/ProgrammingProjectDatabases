@@ -182,6 +182,40 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                             <i className="fas fa-search"></i>
                             <span className="text-custom-dark">10</span>
                         </button>
+                        <Modal
+                            show={show}
+                            onHide={handleClose}
+                            backdrop={true}
+                            keyboard={true}
+                        >
+                            <Modal.Header closeButton>
+                                <Modal.Title>Similar Articles</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{
+                                margin: '20px',
+                                padding: '20px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center'
+                            }}>
+                                <div className="card">
+                                    <img
+                                        src={article.Image}
+                                        onError={(e) => e.target.style.display = 'none'}
+                                        alt=''
+                                        className="card-img-top"
+                                        style={{display: article.Image ? 'block' : 'none'}}
+                                    />
+                                    <div className="card-body">
+                                        <p>{<PrintNewspaper url={article.URL}/>}</p>
+                                        <h5 className="card-title">{article.Title}</h5>
+                                    </div>
+                                </div>
+                            </Modal.Body>
+                        </Modal>
+
+
+
 
 
                         <Modal

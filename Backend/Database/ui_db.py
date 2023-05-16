@@ -233,10 +233,10 @@ class DBConnection:
             "Summary": data[2],
             "Published": data[3],
             "Image": data[4],
-            "RSS_URL": data[5],
-            "Topic": data[6]
+            "RSS_URL": data[6],
+            "Topic": data[5]
         }
-    
+
     @func.is_connected
     def getCluster(self, cluster_id: int) -> tuple:
         """

@@ -396,14 +396,18 @@ def getArticlesTopic():
 @cross_origin()
 def getRecommendedArticles():
     data = request.get_json()
-    cookie = data['Cookie']
-    print('Cookie clust:', cookie)
+    cookie = None
+    try:
+        cookie = data['Cookie']
+    except:
+        pass
+
+    if not cookie:
+        return jsonify({'articles': []})
     news_clusterer = NewsClusterer()
     article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
-    print('Articles clust:', articles)
-    return jsonify(articles[1])
-    
+    return jsonify({'articles': articles})
 
 
 ################# Favorite ROUTES #################
@@ -498,13 +502,12 @@ def GetSettings():
 def AddHasClicked():
     data = request.get_json()
     URL, Cookie = data['URL'], data['Cookie']
-    print('addhasclicked:', URL,' | Cookie:', Cookie)
     result = db.addHasClickedCookie(URL, Cookie)[1]
-    print('result:', result)
     if result[0]:
         return jsonify({"message": "success", "status": 200})
 
     return jsonify({"message": result[1], "status": 401})
+
 
 ################# GOOGLE API CALLS #################
 

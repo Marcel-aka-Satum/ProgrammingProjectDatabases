@@ -41,6 +41,6 @@ def populate_db(conn, cur, cwd):
         conn.commit()
 
     cur.execute(query.insert_cookie(["abc", 1]))
-    cur.execute(query.insert_setting(["scraperTimer", "600"]))
+    cur.execute(query.insert_setting(["scraperTimer", "7200"]))
 
     print("Done inserting values")

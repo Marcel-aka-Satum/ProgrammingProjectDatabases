@@ -285,28 +285,33 @@ const Home = () => {
 
     const [filterText, setFilterText] = useState('');
     const [sortOption, setSortOption] = useState("newest");
-
+    const [disableSort, setDisableSort] = useState(false);
     let usersession = useContext(userSession);
 
     useEffect(() => {
         if (genre === 'recommended') {
             ////TODO: fix this
             const fetchArticles = async () => {
-                await axios.post(`${site_domain}/api/articles/recommended`, {
-                    Cookie: Cookies.get('user'),
-                    headers: request_headers
-                }).then(response      => {
-                    console.log('response:', response)
+                const response = await fetch(`${site_domain}/api/articles/recommended`, {
+                    method: 'POST',
+                    headers: request_headers,
+                    body: JSON.stringify({
+                        Cookie: Cookies.get('user')
+                    })
                 });
+                const data = await response.json();
+                setDisableSort(true);
+                setArticles(data.articles);
             };
-            fetchArticles();
 
+            fetchArticles();
         } else {
             const fetchArticles = async () => {
                 await axios.post(`${site_domain}/api/articles/genre`, {
                     genre: genre,
                     headers: request_headers
                 }).then(response => {
+                    setDisableSort(false);
                     setArticles(response.data);
                 });
             };
@@ -359,8 +364,10 @@ const Home = () => {
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
 
-    const articlesToDisplay = filteredArticles
-        .sort((a, b) => {
+    let articlesToDisplay = filteredArticles.slice(0, numDisplayedArticles);
+
+    if (!disableSort) {
+        articlesToDisplay = articlesToDisplay.sort((a, b) => {
             const dateA = new Date(a.Published);
             const dateB = new Date(b.Published);
             if (sortOption === "oldest") {
@@ -368,8 +375,9 @@ const Home = () => {
             } else {
                 return dateB - dateA;
             }
-        })
-        .slice(0, numDisplayedArticles);
+        });
+    }
+
 
     const handleLoadMore = () => {
         setNumDisplayedArticles(numDisplayedArticles + 20);
@@ -398,25 +406,28 @@ const Home = () => {
                     >
                         X
                     </button>
-                    <div className="dropdown ps-2">
-                        <button className="btn btn-outline-secondary dropdown-toggle" type="button"
-                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                            {sortOption ? sortOption : 'Sort By'}
-                        </button>
-                        <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li>
-                                <button className="dropdown-item" type="button" value="newest"
-                                        onClick={handleSortChange}>newest
-                                </button>
-                            </li>
-                            <li>
-                                <button className="dropdown-item" type="button" value="oldest"
-                                        onClick={handleSortChange}>oldest
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                    {!disableSort ? (
+                        <div className="dropdown ps-2">
+                            <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                {sortOption ? sortOption : 'Sort By'}
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <button className="dropdown-item" type="button" value="newest"
+                                            onClick={handleSortChange}>newest
+                                    </button>
+                                </li>
+                                <li>
+                                    <button className="dropdown-item" type="button" value="oldest"
+                                            onClick={handleSortChange}>oldest
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    ) : null}
+
                 </div>
             </div>
 

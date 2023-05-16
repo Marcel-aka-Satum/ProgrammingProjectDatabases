@@ -15,6 +15,8 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.manifold import TSNE
 
 from bs4 import BeautifulSoup
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
 
 import re
 import psycopg2
