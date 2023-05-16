@@ -360,7 +360,7 @@ def articlesDict():
     return jsonify(db.getArticlesDict()[1])
 
 
-@app.route('/api/get_article', methods=['POST'])
+@app.route('/api/article', methods=['POST'])
 @cross_origin()
 def getArticle():
     data = request.get_json()
@@ -433,7 +433,7 @@ def deleteFavored():
         return jsonify({"message": message_db, "status": 401})
 
 
-@app.route('/api/delete_all_favored', methods=['POST'])
+@app.route('/api/all_favorites', methods=['DELETE'])
 @cross_origin()
 def deleteAllFavored():
     data = request.get_json()
@@ -488,14 +488,14 @@ def GetSettings():
     return jsonify(db.getSettings()[1])
 
 
-@app.route('/api/addhasclicked', methods=['POST'])
+@app.route('/api/clicked', methods=['POST'])
 @cross_origin()
 def AddHasClicked():
     data = request.get_json()
     URL, Cookie = data['URL'], data['Cookie']
-    # print('addhasclicked:', URL,' | Cookie:', Cookie)
+    print('addhasclicked:', URL,' | Cookie:', Cookie)
     result = db.addHasClickedCookie(URL, Cookie)[1]
-    # print('result:', result)
+    print('result:', result)
     if result[0]:
         return jsonify({"message": "success", "status": 200})
 
@@ -617,7 +617,7 @@ def start_clustering():
         news_clusterer.run(visualize=False, translate=False)
         time.sleep(600)
 
-#
+
 # clustering_thread = threading.Thread(target=start_clustering)
 # clustering_thread.start()
 

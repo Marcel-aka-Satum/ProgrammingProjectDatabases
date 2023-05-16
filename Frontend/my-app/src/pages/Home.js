@@ -69,9 +69,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     }
 
     const handleClick = async (URL) => {
+        console.log('URL clicked:', URL);
         try {
-            // console.log('URL clicked:', URL);
-            await axios.post(`${site_domain}/api/addhasclicked`, {
+            await axios.post(`${site_domain}/api/clicked`, {
                 URL: URL,
                 Cookie: Cookies.get('user'),
             });
@@ -83,9 +83,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
-    const openCommentsModal = () => setShowCommentsModal(true);
-    const closeCommentsModal = () => setShowCommentsModal(false);
 
     const handleImageLoad = () => {
         setIsLoading(false);
@@ -118,15 +115,16 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     return (
         <div className="article-card hide-btn-group">
-            <div className='boxi'>
-                <a
-                    href={article.URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => handleClick(article.URL)}
-                    onAuxClick={(e) => handleClick(article.URL)}
-                    onTouchEnd={(e) => handleClick(article.URL)}
-                >
+            <a
+                href={article.URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleClick(article.URL)}
+                onAuxClick={() => handleClick(article.URL)}
+                onTouchEnd={() => handleClick(article.URL)}
+            >
+                <div className='boxi'>
+
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}
@@ -135,22 +133,26 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     ) : (
                         <div className="no-image"></div>
                     )}
-                </a>
-
-                <div className="bottom-0">
-                    <button
-                        className='background-newspaper text-decoration-none'
-                        onClick={() => {
-                            onFilterTextChange(PrintNewspaper({url: article.URL}))
-                        }
-                        }
-                    >
-                        <PrintNewspaper url={article.URL}/>
-                    </button>
                 </div>
-            </div>
+            </a>
+
+            <div className="bottom-0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <button
+        className='background-newspaper text-decoration-none'
+        onClick={() => {
+            onFilterTextChange(PrintNewspaper({ url: article.URL }));
+        }}
+    >
+        <PrintNewspaper url={article.URL} />
+    </button>
+</div>
+
+
             <div className="article-card-body pe-3 ps-3">
-                <a href={article.URL} target="_blank" rel="noreferrer">
+                <a href={article.URL} target="_blank" rel="noreferrer"
+                   onClick={() => handleClick(article.URL)}
+                   onAuxClick={() => handleClick(article.URL)}
+                   onTouchEnd={() => handleClick(article.URL)}>
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 

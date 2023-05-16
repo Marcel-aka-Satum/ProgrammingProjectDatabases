@@ -94,7 +94,7 @@ export default function Account() {
                 //     loop over favorites and do a fetch for each article
                 for (let i = 0; i < favorites.length; i++) {
                     let a_url = favorites[i]
-                    const r_article = await fetch(`${site_domain}/api/get_article`, {
+                    const r_article = await fetch(`${site_domain}/api/article`, {
                         method: 'POST',
                         headers: request_headers,
                         body: JSON.stringify({article_url: a_url}),

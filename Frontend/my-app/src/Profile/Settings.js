@@ -86,8 +86,8 @@ export default function Settings() {
     const handleClearFavorites = () => {
         // send clear favorites request to the server
         async function clearFavorites() {
-            const r_clear_favorites = await fetch(`${site_domain}/api/delete_all_favored`, {
-                method: 'POST',
+            const r_clear_favorites = await fetch(`${site_domain}/api/all_favorites`, {
+                method: 'DELETE',
                 headers: request_headers,
                 body: JSON.stringify({UID: usersession.user.uid}),
             });
