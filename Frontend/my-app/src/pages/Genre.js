@@ -92,10 +92,29 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         img.src = article.Image;
     };
 
+    const handleClick = async (URL) => {
+        console.log('URL clicked:', URL);
+        try {
+            await axios.post(`${site_domain}/api/clicked`, {
+                URL: URL,
+                Cookie: Cookies.get('user'),
+            });
+        } catch (err) {
+            console.log('Error clicking:', err);
+        }
+    };
+
     return (
         <div className="article-card hide-btn-group">
-            <div className='boxi'>
-                <a href={article.URL} target="_blank" rel="noreferrer">
+            <a
+                href={article.URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => handleClick(article.URL)}
+                onAuxClick={() => handleClick(article.URL)}
+                onTouchEnd={() => handleClick(article.URL)}
+            >
+                <div className='boxi'>
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}
@@ -110,21 +129,29 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     ) : (
                         <div className="no-image"></div>
                     )}
-                </a>
-                <div className="bottom-0">
-                    <button
-                        className='background-newspaper text-decoration-none'
-                        onClick={() => {
-                            onFilterTextChange(PrintNewspaper({url: article.URL}))
-                        }
-                        }
-                    >
-                        <PrintNewspaper url={article.URL}/>
-                    </button>
                 </div>
+            </a>
+
+            <div className="bottom-0" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <button
+                    className='background-newspaper text-decoration-none'
+                    onClick={() => {
+                        onFilterTextChange(PrintNewspaper({url: article.URL}));
+                    }}
+                >
+                    <PrintNewspaper url={article.URL}/>
+                </button>
             </div>
+
             <div className="article-card-body pe-3 ps-3">
-                <a href={article.URL} target="_blank" rel="noreferrer">
+                <a
+                    href={article.URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => handleClick(article.URL)}
+                    onAuxClick={() => handleClick(article.URL)}
+                    onTouchEnd={() => handleClick(article.URL)}
+                >
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
@@ -133,7 +160,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
                 <div className="article-card-footer pb-3 mt-3">
 
-                    <div class="container mt-3">
+                    <div className="container mt-3">
 
                         <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow}
                                 data-toggle="tooltip"
