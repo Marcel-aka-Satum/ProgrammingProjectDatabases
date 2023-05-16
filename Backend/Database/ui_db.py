@@ -628,12 +628,12 @@ class DBConnection:
         return data
 
     @func.is_connected
-    def getHasClicked(self) -> list:
+    def getHasClicked(self, cookie: str) -> list:
         """
-        @brief: get the table HasClicked.
+        @brief: get the table HasClicked based on the given cookie.
         """
         cursor = self.connection.cursor()
-        cursor.execute(query_db.get_hasclicked())
+        cursor.execute(query_db.get_hasclicked(cookie))
         data = []
         for i in cursor.fetchall():
             data.append({"User": i[0], "Article": i[1]})
