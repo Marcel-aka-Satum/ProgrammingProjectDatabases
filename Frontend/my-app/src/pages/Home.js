@@ -19,16 +19,16 @@ import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
-import {faker} from '@faker-js/faker';
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
     const [showCommentsModal, setShowCommentsModal] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
-
+    let usersession = useContext(userSession);
 
     const addFavorite = async (URL) => {
+        console.log('ADD:', URL)
         try {
             const response = await axios.post(`${site_domain}/api/favorites`, {
                 UID: uid,
@@ -50,23 +50,29 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     }
 
     const removeFavorite = async (URL) => {
+        console.log('REMOVE:', URL);
         try {
-            const response = await axios.post(`${site_domain}/api/favorites`, {
-                UID: uid,
-                article_url: URL,
-                headers: request_headers
-            })
-            if (response.data.status === 200) {
-                SUCCESS(response.data.message)
-                console.log(response.data)
-                setFavorites(favorites.filter(favorite => favorite !== URL)) // Update the favorites state immediately
+            const response = await fetch(`${site_domain}/api/favorites`, {
+                method: 'DELETE',
+                headers: request_headers,
+                body: JSON.stringify({
+                    UID: uid,
+                    article_url: URL
+                })
+            });
+            const responseData = await response.json();
+            if (response.ok) {
+                SUCCESS(responseData.message);
+                console.log(responseData);
+                setFavorites(favorites.filter(favorite => favorite !== URL));
             } else {
-                ERROR(response.data.message)
+                ERROR(responseData.message);
             }
         } catch (err) {
-            ERROR(err)
+            ERROR(err);
         }
-    }
+    };
+
 
     const handleClick = async (URL) => {
         console.log('URL clicked:', URL);
@@ -160,13 +166,23 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                      dangerouslySetInnerHTML={{__html: text[0]}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
-                    <div className="container mt-3">
-                        <button className='btn btn-outline-primary me-2 ms-1 hide-btn' onClick={handleShow}
+                    <div className="container mt-3 btn-group">
+                        <button className='btn btn-outline-primary' onClick={handleShow}
                                 data-toggle="tooltip"
                                 data-placement="top"
                                 title="Share">
                             <i className="far fa-share-square"></i>
                         </button>
+
+                        {/*button that says 'Similar'*/}
+                        <button className='btn btn-outline-primary'
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Similar">
+                            <i className="fas fa-search"></i>
+                            <span className="text-custom-dark">10</span>
+                        </button>
+
 
                         <Modal
                             show={show}
@@ -234,7 +250,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                 {favorites.includes(article.URL) ?
                                     <>
                                         <button
-                                            className="btn btn-danger me-2"
+                                            className="btn btn-danger"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title="Remove from favorites"
@@ -266,10 +282,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         }
 
 
-                        <span className="article-card-date float-end">
-                        <i>{formatDate(article.Published)}</i>
-                    </span>
                     </div>
+                    <span className="article-card-date float-end pb-2">
+                            <i>{formatDate(article.Published)}</i>
+                        </span>
                 </div>
             </div>
         </div>
