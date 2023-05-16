@@ -181,11 +181,17 @@ def get_cookies() -> str:
     return "SELECT * FROM newsaggregator.cookies"
 
 
-def get_hasclicked() -> str:
+def get_hasclicked(cookie: str) -> str:
     """
         SELECT * FROM newsaggregator.hasclicked
+        WHERE _User IN (SELECT UID FROM newsaggregator.cookies WHERE cookie = '{cookie}')
     """
-    return "SELECT * FROM newsaggregator.hasclicked"
+    return f"""
+            SELECT hc._User, hc.Article
+            FROM newsaggregator.hasclicked hc
+            JOIN newsaggregator.cookies c ON hc._User = c.UID
+            WHERE c.cookie = '{cookie}';
+            """
 
 
 def get_favored() -> str:
