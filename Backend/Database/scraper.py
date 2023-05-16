@@ -3,59 +3,10 @@ import feedparser
 from . import ui_db
 import json
 import requests
-from bs4 import BeautifulSoup
-import random
-import time
-from fake_useragent import UserAgent
-from newspaper import Article
-
-
-# def scraper():
-#     # Initialize DB object
-#     DB = ui_db.DBConnection()
-#     # Establish connection
-#     DB.connect()
-#     if not DB.is_connected():
-#         print("Scraper cannot connect to database")
-#
-#     rss_info = DB.ParseRSSFeeds()
-#     rss_info = json.loads(rss_info)
-#
-#     for rss in rss_info:
-#         rss_url = rss['URL']
-#         print(rss_url)
-#         topic = rss['Topic']
-#         feed = feedparser.parse(rss_url)
-#
-#         print("Scraping: ", rss_url)
-#         for entry in feed.entries:
-#             link = entry['link']
-#             title = entry['title']
-#             summary = entry['summary']
-#             publisher = entry['published']
-#
-#             image = ''
-#             for lnk in entry['links']:
-#                 if lnk['type'] in ['image/jpeg']:
-#                     image = lnk['href']
-#
-#             try:
-#                 status, message = DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic)
-#                 # print("Added article: ", link, 'from: ', rss_url)
-#             except Exception as e:
-#                 print('error:', e)
-#                 continue
 
 class BaseFeedScraper:
     def __init__(self):
         self.DB = ui_db.DBConnection()
-        self.user_agent = None
-        self.headers = None
-        try:
-            self.user_agent = UserAgent()
-            self.headers = {'User-Agent': self.user_agent.random}
-        except:
-            pass
 
     def connect_to_database(self):
         if not self.DB.connect():
@@ -90,57 +41,6 @@ class BaseFeedScraper:
     def get_summary(self, entry):
         return entry['summary']
 
-    def get_image_none(self, url):
-        # Use a legitimate user agent
-        user_agent_list = [
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
-            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36 Edge/16.16299",
-            "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; AS; rv:11.0) like Gecko",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/15.15063"
-        ]
-        headers = {'User-Agent': random.choice(user_agent_list)}
-
-        # Use a random delay between requests, but add a small random variation
-        # in the delay to make the requests less predictable
-        delay = random.uniform(2, 4)
-        time.sleep(delay + random.uniform(-1, 1))
-
-        # Use a session object to reuse the same TCP connection for multiple requests
-        session = requests.Session()
-
-        # Set the maximum number of retries and retry on 5xx HTTP errors and timeouts
-        adapter = requests.adapters.HTTPAdapter(max_retries=3, pool_connections=1, pool_maxsize=1,
-                                                pool_block=True)
-        session.mount('http://', adapter)
-        session.mount('https://', adapter)
-
-        # Make the request with a timeout
-        try:
-            response = session.get(url, headers=headers, timeout=10)
-            response.raise_for_status()  # raise an exception for 4xx or 5xx status codes
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
-            return None
-
-        # Parse the HTML with BeautifulSoup
-        soup = BeautifulSoup(response.text, 'html.parser')
-        image = soup.find('img')
-        if image is not None:
-            return image['src']
-        else:
-            return None
-
-    def get_image_none_2(self, url):
-        try:
-            article = Article(url)
-            response = requests.get(url, timeout=5)
-            article.set_html(response.content)
-            article.parse()
-            return article.top_image
-        except:
-            return None
 
     def scrape_entry(self, entry, rss_url, topic, Image):
         link = entry['link']
