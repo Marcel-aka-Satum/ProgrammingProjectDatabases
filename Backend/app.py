@@ -617,7 +617,7 @@ def start_clustering():
         news_clusterer.run(visualize=False, translate=False)
         time.sleep(600)
 
-
+#
 # clustering_thread = threading.Thread(target=start_clustering)
 # clustering_thread.start()
 

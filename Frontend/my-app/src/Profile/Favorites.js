@@ -149,8 +149,8 @@ export default function Account() {
         return title.includes(filter) || summary.includes(filter) || url.includes(filter);
     });
     const removeFavorite = (url) => async () => {
-        const response = await fetch(`${site_domain}/api/delete_favored`, {
-            method: 'POST',
+        const response = await fetch(`${site_domain}/api/favorites`, {
+            method: 'DELETE',
             headers: request_headers,
             body: JSON.stringify({article_url: url, UID: usersession.user.uid}),
         });

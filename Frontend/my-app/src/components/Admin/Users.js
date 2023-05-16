@@ -74,7 +74,7 @@ export default function Users() {
     };
     const applyDeleteUser = async (_id) => {
         const reponse = await fetch(`${site_domain}/api/user/${_id}`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: request_headers
         })
         const data = await reponse.json();
