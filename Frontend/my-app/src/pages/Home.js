@@ -22,7 +22,7 @@ import Cookies from 'js-cookie';
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
     const [show, setShow] = useState(false);
-    const [showCommentsModal, setShowCommentsModal] = useState(false);
+    const [showSimilarModal, setShowSimilarModal] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
     let usersession = useContext(userSession);
@@ -89,6 +89,8 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleCloseSimilarModal = () => setShowSimilarModal(false);
+    const handleShowSimilarModal = () => setShowSimilarModal(true);
 
     const handleImageLoad = () => {
         setIsLoading(false);
@@ -130,7 +132,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                 onTouchEnd={() => handleClick(article.URL)}
             >
                 <div className='boxi'>
-
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}
@@ -153,7 +154,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                 </button>
             </div>
 
-
             <div className="article-card-body pe-3 ps-3">
                 <a href={article.URL} target="_blank" rel="noreferrer"
                    onClick={() => handleClick(article.URL)}
@@ -162,61 +162,84 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
-                <div className="article-card-content"
-                     dangerouslySetInnerHTML={{__html: text[0]}}/>
+                <div className="article-card-content" dangerouslySetInnerHTML={{__html: text[0]}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
                     <div className="container mt-3 btn-group">
-                        <button className='btn btn-outline-primary' onClick={handleShow}
-                                data-toggle="tooltip"
+                        <button className='btn btn-outline-primary' onClick={handleShow} data-toggle="tooltip"
                                 data-placement="top"
                                 title="Share">
                             <i className="far fa-share-square"></i>
                         </button>
 
                         {/*button that says 'Similar'*/}
-                        <button className='btn btn-outline-primary'
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Similar">
+                        <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
+                                data-toggle="tooltip" data-placement="top" title="Similar">
                             <i className="fas fa-search"></i>
                             <span className="text-custom-dark">10</span>
                         </button>
-                        <Modal
-                            show={show}
-                            onHide={handleClose}
-                            backdrop={true}
-                            keyboard={true}
-                        >
+                        <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true} keyboard={true}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Similar Articles</Modal.Title>
                             </Modal.Header>
                             <Modal.Body style={{
-                                margin: '20px',
-                                padding: '20px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center'
+                                margin: '20px', padding: '20px', display: 'flex',
+                                flexDirection: 'column', alignItems: 'center',
                             }}>
-                                <div className="card">
-                                    <img
-                                        src={article.Image}
-                                        onError={(e) => e.target.style.display = 'none'}
-                                        alt=''
-                                        className="card-img-top"
-                                        style={{display: article.Image ? 'block' : 'none'}}
-                                    />
-                                    <div className="card-body">
-                                        <p>{<PrintNewspaper url={article.URL}/>}</p>
-                                        <h5 className="card-title">{article.Title}</h5>
+                                <div style={{height: '500px', overflowY: 'scroll'}}>
+
+                                    {/*TODO: This should loop over the cluster, now only the clicked article is hardcoded*/}
+                                    <div className="card" style={{marginBottom: '10px'}}>
+                                        <img
+                                            src={article.Image}
+                                            onError={(e) => (e.target.style.display = 'none')}
+                                            alt=''
+                                            className="card-img-top"
+                                            style={{display: article.Image ? 'block' : 'none'}}
+                                        />
+                                        <div className="card-body">
+                                            <p>{<PrintNewspaper url={article.URL}/>}</p>
+                                            <a
+                                                href={article.URL}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                onClick={() => handleClick(article.URL)}
+                                                onAuxClick={() => handleClick(article.URL)}
+                                                onTouchEnd={() => handleClick(article.URL)}
+                                                className="text-decoration-none text-dark"
+                                            >
+                                                <h5 className="card-title">{formatTitle(article.Title)}</h5>
+                                            </a>
+                                        </div>
                                     </div>
+                                    <div className="card" style={{marginBottom: '10px'}}>
+                                        <img
+                                            src={article.Image}
+                                            onError={(e) => (e.target.style.display = 'none')}
+                                            alt=''
+                                            className="card-img-top"
+                                            style={{display: article.Image ? 'block' : 'none'}}
+                                        />
+                                        <div className="card-body">
+                                            <p>{<PrintNewspaper url={article.URL}/>}</p>
+                                            <a
+                                                href={article.URL}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                onClick={() => handleClick(article.URL)}
+                                                onAuxClick={() => handleClick(article.URL)}
+                                                onTouchEnd={() => handleClick(article.URL)}
+                                                className="text-decoration-none text-dark"
+                                            >
+                                                <h5 className="card-title">{formatTitle(article.Title)}</h5>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    {/*TODO: End of loop*/}
                                 </div>
                             </Modal.Body>
                         </Modal>
-
-
-
-
 
                         <Modal
                             show={show}
@@ -248,7 +271,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                     </div>
                                 </div>
                                 <div className="mt-3">
-
                                     <div
                                         className="d-flex justify-content-between align-items-center bg-light p-3 rounded"
                                         style={{position: "relative"}}>
@@ -323,8 +345,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                 </div>
             </div>
         </div>
-    )
-        ;
+    );
 }
 
 function GenreSection({
