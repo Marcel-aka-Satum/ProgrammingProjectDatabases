@@ -33,6 +33,8 @@ from easynmt import EasyNMT
 
 import time
 
+import pickle
+
 class NewsClusterer:
     """
     A class to cluster news articles based on their titles and summaries.
@@ -71,7 +73,7 @@ class NewsClusterer:
 
         if not existing_translation.empty:
             translation = existing_translation.iloc[0]
-            print(f"Using precomputed translation for text: {text}")
+            #print(f"Using precomputed translation for text: {text}")
         else:
             if translate:
                 model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
@@ -164,6 +166,8 @@ class NewsClusterer:
         df['preprocessed'] = df['Title']+ " " + df['Summary']
         df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=translate)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
+        with open("tfidf_matrix.pkl", "wb") as f:
+                pickle.dump(X_tfidf, f)
         return X_tfidf
 
 
@@ -292,5 +296,5 @@ class NewsClusterer:
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=True, translate=False)
+    news_clusterer.run(visualize=False, translate=False)
 

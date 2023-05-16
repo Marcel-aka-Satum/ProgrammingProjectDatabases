@@ -13,6 +13,7 @@ from flask_cors import CORS, cross_origin
 from Database.scraper import scraper
 from Database.ui_db import DBConnection
 from Database.article_clustering import NewsClusterer
+from Database.reccommender import ArticleRecommender
 from Helpers import helpers as h
 from Helpers.ErrorDetectionRoutes import *
 
@@ -396,9 +397,10 @@ def getArticlesTopic():
 def getRecommendedArticles():
     data = request.get_json()
     cookie = data['Cookie']
-    # articles = db.getRecommendedArticles(cookie)
-    # return jsonify(articles[1])
-    return jsonify({"message": "Not implemented yet", "status": 501})
+    article_recommender = ArticleRecommender(db_connection, news_clusterer)
+    articles = article_recommender.getRecommendedArticles(cookie)
+    return jsonify(articles[1])
+    
 
 
 ################# Favorite ROUTES #################
