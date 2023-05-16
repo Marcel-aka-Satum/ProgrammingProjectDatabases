@@ -61,7 +61,7 @@ class NewsClusterer:
         return clean_text
     
 
-    def translate_text(text):
+    def translate_text(text, translate:bool):
         try:
             translations_df = pd.read_csv('translations.csv')
         except FileNotFoundError:
@@ -73,18 +73,21 @@ class NewsClusterer:
             translation = existing_translation.iloc[0]
             print(f"Using precomputed translation for text: {text}")
         else:
-            model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
-            print("Translating text: " + text)
-            try:
-                translation = model.translate(text, target_lang='en')
-            except:
-                translation = text
-            print("Translated text: " + translation)
+            if translate:
+                model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
+                print("Translating text: " + text)
+                try:
+                    translation = model.translate(text, target_lang='en')
+                except:
+                    translation = text
+                print("Translated text: " + translation)
 
-            # Append translations to the 'translations.csv' file
-            new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})
-            translations_df = translations_df.append(new_translation, ignore_index=True)
-            translations_df.to_csv('translations.csv', index=False)
+                # Append translations to the 'translations.csv' file
+                new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})
+                translations_df = translations_df.append(new_translation, ignore_index=True)
+                translations_df.to_csv('translations.csv', index=False)
+            else:
+                translation = text
 
         return translation
 
@@ -92,7 +95,7 @@ class NewsClusterer:
     def remove_non_alphanumeric(text):
         return ''.join(char for char in text if char.isalnum() or char.isspace())
 
-    def preprocess_text(self, text):
+    def preprocess_text(self, text, translate:bool):
         """
         Preprocesses the input text by removing HTML tags, translating all articles into english, removing stop words 
         and lemmatizing the tokens.
@@ -102,7 +105,7 @@ class NewsClusterer:
         """
         text = NewsClusterer.remove_html_tags(text)
         text = NewsClusterer.remove_non_alphanumeric(text)
-        text = NewsClusterer.translate_text(text)
+        text = NewsClusterer.translate_text(text, translate=translate)
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
         tokens = word_tokenize(text)
@@ -150,7 +153,7 @@ class NewsClusterer:
         return df
 
     
-    def preprocess_and_vectorize(self, df):
+    def preprocess_and_vectorize(self, df, translate:bool):
         """
         Preprocesses the input DataFrame by preprocessing the titles and summaries, 
         and applying TF-IDF vectorization.
@@ -159,7 +162,7 @@ class NewsClusterer:
         :return: TF-IDF feature matrix.
         """
         df['preprocessed'] = df['Title']+ " " + df['Summary']
-        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text)
+        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=False)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
         return X_tfidf
 
@@ -270,14 +273,14 @@ class NewsClusterer:
 
         fig_3d.show()
 
-    def run(self, visualize:bool):
+    def run(self, visualize:bool, translate:bool):
         """
         Executes the full news clustering pipeline.
 
         :param db_connection: A connected instance of the database connection class.
         """
         df = self.load_data()
-        X_tfidf = self.preprocess_and_vectorize(df)
+        X_tfidf = self.preprocess_and_vectorize(df, translate=translate)
         X_reduced = self.apply_svd(X_tfidf)
         clusters = self.cluster_data(X_reduced)
         df['cluster'] = clusters
@@ -289,5 +292,5 @@ class NewsClusterer:
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=True)
+    news_clusterer.run(visualize=True, translate=False)
 

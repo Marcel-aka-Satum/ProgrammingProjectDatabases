@@ -614,7 +614,7 @@ scraper_thread.start()
 def start_clustering():
     news_clusterer = NewsClusterer()
     while True:
-        news_clusterer.run(visualize=False)
+        news_clusterer.run(visualize=False, translate=False)
         time.sleep(600)
 
 
