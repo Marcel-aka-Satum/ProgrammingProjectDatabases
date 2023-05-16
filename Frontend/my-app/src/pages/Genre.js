@@ -291,15 +291,15 @@ const Home = () => {
     useEffect(() => {
         if (genre === 'recommended') {
             ////TODO: fix this
-            // const fetchArticles = async () => {
-            //     await axios.post(`${site_domain}/api/articles/recommended`, {
-            //         Cookie: Cookies.get('user'),
-            //         headers: request_headers
-            //     }).then(response      => {
-            //         setArticles(response.data);
-            //     });
-            // };
-            // fetchArticles();
+            const fetchArticles = async () => {
+                await axios.post(`${site_domain}/api/articles/recommended`, {
+                    Cookie: Cookies.get('user'),
+                    headers: request_headers
+                }).then(response      => {
+                    console.log('response:', response)
+                });
+            };
+            fetchArticles();
 
         } else {
             const fetchArticles = async () => {

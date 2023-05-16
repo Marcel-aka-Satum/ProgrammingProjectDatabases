@@ -283,7 +283,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
 
                     </div>
-                    <span className="article-card-date float-end pb-2">
+                    <span className="article-card-date float-end pb-2 pt-2">
                             <i>{formatDate(article.Published)}</i>
                         </span>
                 </div>

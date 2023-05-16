@@ -639,6 +639,20 @@ class DBConnection:
             data.append({"User": i[0], "Article": i[1]})
         return data
 
+
+    @func.is_connected
+    def getAllHasClicked(self) -> list:
+        """
+        @brief: get the table HasClicked.
+        """
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_all_hasclicked())
+        data = []
+        for i in cursor.fetchall():
+            data.append({"User": i[0], "Article": i[1]})
+        return data
+
+
     @func.is_connected
     def getFavored(self) -> list:
         """

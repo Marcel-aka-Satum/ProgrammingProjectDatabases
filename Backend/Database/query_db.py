@@ -193,6 +193,13 @@ def get_hasclicked(cookie: str) -> str:
             WHERE c.cookie = '{cookie}';
             """
 
+def get_all_hasclicked() -> str:
+    """
+        SELECT * FROM newsaggregator.hasclicked
+    """
+    return "SELECT * FROM newsaggregator.hasclicked"
+
+
 
 def get_favored() -> str:
     """

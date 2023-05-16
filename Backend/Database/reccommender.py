@@ -63,7 +63,7 @@ class ArticleRecommender:
         for url, score in recommended_urls:
             success, article = self.db_connection.getArticle(url)
             if success:
-                recommended_articles.append(article)
+                recommended_articles.append(article[1])
 
         return recommended_articles
 

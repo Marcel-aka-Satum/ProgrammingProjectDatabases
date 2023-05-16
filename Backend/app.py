@@ -397,8 +397,11 @@ def getArticlesTopic():
 def getRecommendedArticles():
     data = request.get_json()
     cookie = data['Cookie']
-    article_recommender = ArticleRecommender(db_connection, news_clusterer)
+    print('Cookie clust:', cookie)
+    news_clusterer = NewsClusterer()
+    article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
+    print('Articles clust:', articles)
     return jsonify(articles[1])
     
 
@@ -570,10 +573,10 @@ def DBCookies():
     return jsonify(db.getCookies()[1])
 
 
-@app.route('/db/hasclicked')
-def DBHasClicked():
-    x = db.getHasClicked()
-    return jsonify(db.getHasClicked()[1])
+@app.route('/db/allhasclicked')
+def DBAllHasClicked():
+    result = db.getAllHasClicked()
+    return jsonify(result[1])
 
 
 @app.route('/db/favored')
