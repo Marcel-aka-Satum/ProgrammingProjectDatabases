@@ -162,7 +162,7 @@ class NewsClusterer:
         :return: TF-IDF feature matrix.
         """
         df['preprocessed'] = df['Title']+ " " + df['Summary']
-        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=False)
+        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=translate)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
         return X_tfidf
 
