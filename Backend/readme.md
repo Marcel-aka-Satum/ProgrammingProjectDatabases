@@ -142,7 +142,7 @@ Each user object in the response body contains the following fields:
 | 200         | `{"totalUsers": <int>}`| A JSON object containing the total number of users in the database |
 | 500         | None                   | An error occurred while processing the request                   |
 
-### `GET /api/add_Visitor` 
+### `GET /api/visitor` 
 
 **Description:** _Generate a unique cookie and add a new user_
 
@@ -157,7 +157,7 @@ Each user object in the response body contains the following fields:
 
 The response body contains a JSON string with a unique cookie value used for tracking users.
 
-### `POST /api/add_user`
+### `POST /api/user`
 
 **Description:** _Add a new user to the database_
 
@@ -181,7 +181,7 @@ The response body contains a JSON string with a unique cookie value used for tra
 
 
 
-### `POST /api/update_user/<id>`
+### `POST /api/user/<id>`
 
 **Description:** _Update a user of the database_
 
@@ -203,7 +203,7 @@ The response body contains a JSON string with a unique cookie value used for tra
 | 401       | {"message": message}                           | There was an error updating the user           |
 | 404       | {"message": "USER (id) Not Found"}             | The specified user was not found in the system |
 
-### `POST /api/delete_user/<id>`
+### `POST /api/user/<id>`
 
 **Description:** _Delete a user of the database_
 
@@ -249,7 +249,7 @@ Each object has the following fields: |
 | --- | --- | --- |
 | `totalRSSFeeds` | Integer | The total number of RSS feeds in the database |
 
-### `POST /api/add_rssfeed`
+### `POST /api/rssfeeds`
 **Description:** _This endpoint allows adding a new RSS feed to the database. It expects a JSON object containing the
 `URL`, `Publisher`, and `Topic` of the RSS feed. The endpoint first validates the RSS feed URL by checking that it can 
 be accessed and contains valid RSS XML. If the validation is successful, the endpoint attempts to add the new RSS feed 
@@ -270,7 +270,7 @@ to the database._
 | `message` | String | A message describing the result of the operation |
 | `status` | Integer | The HTTP status code indicating the result of the operation |
 
-### `POST /api/update_rssfeed`
+### `PATCH /api/rssfeeds`
 
 **Description:** _This endpoint allows updating an existing RSS feed in the database. It expects a JSON object containing 
 the `URL`, `Publisher`, and `Topic` of the RSS feed to be updated. The endpoint attempts to update the corresponding 
@@ -291,7 +291,7 @@ RSS feed in the database._
 | `message` | String | A message describing the result of the operation |
 | `status` | Integer | The HTTP status code indicating the result of the operation |
 
-### `POST /api/delete_rssfeed`
+### `DELETE /api/rssfeeds`
 
 **Description:** _This endpoint allows deleting an existing RSS feed from the database. It expects a JSON object 
 containing the `URL` of the RSS feed to be deleted. The endpoint attempts to delete the corresponding RSS feed from 
@@ -427,7 +427,7 @@ The response will be in JSON format with the following fields:
 |------------|-----------|-------------|
 | favorites  | list      | A list of favorite articles |
 
-### `POST /api/addFavored`
+### `POST /api/favorites`
 
 **Description:** _This endpoint adds a new favorite article for a given user._
 
@@ -447,7 +447,7 @@ The response will be in JSON format with the following fields:
 | message    | string    | A message indicating the status of the operation |
 | status     | integer   | An HTTP status code                               |
 
-### `POST /api/delete_favored`
+### `POST /api/favorites`
 
 **Description:** _This endpoint deletes a favorite article for a given user._
 
@@ -564,7 +564,7 @@ Each topic object has the following fields:
 
 ### Settings Endpoints
 
-### `/api/update_settings`
+### `PATCH /api/settings`
 
 **Description:** _This endpoint allows the user to update a setting value in the database._
 

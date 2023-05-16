@@ -65,7 +65,7 @@ export default function Rss() {
         publisher = publisher.trim();
 
         try {
-            const response = await fetch(`${site_domain}/api/add_rssfeed`, {
+            const response = await fetch(`${site_domain}/api/rssfeeds`, {
                 method: 'POST',
                 headers: request_headers,
                 body: JSON.stringify({
@@ -102,8 +102,8 @@ export default function Rss() {
         }
     }
     const DeleteFeed = async (_url) => {
-        const response = await fetch(`${site_domain}/api/delete_rssfeed`, {
-            method: 'POST',
+        const response = await fetch(`${site_domain}/api/rssfeeds`, {
+            method: 'DELETE',
             headers: request_headers,
             body: JSON.stringify({
                 URL: _url
@@ -118,8 +118,8 @@ export default function Rss() {
         }
     };
     const EditFeed = async (_url, _topic, _publisher) => {
-        const response = await fetch(`${site_domain}/api/update_rssfeed`, {
-            method: 'POST',
+        const response = await fetch(`${site_domain}/api/rssfeeds`, {
+            method: 'PATCH',
             headers: request_headers,
             body: JSON.stringify({
                     URL: _url,

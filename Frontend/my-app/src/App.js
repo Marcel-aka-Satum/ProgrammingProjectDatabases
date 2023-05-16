@@ -40,7 +40,7 @@ function App() {
 
         async function postCookie() {
             try {
-                await axios.post(`${site_domain}/api/add_Visitor`, {
+                await axios.post(`${site_domain}/api/visitor`, {
                     Cookie: Cookies.get('user'),
                 });
 

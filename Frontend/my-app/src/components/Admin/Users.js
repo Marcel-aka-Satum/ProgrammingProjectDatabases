@@ -50,7 +50,7 @@ export default function Users() {
     }
 
     const applyUserChanges = async (_id, new_username, new_email, new_password, new_is_admin, type) => {
-        const response = await fetch(`${site_domain}/api/update_user/${_id}`, {
+        const response = await fetch(`${site_domain}/api/user/${_id}`, {
             method: 'POST',
             headers: request_headers,
             body: JSON.stringify({
@@ -73,7 +73,7 @@ export default function Users() {
         }
     };
     const applyDeleteUser = async (_id) => {
-        const reponse = await fetch(`${site_domain}/api/delete_user/${_id}`, {
+        const reponse = await fetch(`${site_domain}/api/user/${_id}`, {
             method: 'POST',
             headers: request_headers
         })
@@ -89,7 +89,7 @@ export default function Users() {
         e.preventDefault();
         try {
             if (username && email && password) {
-                const response = await fetch(`${site_domain}/api/add_user`, {
+                const response = await fetch(`${site_domain}/api/user`, {
                     method: 'POST',
                     headers: request_headers,
                     body: JSON.stringify({

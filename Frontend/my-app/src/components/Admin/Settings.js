@@ -44,8 +44,8 @@ export default function Settings() {
         }
         setSelectedUpdateInterval(currentSelectedUpdateInterval);
 
-        fetch(`${site_domain}/api/update_settings`, {
-            method: 'POST',
+        fetch(`${site_domain}/api/settings`, {
+            method: 'PATCH',
             headers: request_headers,
             body: JSON.stringify({
                 setting: 'scraperTimer',

@@ -202,7 +202,7 @@ def getTotalUsers():
     return jsonify({"totalUsers": len(json.loads(users))})
 
 
-@app.route('/api/add_Visitor', methods=['POST'])
+@app.route('/api/visitor', methods=['POST'])
 def addVisitor():
     data = request.get_json()
     uid = db.generateUID()[1]
@@ -216,7 +216,7 @@ def addVisitor():
     return jsonify({"message": "Visitor added successfully", "status": 200})
 
 
-@app.route('/api/add_user', methods=['POST'])
+@app.route('/api/user', methods=['POST'])
 @cross_origin()
 def addUser():
     data = request.get_json()
@@ -237,7 +237,7 @@ def addUser():
         return jsonify({"message": "Something went wrong", "status": 500})
 
 
-@app.route('/api/update_user/<id>', methods=['POST'])
+@app.route('/api/user/<id>', methods=['POST'])
 @cross_origin()
 def updateUser(id):
     data = request.get_json()
@@ -259,7 +259,7 @@ def updateUser(id):
         return jsonify({"message": message, "status": 401})
 
 
-@app.route('/api/delete_user/<id>', methods=['DELETE'])
+@app.route('/api/user/<id>', methods=['DELETE'])
 @cross_origin()
 def deleteUser(id):
     user = db.getUser(id)[1]
@@ -286,7 +286,7 @@ def getTotalRSSFeeds():
     return jsonify({"totalRSSFeeds": len(json.loads(rssfeeds))})
 
 
-@app.route('/api/add_rssfeed', methods=['POST'])
+@app.route('/api/rssfeeds', methods=['POST'])
 @cross_origin()
 def addRSSFeed():
     data = request.get_json()
@@ -306,7 +306,7 @@ def addRSSFeed():
         return jsonify({"message": "Something went wrong", "status": 500})
 
 
-@app.route('/api/update_rssfeed', methods=['POST'])
+@app.route('/api/rssfeeds', methods=['PATCH'])
 @cross_origin()
 def updateRSSFeed():
     data = request.get_json()
@@ -320,7 +320,7 @@ def updateRSSFeed():
         return jsonify({"message": message_db, "status": 401})
 
 
-@app.route('/api/delete_rssfeed', methods=['POST'])
+@app.route('/api/rssfeeds', methods=['DELETE'])
 @cross_origin()
 def deleteRSSFeed():
     data = request.get_json()
@@ -409,7 +409,7 @@ def favorites():
     return jsonify({'favorites': favorites_list})
 
 
-@app.route('/api/addFavored', methods=['POST'])
+@app.route('/api/favorites', methods=['POST'])
 @cross_origin()
 def addFavored():
     data = request.get_json()
@@ -421,7 +421,7 @@ def addFavored():
         return jsonify({"message": message_db, "status": 401})
 
 
-@app.route('/api/delete_favored', methods=['POST'])
+@app.route('/api/favorites', methods=['DELETE'])
 @cross_origin()
 def deleteFavored():
     data = request.get_json()
@@ -468,7 +468,7 @@ def error_handler():
     return render_template('errors/404.html'), 404
 
 
-@app.route('/api/update_settings', methods=['POST'])
+@app.route('/api/settings', methods=['PATCH'])
 @cross_origin()
 def ChangeSetting():
     data = request.get_json()

@@ -49,7 +49,7 @@ export default function Settings() {
             return;
         }
 
-        const update_user = await fetch(`${site_domain}/api/update_user/${usersession.user.uid}`, {
+        const update_user = await fetch(`${site_domain}/api/user/${usersession.user.uid}`, {
             method: 'POST',
             headers: request_headers,
             body: JSON.stringify({

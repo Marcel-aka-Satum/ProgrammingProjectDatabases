@@ -27,7 +27,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const addFavorite = async (URL) => {
         try {
-            const response = await axios.post(`${site_domain}/api/addFavored`, {
+            const response = await axios.post(`${site_domain}/api/favorites`, {
                 UID: uid,
                 article_url: URL,
                 headers: request_headers
@@ -48,7 +48,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const removeFavorite = async (URL) => {
         try {
-            const response = await axios.post(`${site_domain}/api/delete_favored`, {
+            const response = await axios.post(`${site_domain}/api/favorites`, {
                 UID: uid,
                 article_url: URL,
                 headers: request_headers
