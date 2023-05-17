@@ -259,35 +259,66 @@ The SQL statement is executed using the `execute()` method of the cursor object.
 
 # Scraper.py
 
-This code is written in Python and uses the feedparser library to scrape RSS feeds and the psycopg2 library to connect to a PostgreSQL database. The purpose of this code is to scrape news articles from RSS feeds and insert them into the `newsarticles` table in the `newsaggregator` schema of the database.
+| Feed Format   | Version  | Description                                     |
+|---------------|----------|-------------------------------------------------|
+| RSS           | 0.90     | An early version of the RSS feed format        |
+| Netscape RSS  | 0.91     | An early version of RSS by Netscape            |
+| Userland RSS  | 0.91     | An early version of RSS by Userland            |
+| RSS           | 0.92     | A version with improvements over 0.91          |
+| RSS           | 0.93     | A version with improvements over 0.92          |
+| RSS           | 0.94     | A version with improvements over 0.93          |
+| RSS           | 1.0      | A major revision of the RSS feed format        |
+| RSS           | 2.0      | The most widely-used version of the RSS format |
+| Atom          | 0.3      | An early version of the Atom feed format       |
+| Atom          | 1.0      | The latest and most stable version of Atom     |
+| CDF           | -        | Channel Definition Format, an XML format       |
+| JSON Feed     | -        | A feed format based on the JSON data format    |
 
-`scraper()`
+`BaseFeedScraper` is a Python class developed for scraping and parsing syndicated feeds using the Universal Feed Parser Python module. The table above lists the feed formats and versions supported by the Universal Feed Parser.
 
-- This function scrapes news articles from RSS feeds and inserts them into the `newsarticles` table in the database. It does this by iterating through each RSS feed in the `rssfeeds` table of the database and using the feedparser library to scrape news articles from each feed. The function then inserts the scraped data into the `newsarticles` table.
+## Class Methods
 
-### Initializing DB object
+- `__init__(self)`: Constructor method for initializing a new instance of `BaseFeedScraper`. This method sets up a connection to the database.
 
-The function creates a DBConnection object called `DB` to connect to the database. The `DBConnection()` function is defined in another file called `ui_db.py`. 
+- `connect_to_database(self)`: Method to establish a connection with the database. If connection fails, it prints "Scraper cannot connect to database".
 
-### Parsing RSS feed info
+- `parse_rss_feeds(self)`: Method to parse the RSS feeds from the database.
 
-The function calls the `ParseRSSFeeds()` method of the `DB` object to retrieve the RSS feed information from the `rssfeeds` table. The method returns a JSON object, which is converted to a Python dictionary using the `json.loads()` method. 
+- `get_image(self, entry)`: Method to extract image from the `entry`. It supports various image formats such as jpeg, png, jpg, and gif.
 
-### Scraping news articles
+- `get_summary(self, entry)`: Method to get the summary from the `entry`.
 
-The function iterates through each RSS feed in the dictionary and uses the `feedparser.parse()` method to scrape news articles from the feed. The function extracts information about each article, including its URL, title, summary, published date, and image URL. It then uses an SQL statement called `rss_insert_query` to insert the data into the `newsarticles` table.
+- `scrape_entry(self, entry, rss_url, topic, Image)`: Method to scrape individual entries from the feed. It takes in an entry, the URL of the RSS feed, the topic, and an image.
 
-### Executing SQL statements
+- `scrape_feed(self, rss_url, topic)`: Method to scrape an entire feed given its URL and topic. It parses the feed and scrapes each entry. If the feed includes an image or logo, it is also scraped.
 
-The SQL statement is executed using the `execute()` method of the cursor object. If an exception is raised during the execution, it means that the article is most likely a duplicate and is not inserted. After each row is inserted, the changes are committed to the database.
+- `get_scraper_for_url(self, url)`: Method to get the scraper instance for a given url.
 
-### Example usage
+- `scrape_all_feeds(self)`: Method to scrape all the RSS feeds. It parses the RSS feeds from the database and scrapes each feed.
 
-To use this function, you must first ensure that the database has been initialized and the `rssfeeds` table has been populated with data using the `initialize_db()` and `populate_db()` functions respectively. Then, call the `scraper()` function to start scraping news articles from the RSS feeds and inserting them into the `newsarticles` table.
+## Usage
 
 ```python
-scraper()
+def scraper():
+    print("Starting scraper")
+    _scraper = BaseFeedScraper()
+    _scraper.connect_to_database()
+    _scraper.scrape_all_feeds()
+    print('scraping done')
+
+    print("Calculating the new tf-idf matrix for new articles")
+    clusterer = NewsClusterer()
+    all_articles = clusterer.load_data()
+    X_tfidf = clusterer.preprocess_and_vectorize(all_articles, translate=False)
+    with open("tfidf_matrix.pkl", "wb") as f:
+        pickle.dump(X_tfidf, f)
+    print("Saved tf-idf matrix")
+
+if __name__ == '__main__':
+    scraper()
 ```
+In this usage example, a new instance of BaseFeedScraper is created. It connects to the database and begins to scrape all feeds. After the scraping is done, it calculates the tf-idf matrix for new articles and saves it.
+
 
 # query_db.py
 
