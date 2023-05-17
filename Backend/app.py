@@ -474,7 +474,6 @@ def topics():
 @cross_origin()
 def get_all_clusters():
     all_clusters = db.getAllClusters()[1]
-    print(all_clusters)
     return jsonify({'clusters': all_clusters})
 
 @app.route('/api/clustersGenre', methods=['POST'])
@@ -483,7 +482,6 @@ def get_all_clusters_genre():
     data = request.get_json()
     genre = data['genre']
     all_clusters = db.getAllClustersGenre(genre)[1]
-    print(all_clusters)
     return jsonify({'clusters': all_clusters})
 
 
