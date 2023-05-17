@@ -352,7 +352,10 @@ const Home = () => {
                 });
                 const data = await response.json();
                 setDisableSort(true);
-                setArticles(data.articles);
+                let listOfArrays = data.articles.map(article => [[article]]);
+                setClustersGenre(listOfArrays);
+
+                console.log(listOfArrays)
             };
 
             fetchArticles();
@@ -370,6 +373,7 @@ const Home = () => {
                     });
 
                   setClustersGenre(sorted);
+                  console.log(sorted)
                 });
             };
             fetchClustersGenre();
@@ -534,4 +538,3 @@ const Home = () => {
 };
 
 export default Home;
-
