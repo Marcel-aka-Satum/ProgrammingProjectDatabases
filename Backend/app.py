@@ -468,6 +468,27 @@ def topics():
     topics_list = db.getTopics()[1]
     return jsonify({'topics': topics_list})
 
+################# CLUSTERS #################
+
+@app.route('/api/clusters', methods=['GET'])
+@cross_origin()
+def get_all_clusters():
+    all_clusters = db.getAllClusters()[1]
+    print(all_clusters)
+    return jsonify({'clusters': all_clusters})
+
+@app.route('/api/clustersGenre', methods=['POST'])
+@cross_origin()
+def get_all_clusters_genre():
+    data = request.get_json()
+    genre = data['genre']
+    all_clusters = db.getAllClustersGenre(genre)[1]
+    print(all_clusters)
+    return jsonify({'clusters': all_clusters})
+
+
+
+
 
 ################# OTHERS #################
 @app.errorhandler(404)
