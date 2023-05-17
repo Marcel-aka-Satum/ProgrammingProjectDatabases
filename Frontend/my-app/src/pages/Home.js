@@ -172,7 +172,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                             <i className="far fa-share-square"></i>
                         </button>
 
-                        {/*button that says 'Similar'*/}
+                        {/*button that says 'Similar'
                         <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
                                 data-toggle="tooltip" data-placement="top" title="Similar">
                             <i className="fas fa-search"></i>
@@ -187,8 +187,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                 flexDirection: 'column', alignItems: 'center',
                             }}>
                                 <div style={{height: '500px', overflowY: 'scroll'}}>
-
-                                    {/*TODO: This should loop over the cluster, now only the clicked article is hardcoded*/}
                                     <div className="card" style={{marginBottom: '10px'}}>
                                         <img
                                             src={article.Image}
@@ -235,11 +233,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                             </a>
                                         </div>
                                     </div>
-
-                                    {/*TODO: End of loop*/}
                                 </div>
                             </Modal.Body>
-                        </Modal>
+                        </Modal>*/}
 
                         <Modal
                             show={show}
@@ -404,6 +400,7 @@ const Home = () => {
         const [genres, setGenres] = useState(new Set())
         const [articlesGenre, setArticlesGenre] = useState([])
         const [favorites, setFavorites] = useState([])
+        const [clusters, setClusters] = useState([])
 
         const [filterText, setFilterText] = useState("");
         const [sortOption, setSortOption] = useState("newest");
@@ -433,6 +430,19 @@ const Home = () => {
             }
 
             fetchFavorites();
+        }, []);
+
+        useEffect(() => {
+            const fetchClusters = async () => {
+                const response = await axios.get(`${site_domain}/api/clusters`);
+                // const limitedArticles = response.data.slice(0, 500);
+                if (response.data !== "tuple index out of range") {
+                    setClusters(response.data);
+                    console.log(response.data)
+                }
+            };
+            fetchClusters();
+
         }, []);
 
         useEffect(() => {
