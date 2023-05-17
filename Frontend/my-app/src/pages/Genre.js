@@ -20,10 +20,11 @@ import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 import {request_headers, site_domain} from "../globals";
 import Cookies from "js-cookie";
 
-function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
+function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
+     const [showSimilarModal, setShowSimilarModal] = useState(false);
 
     const addFavorite = async (URL) => {
         try {
@@ -66,6 +67,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const handleCloseSimilarModal = () => setShowSimilarModal(false);
+    const handleShowSimilarModal = () => setShowSimilarModal(true);
 
 
     const handleImageLoad = () => {
@@ -159,15 +163,62 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                      dangerouslySetInnerHTML={{__html: text[0]}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
-
-                    <div className="container mt-3">
-
-                        <button className='btn btn-outline-primary me-2 ms-2 hide-btn' onClick={handleShow}
-                                data-toggle="tooltip"
+                    <div className="container mt-3 btn-group">
+                        <button className='btn btn-outline-primary' onClick={handleShow} data-toggle="tooltip"
                                 data-placement="top"
                                 title="Share">
                             <i className="far fa-share-square"></i>
                         </button>
+
+                        {/*button that says 'Similar'*/}
+                        {related.length > 0 ? (
+                            <>
+                            <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
+                                data-toggle="tooltip" data-placement="top" title="Similar">
+                            <i className="fas fa-search"></i>
+                            <span className="text-custom-dark">10</span>
+                        </button>
+                        <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true} keyboard={true}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Similar Articles</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{
+                                margin: '20px', padding: '20px', display: 'flex',
+                                flexDirection: 'column', alignItems: 'center',
+                            }}>
+                                <div style={{height: '500px', overflowY: 'scroll'}}>
+                                    {related.map(cluster => {
+                                        return (<div className="card" style={{marginBottom: '10px'}}>
+                                        <img
+                                            src={cluster.Image}
+                                            onError={(e) => (e.target.style.display = 'none')}
+                                            alt=''
+                                            className="card-img-top"
+                                            style={{display: cluster.Image ? 'block' : 'none'}}
+                                        />
+                                        <div className="card-body">
+                                            <p>{<PrintNewspaper url={cluster.URL}/>}</p>
+                                            <a
+                                                href={cluster.URL}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                onClick={() => handleClick(cluster.URL)}
+                                                onAuxClick={() => handleClick(cluster.URL)}
+                                                onTouchEnd={() => handleClick(cluster.URL)}
+                                                className="text-decoration-none text-dark"
+                                            >
+                                                <h5 className="card-title">{formatTitle(cluster.Title)}</h5>
+                                            </a>
+                                        </div>
+                                    </div>)
+                                    })}
+                                </div>
+                            </Modal.Body>
+                        </Modal>
+                            </>
+                        ) : <></>}
+
+
                         <Modal
                             show={show}
                             onHide={handleClose}
@@ -198,7 +249,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                     </div>
                                 </div>
                                 <div className="mt-3">
-
                                     <div
                                         className="d-flex justify-content-between align-items-center bg-light p-3 rounded"
                                         style={{position: "relative"}}>
@@ -207,12 +257,12 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                         </div>
                                         <CopyToClipboard text={article.URL}>
                                             <button
-                                                className="btn "
+                                                className="btn"
                                                 style={{position: "absolute", right: "0"}}
                                                 title="Copy link"
                                                 onClick={handleClipboard}
                                             >
-                                                <i class="far fa-clipboard" aria-hidden="true"></i>
+                                                <i className="far fa-clipboard" aria-hidden="true"></i>
                                             </button>
                                         </CopyToClipboard>
                                     </div>
@@ -234,7 +284,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                 {favorites.includes(article.URL) ?
                                     <>
                                         <button
-                                            className="btn btn-danger me-2"
+                                            className="btn btn-danger"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title="Remove from favorites"
@@ -266,10 +316,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         }
 
 
-                        <span className="article-card-date float-end p-2 pb-4">
-                        <i>{formatDate(article.Published)}</i>
-                    </span>
                     </div>
+                    <span className="article-card-date float-end pb-2 pt-2">
+                            <i>{formatDate(article.Published)}</i>
+                        </span>
                 </div>
             </div>
         </div>
@@ -282,6 +332,7 @@ const Home = () => {
     const [articles, setArticles] = useState([])
     const [numDisplayedArticles, setNumDisplayedArticles] = useState(20);
     const [favorites, setFavorites] = useState([])
+    const [clustersGenre, setClustersGenre] = useState([])
 
     const [filterText, setFilterText] = useState('');
     const [sortOption, setSortOption] = useState("newest");
@@ -306,16 +357,22 @@ const Home = () => {
 
             fetchArticles();
         } else {
-            const fetchArticles = async () => {
-                await axios.post(`${site_domain}/api/articles/genre`, {
+            const fetchClustersGenre = async () => {
+                await axios.post(`${site_domain}/api/clustersGenre`, {
                     genre: genre,
                     headers: request_headers
                 }).then(response => {
-                    setDisableSort(false);
-                    setArticles(response.data);
+                  const ClustersGenre = response.data['clusters'][1].map(cluster => {
+                    return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
+                  });
+                  const sorted = ClustersGenre.sort((a, b) => {
+                    return new Date(b[0][0].Published) - new Date(a[0][0].Published);
+                    });
+
+                  setClustersGenre(sorted);
                 });
             };
-            fetchArticles();
+            fetchClustersGenre();
         }
     }, [genre]);
 
@@ -334,18 +391,25 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        function compareDatesNewest(a, b) {
-            return new Date(b.Published) - new Date(a.Published);
-        }
-
-        function compareDatesOldest(a, b) {
-            return new Date(a.Published) - new Date(b.Published);
-        }
-
         if (sortOption === "newest") {
-            setArticles((prevArticles) => [...prevArticles].sort(compareDatesNewest));
+
+                  const ClustersGenre = clustersGenre.map(cluster => {
+
+                    return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
+                  });
+                  const sorted = ClustersGenre.sort((a, b) => {
+                    return new Date(b[0][0].Published) - new Date(a[0][0].Published);
+                    });
+                  setClustersGenre(sorted);
+
         } else if (sortOption === "oldest") {
-            setArticles((prevArticles) => [...prevArticles].sort(compareDatesOldest));
+            const ClustersGenre = clustersGenre.map(cluster => {
+                    return cluster.sort((a, b) => new Date(a[0][0].Published) - new Date(b[0][0].Published));
+                  });
+                  const sorted = ClustersGenre.sort((a, b) => {
+                    return new Date(a[0][0].Published) - new Date(b[0][0].Published);
+                    });
+                  setClustersGenre(sorted);
         }
     }, [sortOption]);
 
@@ -356,27 +420,39 @@ const Home = () => {
         setFilterText(newText);
     };
 
-    const filteredArticles = articles.filter((article) => {
-        const title = article.Title.toLowerCase();
-        const summary = article.Summary.toLowerCase();
-        const url = extractBaseUrl(article.URL);
-        const filter = filterText.toLowerCase();
-        return title.includes(filter) || summary.includes(filter) || url.includes(filter);
+    const filteredArticles = clustersGenre.map((articleList) => {
+        return articleList[0].filter((article) => {
+            const title = article.Title.toLowerCase();
+            const summary = article.Summary.toLowerCase();
+            const url = extractBaseUrl(article.URL);
+            const filter = filterText.toLowerCase();
+            return title.includes(filter) || summary.includes(filter) || url.includes(filter);
+        });
     });
 
-    let articlesToDisplay = filteredArticles.slice(0, numDisplayedArticles);
+    const filteredArray = filteredArticles.filter((subArray) => subArray.length > 0);
 
-    if (!disableSort) {
-        articlesToDisplay = articlesToDisplay.sort((a, b) => {
-            const dateA = new Date(a.Published);
-            const dateB = new Date(b.Published);
-            if (sortOption === "oldest") {
-                return dateA - dateB;
-            } else {
-                return dateB - dateA;
-            }
+    let articlesToDisplay
+    if (sortOption === "newest") {
+
+        const ClustersGenre = filteredArray.map(cluster => {
+        return cluster.sort((a, b) =>
+            new Date(b.Published) - new Date(a.Published));
+        });
+        articlesToDisplay = ClustersGenre.sort((a, b) => {
+        return new Date(b.Published) - new Date(a.Published);
+        });
+
+    } else if (sortOption === "oldest") {
+        const ClustersGenre = filteredArray.map(cluster => {
+                return cluster.sort((a, b) => new Date(a.Published) - new Date(b.Published));
+              });
+        articlesToDisplay = ClustersGenre.sort((a, b) => {
+        return new Date(a.Published) - new Date(b.Published);
         });
     }
+
+    const slicedArticles = articlesToDisplay.slice(0, numDisplayedArticles);
 
 
     const handleLoadMore = () => {
@@ -432,21 +508,23 @@ const Home = () => {
             </div>
 
             <ul className="articles-row">
-                {articlesToDisplay.map((article) => (
-                    <li key={article.URL} className="p-3">
-                        <ArticleCard article={article} onFilterTextChange={handleFilterTextChange}
+               {slicedArticles.map((articles) => (
+                    articles.length > 0 ? (
+                    <li key={articles[0].URL} className="p-3">
+                        <ArticleCard article={articles[0]} onFilterTextChange={handleFilterTextChange}
                                      logged={usersession.user.isLogged} uid={usersession.user.uid} favorites={favorites}
-                                     setFavorites={setFavorites}/>
+                                     setFavorites={setFavorites} related={articles.length > 0 ? (articles.slice(1)) : []}/>
                     </li>
+                    ) : <></>
                 ))}
             </ul>
-            {numDisplayedArticles < filteredArticles.length && (
+            {numDisplayedArticles < filteredArray.length && (
                 <div className="col-12 d-flex justify-content-center">
                     <button className="btn btn-outline-primary" onClick={handleLoadMore}>
                         Load More
                     </button>
                     <small className="text-center text-dark d-flex justify-content-center align-items-center ps-3">
-                        Showing {numDisplayedArticles} of {filteredArticles.length} articles
+                        Showing {numDisplayedArticles} of {filteredArray.length} articles
                     </small>
                 </div>
             )}
