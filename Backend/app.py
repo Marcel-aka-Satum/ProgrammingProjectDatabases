@@ -645,8 +645,14 @@ def start_clustering():
         time.sleep(600)
 
 
-# clustering_thread = threading.Thread(target=start_clustering)
-# clustering_thread.start()
+def translate():
+    news_clusterer = NewsClusterer()
+    while True:
+        articles = news_clusterer.load_data()
+        news_clusterer.preprocess_and_vectorize(articles, translate=True)
+
+translate_thread = threading.Thread(target=translate)
+translate_thread.start()
 
 if __name__ == '__main__':
     app.run(port=4444)
