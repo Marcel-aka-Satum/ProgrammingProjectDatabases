@@ -251,14 +251,28 @@ class DBConnection:
 
         # return True and dict with article data
         return True, data
-    
+
     @func.is_connected
     def getAllClusters(self) -> tuple:
         """
         @brief: get all records from the relatedcluster table
         """
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM newsaggregator.relatedcluster;")
+        cursor.execute(query_db.get_all_clusters())
+        data = cursor.fetchall()
+
+        if data is None:
+            return False, ""
+
+        return True, data
+
+    @func.is_connected
+    def getAllClustersGenre(self, genre) -> tuple:
+        """
+        @brief: get all records from the relatedcluster table
+        """
+        cursor = self.connection.cursor()
+        cursor.execute(query_db.get_all_clusters_genre(genre))
         data = cursor.fetchall()
 
         if data is None:
