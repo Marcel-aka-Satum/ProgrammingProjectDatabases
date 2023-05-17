@@ -143,6 +143,108 @@ def get_cluster(Cluster_ID: int) -> str:
             WHERE Cluster_ID = {Cluster_ID};
             """
 
+def get_all_clusters():
+    """
+        SELECT Topic, json_agg(json_build_object(
+            'Cluster', Cluster
+        )) AS Topic_Clusters
+        FROM (
+            SELECT Cluster_ID, Topic, json_agg(json_build_object(
+                'URL', URL,
+                'Title', Title,
+                'Summary', Summary,
+                'Published', Published,
+                'Image', Image
+            )) AS Cluster
+            FROM (
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic,
+                CASE WHEN r.Cluster_ID = -1 THEN
+                    ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
+                END AS rn
+                FROM newsaggregator.relatedcluster r
+                JOIN newsaggregator.newsarticles n ON r.URL = n.URL
+                ORDER BY n.Topic ASC, r.Cluster_ID ASC, n.Published DESC
+            ) AS subquery
+            GROUP BY subquery.Cluster_ID, subquery.Topic, subquery.rn
+        ) AS topic_clusters
+        GROUP BY Topic
+        ORDER BY Topic ASC;
+    """
+
+    return f"""
+        SELECT Topic, json_agg(json_build_object(
+            'Cluster', Cluster
+        )) AS Topic_Clusters
+        FROM (
+            SELECT Cluster_ID, Topic, json_agg(json_build_object(
+                'URL', URL,
+                'Title', Title,
+                'Summary', Summary,
+                'Published', Published,
+                'Image', Image
+            )) AS Cluster
+            FROM (
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic,
+                CASE WHEN r.Cluster_ID = -1 THEN
+                    ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
+                END AS rn
+                FROM newsaggregator.relatedcluster r
+                JOIN newsaggregator.newsarticles n ON r.URL = n.URL
+                ORDER BY n.Topic ASC, r.Cluster_ID ASC, n.Published DESC
+            ) AS subquery
+            GROUP BY subquery.Cluster_ID, subquery.Topic, subquery.rn
+        ) AS topic_clusters
+        GROUP BY Topic
+        ORDER BY Topic ASC;
+
+    """
+
+
+def get_all_clusters_genre(Topic: str):
+    """
+
+            SELECT json_agg(json_build_object(
+                'URL', URL,
+                'Title', Title,
+                'Summary', Summary,
+                'Published', Published,
+                'Image', Image
+            )) AS Cluster
+            FROM (
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic,
+                CASE WHEN r.Cluster_ID = -1 THEN
+                    ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
+                END AS rn
+                FROM newsaggregator.relatedcluster r
+                JOIN newsaggregator.newsarticles n ON r.URL = n.URL
+                WHERE n.Topic = '{Topic}'
+            ) AS subquery
+            GROUP BY subquery.Cluster_ID, subquery.Topic, subquery.rn
+
+            """
+
+    return f"""
+            SELECT json_agg(json_build_object(
+                'URL', URL,
+                'Title', Title,
+                'Summary', Summary,
+                'Published', Published,
+                'Image', Image
+            )) AS Cluster
+            FROM (
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic,
+                CASE WHEN r.Cluster_ID = -1 THEN
+                    ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
+                END AS rn
+                FROM newsaggregator.relatedcluster r
+                JOIN newsaggregator.newsarticles n ON r.URL = n.URL
+                WHERE n.Topic = '{Topic}'
+            ) AS subquery
+            GROUP BY subquery.Cluster_ID, subquery.Topic, subquery.rn
+
+    """
+
+
 
 #################### TABLE GETTERS ####################
 
