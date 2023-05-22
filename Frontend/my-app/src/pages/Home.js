@@ -20,7 +20,7 @@ import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
 
-function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites}) {
+function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
     const [showSimilarModal, setShowSimilarModal] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
@@ -171,6 +171,53 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                 title="Share">
                             <i className="far fa-share-square"></i>
                         </button>
+
+                        {related.length > 0 ? (
+                            <>
+                            <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
+                                data-toggle="tooltip" data-placement="top" title="Similar">
+                            <i className="fas fa-search"></i>
+                            <span className="text-custom-dark">10</span>
+                        </button>
+                        <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true} keyboard={true}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Similar Articles</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body style={{
+                                margin: '20px', padding: '20px', display: 'flex',
+                                flexDirection: 'column', alignItems: 'center',
+                            }}>
+                                <div style={{height: '500px', overflowY: 'scroll'}}>
+                                    {related.map(cluster => {
+                                        return (<div className="card" style={{marginBottom: '10px'}}>
+                                        <img
+                                            src={cluster.Image}
+                                            onError={(e) => (e.target.style.display = 'none')}
+                                            alt=''
+                                            className="card-img-top"
+                                            style={{display: cluster.Image ? 'block' : 'none'}}
+                                        />
+                                        <div className="card-body">
+                                            <p>{<PrintNewspaper url={cluster.URL}/>}</p>
+                                            <a
+                                                href={cluster.URL}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                onClick={() => handleClick(cluster.URL)}
+                                                onAuxClick={() => handleClick(cluster.URL)}
+                                                onTouchEnd={() => handleClick(cluster.URL)}
+                                                className="text-decoration-none text-dark"
+                                            >
+                                                <h5 className="card-title">{formatTitle(cluster.Title)}</h5>
+                                            </a>
+                                        </div>
+                                    </div>)
+                                    })}
+                                </div>
+                            </Modal.Body>
+                        </Modal>
+                            </>
+                        ) : <></>}
 
                         {/*button that says 'Similar'
                         <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
@@ -359,20 +406,35 @@ function GenreSection({
         return str.replace(/\s+/g, '-');
     }
 
-    const filteredArticles = articles.filter((article) => {
-        const title = article.Title.toLowerCase();
-        const summary = article.Summary.toLowerCase();
-        const url = extractBaseUrl(article.URL);
-        const filter = filterText.toLowerCase();
-        return title.includes(filter) || summary.includes(filter) || url.includes(filter);
-    });
+    console.log(genre)
+    console.log(articles)
 
-    if (filteredArticles.length === 0) {
+
+    if(articles.length === 0){
+        console.log("hello")
+        return null;
+    }
+
+    const filteredArticles = articles.map((Articles)=>{
+
+        return Articles.filter((article) => {
+            const title = article.Title.toLowerCase();
+            const summary = article.Summary.toLowerCase();
+            const url = extractBaseUrl(article.URL);
+            const filter = filterText.toLowerCase();
+            return title.includes(filter) || summary.includes(filter) || url.includes(filter);
+        });
+    })
+
+    const filteredArray = filteredArticles.filter((subArray) => subArray.length > 0);
+
+    if (filteredArray.length === 0) {
         return null; // return null to skip rendering this component
     }
 
+    console.log(filteredArray)
     return (
-        <div className="genre-section">
+            <div className="genre-section">
             <h2>
                 {genre} {logged && usersession.user.isAdmin && usersession.user.debug && (
                 `(${filteredArticles.length})`
@@ -384,21 +446,17 @@ function GenreSection({
                 </a>
             </h2>
             <ul className="articles-row">
-                {filteredArticles.slice(0, 3).map((article) => (
-                    <li key={article.URL} className="p-3">
-                        <ArticleCard article={article} onFilterTextChange={onFilterTextChange} logged={logged}
-                                     uid={uid} favorites={favorites} setFavorites={setFavorites}/>
+                {filteredArray.slice(0, 3).map((articles) => (
+                    <li key={articles[0].URL} className="p-3">
+                        <ArticleCard article={articles[0]} onFilterTextChange={onFilterTextChange} logged={logged}
+                                     uid={uid} favorites={favorites} setFavorites={setFavorites} related={articles.length > 0 ? (articles.slice(1)) : []}/>
                     </li>
                 ))}
             </ul>
-        </div>
-    );
+        </div>);
 }
 
 const Home = () => {
-        const [articles, setArticles] = useState([])
-        const [genres, setGenres] = useState(new Set())
-        const [articlesGenre, setArticlesGenre] = useState([])
         const [favorites, setFavorites] = useState([])
         const [clusters, setClusters] = useState([])
 
@@ -406,18 +464,6 @@ const Home = () => {
         const [sortOption, setSortOption] = useState("newest");
 
         let usersession = useContext(userSession);
-
-        useEffect(() => {
-            const fetchArticles = async () => {
-                const response = await axios.get(`${site_domain}/api/articles`);
-                // const limitedArticles = response.data.slice(0, 500);
-                if (response.data !== "tuple index out of range") {
-                    setArticles(response.data);
-                }
-            };
-            fetchArticles();
-
-        }, []);
 
         useEffect(() => {
             async function fetchFavorites() {
@@ -432,78 +478,45 @@ const Home = () => {
             fetchFavorites();
         }, []);
 
+        function sortNewest(topics){
+            const sortedTopics = topics.map(clusters => {
+                  const sortedClustersGenre = clusters[1].map(cluster => {
+                      return cluster['Cluster'].sort((a, b) => new Date(b.Published) - new Date(a.Published));
+                    });
+
+              const sorted =  sortedClustersGenre.sort((a, b) => {
+                return new Date(b[0].Published) - new Date(a[0].Published);
+                });
+
+              return [clusters[0], sorted]
+              });
+            return sortedTopics.sort((a, b) => {
+              return new Date(b[1][0][0].Published) - new Date(a[1][0][0].Published)
+            })
+        }
+
+
         useEffect(() => {
             const fetchClusters = async () => {
-                const response = await axios.get(`${site_domain}/api/clusters`);
-                // const limitedArticles = response.data.slice(0, 500);
-                if (response.data !== "tuple index out of range") {
-                    setClusters(response.data);
-                    console.log(response.data)
-                }
-            };
+                await axios.get(`${site_domain}/api/clusters`)
+                .then(response => {
+                  setClusters(sortNewest(response.data.clusters[1]))
+                });
+                };
             fetchClusters();
 
-        }, []);
+        }, [sortOption]);
 
         useEffect(() => {
-            function compareDatesNewest(a, b) {
-                return new Date(b.Published) - new Date(a.Published);
-            }
-
-            function compareDatesOldest(a, b) {
-                return new Date(a.Published) - new Date(b.Published);
-            }
-
             function sortArticlesByDate(articles, sortOption) {
                 if (sortOption === "newest") {
-                    return articles.sort(compareDatesNewest);
-                } else if (sortOption === "oldest") {
-                    return articles.sort(compareDatesOldest);
-                } else {
+                    setClusters(sortNewest(clusters))
+                }
+                else {
                     return articles;
                 }
             }
-
-            function fetchGenres(sortedArticles) {
-                const uniqueGenres = new Set();
-                const grouped = {};
-
-                for (const article of sortedArticles) {
-                    uniqueGenres.add(article.Topic);
-
-                    if (!grouped[article.Topic]) {
-                        grouped[article.Topic] = [];
-                    }
-                    grouped[article.Topic].push(article);
-                }
-
-                // Sort each genre's articles by date
-                for (const genre in grouped) {
-                    grouped[genre] = sortArticlesByDate(grouped[genre], sortOption);
-                }
-
-                // Sort the genres by the date of the latest article in each genre
-                const sortedGenres = Array.from(uniqueGenres).sort((a, b) => {
-                    const latestA = grouped[a][0].Published;
-                    const latestB = grouped[b][0].Published;
-                    return new Date(latestB) - new Date(latestA);
-                });
-
-                // Reverse the order so that the genres with the latest articles are first
-                if (sortOption === "oldest") {
-                    sortedGenres.reverse();
-                }
-                setGenres(sortedGenres);
-
-                setArticlesGenre(grouped);
-            }
-
-            if (articles.length > 0) {
-                // Sort all articles by date before grouping them by genre
-                const sortedArticles = sortArticlesByDate([...articles], sortOption);
-                fetchGenres(sortedArticles);
-            }
-        }, [articles, sortOption]);
+        }, [clusters, sortOption]);
 
 
         const handleSortChange = (e) => {
@@ -548,30 +561,30 @@ const Home = () => {
                             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <li>
                                     <button className="dropdown-item" type="button" value="newest"
-                                            onClick={handleSortChange}>newest
+                                            onClick={handleSortChange}>
+                                        <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Newest
                                     </button>
                                 </li>
                                 <li>
-                                    <button className="dropdown-item" type="button" value="oldest"
-                                            onClick={handleSortChange}>oldest
-                                    </button>
+                                    <a href="/genre/recommended">
+                                        <button className="dropdown-item" type="button" value="recommended">
+                                            <i className="fa fa-star me-2" style={{color: "#FFC300FF"}}></i>Recommended
+                                        </button>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
-                        <a href="/genre/recommended">
-                            <button className="btn btn-outline-secondary d-inline-flex align-items-center">
-                                <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Recommended
-                            </button>
-                        </a>
+
                     </div>
                 </div>
                 <div className="row">
-                    {Array.from(genres).map((genre) => (
-                        <GenreSection key={genre} genre={genre} articles={articlesGenre[genre]} filterText={filterText}
+                    {clusters.map((topicClusters) => (
+                        topicClusters.length > 0 ? (
+                        <GenreSection key={topicClusters[0]} genre={topicClusters[0]} articles={topicClusters[1]} filterText={filterText}
                                       onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
                                       uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
                                       usersession={usersession}
-                        />
+                        />) : <></>
                     ))}
                 </div>
             </div>

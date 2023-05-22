@@ -463,8 +463,32 @@ const Home = () => {
         setNumDisplayedArticles(numDisplayedArticles + 20);
     };
 
+
+    /*
+    const [quote, setQuote] = useState('');
+
+    function getRandomQuote() {
+        return fetch('quotes.txt')
+        .then(response => response.text())
+        .then(data => {
+          const quotes = data.split('\n').map(quote => quote.trim());
+          const randomIndex = Math.floor(Math.random() * quotes.length);
+          return quotes[randomIndex];
+        })
+        .catch(error => {
+          console.error('Error fetching quotes:', error);
+          return null;
+        });
+        }
+
+        useEffect(() => {
+        getRandomQuote().then(randomQuote => {
+          setQuote(randomQuote);
+        });
+        }, [filteredArray.length === 0]);
+*/
     return (
-        <div className="row">
+            <div className="row">
             <h2 className="text-center text-dark mt-5">{formatTitle(genre)}</h2>
             <div className="col-12 d-flex justify-content-center">
                 <div className="form-group w-auto pb-3 d-flex justify-content-between">
@@ -511,6 +535,7 @@ const Home = () => {
                 </div>
             </div>
 
+                {filteredArray.length > 0 ? (
             <ul className="articles-row">
                {slicedArticles.map((articles) => (
                     articles.length > 0 ? (
@@ -521,7 +546,10 @@ const Home = () => {
                     </li>
                     ) : <></>
                 ))}
-            </ul>
+            </ul>):
+            <h1 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                Bad news... We don't have what you're looking for...
+            </h1>}
             {numDisplayedArticles < filteredArray.length && (
                 <div className="col-12 d-flex justify-content-center">
                     <button className="btn btn-outline-primary" onClick={handleLoadMore}>
@@ -533,8 +561,7 @@ const Home = () => {
                 </div>
             )}
         </div>
-    )
-        ;
+    );
 };
 
 export default Home;
