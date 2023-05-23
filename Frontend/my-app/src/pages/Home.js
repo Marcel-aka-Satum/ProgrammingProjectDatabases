@@ -19,6 +19,10 @@ import Modal from 'react-bootstrap/Modal';
 import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
+import {Quotes} from '../Quotes';
+
+
+let genreNum = 0
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
@@ -432,6 +436,8 @@ function GenreSection({
         return null; // return null to skip rendering this component
     }
 
+    genreNum = genreNum + 1;
+
     console.log(filteredArray)
     return (
             <div className="genre-section">
@@ -500,17 +506,18 @@ const Home = () => {
             const fetchClusters = async () => {
                 await axios.get(`${site_domain}/api/clusters`)
                 .then(response => {
-                  setClusters(sortNewest(response.data.clusters[1]))
+                    const clusters = sortNewest(response.data.clusters[1])
+                  setClusters(clusters)
                 });
                 };
             fetchClusters();
-
         }, [sortOption]);
 
         useEffect(() => {
             function sortArticlesByDate(articles, sortOption) {
                 if (sortOption === "newest") {
-                    setClusters(sortNewest(clusters))
+                    const clusters = sortNewest(clusters)
+                    setClusters(clusters)
                 }
                 else {
                     return articles;
@@ -526,6 +533,8 @@ const Home = () => {
         const handleFilterTextChange = (newText) => {
             setFilterText(newText);
         };
+
+        genreNum = 0;
 
 
         return (
@@ -586,6 +595,14 @@ const Home = () => {
                                       usersession={usersession}
                         />) : <></>
                     ))}
+                    {genreNum === 0 && (
+                        <>
+                            <h3 style={{ display: 'flex', justifyContent: 'center', marginTop: "20px" }}>
+                                Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
+                            </h3>
+                            <Quotes />
+                        </>
+                    )}
                 </div>
             </div>
 

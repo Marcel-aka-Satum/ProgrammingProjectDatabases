@@ -19,6 +19,7 @@ import {userSession} from '../App'
 import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 import {request_headers, site_domain} from "../globals";
 import Cookies from "js-cookie";
+import {Quotes} from '../Quotes.js';
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
@@ -329,7 +330,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
 const Home = () => {
     const genre = useLocation().pathname.split('/')[2].replace(/-/g, " ");
-    const [articles, setArticles] = useState([])
     const [numDisplayedArticles, setNumDisplayedArticles] = useState(20);
     const [favorites, setFavorites] = useState([])
     const [clustersGenre, setClustersGenre] = useState([])
@@ -547,9 +547,13 @@ const Home = () => {
                     ) : <></>
                 ))}
             </ul>):
-            <h1 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
-                Bad news... We don't have what you're looking for...
-            </h1>}
+                    <>
+            <h3 style={{ display: 'flex', justifyContent: 'center' , marginTop:"20px" }}>
+                Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
+            </h3>
+                <Quotes/>
+                </>
+                }
             {numDisplayedArticles < filteredArray.length && (
                 <div className="col-12 d-flex justify-content-center">
                     <button className="btn btn-outline-primary" onClick={handleLoadMore}>
