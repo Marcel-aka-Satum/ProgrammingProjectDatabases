@@ -181,10 +181,11 @@ def get_all_clusters():
                 'Title', Title,
                 'Summary', Summary,
                 'Published', Published,
-                'Image', Image
+                'Image', Image,
+                'Clicked', Clicked
             )) AS Cluster
             FROM (
-                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic,
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked,
                 CASE WHEN r.Cluster_ID = -1 THEN
                     ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
                 END AS rn
@@ -229,10 +230,11 @@ def get_all_clusters_genre(Topic: str):
                 'Title', Title,
                 'Summary', Summary,
                 'Published', Published,
-                'Image', Image
+                'Image', Image,
+                'Clicked', Clicked
             )) AS Cluster
             FROM (
-                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic,
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked,
                 CASE WHEN r.Cluster_ID = -1 THEN
                     ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
                 END AS rn
@@ -393,6 +395,16 @@ def insert_hasclickedcookie(values: list) -> str:
             WHERE c.cookie = '{values[1]}';
             """
 
+def addCountArticle(values: list) -> str:
+    """
+        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic, Count)
+    """
+    print('clicked lol: ', values[0])
+    return f"""
+            UPDATE newsaggregator.newsarticles
+            SET Clicked = Clicked + 1
+            WHERE URL = '{values[0]}';
+            """
 
 def insert_favored(values: list) -> str:
     """

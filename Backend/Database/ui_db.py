@@ -234,7 +234,8 @@ class DBConnection:
             "Published": data[3],
             "Image": data[4],
             "RSS_URL": data[6],
-            "Topic": data[5]
+            "Topic": data[5],
+            "Clicked": data[7],
         }
 
     @func.is_connected
@@ -495,6 +496,7 @@ class DBConnection:
         try:
             cursor = self.connection.cursor()
             cursor.execute(query_db.insert_hasclickedcookie([URL, Cookie]))
+            cursor.execute(query_db.addCountArticle([URL]))
             return True, "success"
         except psycopg2.errors.UniqueViolation as e:
             if "hasclicked_pkey" in str(e):
@@ -588,7 +590,7 @@ class DBConnection:
         for i in cursor.fetchall():
             data.append(
                 {"URL": i[0], "Title": i[1], "Summary": i[2], "Published": i[3], "Image": i[4], "Topic": i[5],
-                 "RSS_URL": i[6]})
+                 "RSS_URL": i[6], "Clicked": i[7]})
         return data
     
     @func.is_connected

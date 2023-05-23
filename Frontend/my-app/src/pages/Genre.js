@@ -25,7 +25,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
-     const [showSimilarModal, setShowSimilarModal] = useState(false);
+    const [showSimilarModal, setShowSimilarModal] = useState(false);
 
     const addFavorite = async (URL) => {
         try {
@@ -111,6 +111,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     return (
         <div className="article-card hide-btn-group">
+            {/*<h1 className="article-card-header">*/}
+            {/*    <span className="badge bg-secondary">{article.Clicked}</span>*/}
+            {/*</h1>*/}
             <a
                 href={article.URL}
                 target="_blank"
@@ -174,48 +177,49 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         {/*button that says 'Similar'*/}
                         {related.length > 0 ? (
                             <>
-                            <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
-                                data-toggle="tooltip" data-placement="top" title="Similar">
-                            <i className="fas fa-search"></i>
-                            <span className="text-custom-dark">10</span>
-                        </button>
-                        <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true} keyboard={true}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Similar Articles</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{
-                                margin: '20px', padding: '20px', display: 'flex',
-                                flexDirection: 'column', alignItems: 'center',
-                            }}>
-                                <div style={{height: '500px', overflowY: 'scroll'}}>
-                                    {related.map(cluster => {
-                                        return (<div className="card" style={{marginBottom: '10px'}}>
-                                        <img
-                                            src={cluster.Image}
-                                            onError={(e) => (e.target.style.display = 'none')}
-                                            alt=''
-                                            className="card-img-top"
-                                            style={{display: cluster.Image ? 'block' : 'none'}}
-                                        />
-                                        <div className="card-body">
-                                            <p>{<PrintNewspaper url={cluster.URL}/>}</p>
-                                            <a
-                                                href={cluster.URL}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                onClick={() => handleClick(cluster.URL)}
-                                                onAuxClick={() => handleClick(cluster.URL)}
-                                                onTouchEnd={() => handleClick(cluster.URL)}
-                                                className="text-decoration-none text-dark"
-                                            >
-                                                <h5 className="card-title">{formatTitle(cluster.Title)}</h5>
-                                            </a>
+                                <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
+                                        data-toggle="tooltip" data-placement="top" title="Similar">
+                                    <i className="fas fa-search"></i>
+                                    <span className="text-custom-dark">10</span>
+                                </button>
+                                <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true}
+                                       keyboard={true}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Similar Articles</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body style={{
+                                        margin: '20px', padding: '20px', display: 'flex',
+                                        flexDirection: 'column', alignItems: 'center',
+                                    }}>
+                                        <div style={{height: '500px', overflowY: 'scroll'}}>
+                                            {related.map(cluster => {
+                                                return (<div className="card" style={{marginBottom: '10px'}}>
+                                                    <img
+                                                        src={cluster.Image}
+                                                        onError={(e) => (e.target.style.display = 'none')}
+                                                        alt=''
+                                                        className="card-img-top"
+                                                        style={{display: cluster.Image ? 'block' : 'none'}}
+                                                    />
+                                                    <div className="card-body">
+                                                        <p>{<PrintNewspaper url={cluster.URL}/>}</p>
+                                                        <a
+                                                            href={cluster.URL}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            onClick={() => handleClick(cluster.URL)}
+                                                            onAuxClick={() => handleClick(cluster.URL)}
+                                                            onTouchEnd={() => handleClick(cluster.URL)}
+                                                            className="text-decoration-none text-dark"
+                                                        >
+                                                            <h5 className="card-title">{formatTitle(cluster.Title)}</h5>
+                                                        </a>
+                                                    </div>
+                                                </div>)
+                                            })}
                                         </div>
-                                    </div>)
-                                    })}
-                                </div>
-                            </Modal.Body>
-                        </Modal>
+                                    </Modal.Body>
+                                </Modal>
                             </>
                         ) : <></>}
 
@@ -365,15 +369,15 @@ const Home = () => {
                     genre: genre,
                     headers: request_headers
                 }).then(response => {
-                  const ClustersGenre = response.data['clusters'][1].map(cluster => {
-                    return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
-                  });
-                  const sorted = ClustersGenre.sort((a, b) => {
-                    return new Date(b[0][0].Published) - new Date(a[0][0].Published);
+                    const ClustersGenre = response.data['clusters'][1].map(cluster => {
+                        return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
+                    });
+                    const sorted = ClustersGenre.sort((a, b) => {
+                        return new Date(b[0][0].Published) - new Date(a[0][0].Published);
                     });
 
-                  setClustersGenre(sorted);
-                  console.log(sorted)
+                    setClustersGenre(sorted);
+                    console.log(sorted)
                 });
             };
             fetchClustersGenre();
@@ -397,23 +401,25 @@ const Home = () => {
     useEffect(() => {
         if (sortOption === "newest") {
 
-                  const ClustersGenre = clustersGenre.map(cluster => {
-
-                    return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
-                  });
-                  const sorted = ClustersGenre.sort((a, b) => {
-                    return new Date(b[0][0].Published) - new Date(a[0][0].Published);
-                    });
-                  setClustersGenre(sorted);
-
-        } else if (sortOption === "oldest") {
             const ClustersGenre = clustersGenre.map(cluster => {
-                    return cluster.sort((a, b) => new Date(a[0][0].Published) - new Date(b[0][0].Published));
-                  });
-                  const sorted = ClustersGenre.sort((a, b) => {
-                    return new Date(a[0][0].Published) - new Date(b[0][0].Published);
-                    });
-                  setClustersGenre(sorted);
+
+                return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
+            });
+            const sorted = ClustersGenre.sort((a, b) => {
+                return new Date(b[0][0].Published) - new Date(a[0][0].Published);
+            });
+            setClustersGenre(sorted);
+
+        } else if (sortOption === "popular") {
+            //     sort by bigger .Clicked count
+            const ClustersGenre = clustersGenre.map(cluster => {
+                    return cluster.sort((a, b) => b[0][0].Clicked - a[0][0].Clicked);
+                }
+            );
+            const sorted = ClustersGenre.sort((a, b) => {
+                return b[0][0].Clicked - a[0][0].Clicked;
+            });
+            setClustersGenre(sorted);
         }
     }, [sortOption]);
 
@@ -440,19 +446,20 @@ const Home = () => {
     if (sortOption === "newest") {
 
         const ClustersGenre = filteredArray.map(cluster => {
-        return cluster.sort((a, b) =>
-            new Date(b.Published) - new Date(a.Published));
+            return cluster.sort((a, b) =>
+                new Date(b.Published) - new Date(a.Published));
         });
         articlesToDisplay = ClustersGenre.sort((a, b) => {
-        return new Date(b.Published) - new Date(a.Published);
+            return new Date(b.Published) - new Date(a.Published);
         });
 
-    } else if (sortOption === "oldest") {
+    } else if (sortOption === "popular") {
         const ClustersGenre = filteredArray.map(cluster => {
-                return cluster.sort((a, b) => new Date(a.Published) - new Date(b.Published));
-              });
+                return cluster.sort((a, b) => b.Clicked - a.Clicked);
+            }
+        );
         articlesToDisplay = ClustersGenre.sort((a, b) => {
-        return new Date(a.Published) - new Date(b.Published);
+            return b.Clicked - a.Clicked;
         });
     }
 
@@ -488,7 +495,7 @@ const Home = () => {
         }, [filteredArray.length === 0]);
 */
     return (
-            <div className="row">
+        <div className="row">
             <h2 className="text-center text-dark mt-5">{formatTitle(genre)}</h2>
             <div className="col-12 d-flex justify-content-center">
                 <div className="form-group w-auto pb-3 d-flex justify-content-between">
@@ -520,12 +527,14 @@ const Home = () => {
                             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <li>
                                     <button className="dropdown-item" type="button" value="newest"
-                                            onClick={handleSortChange}>newest
+                                            onClick={handleSortChange}>
+                                        <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> newest
                                     </button>
                                 </li>
                                 <li>
-                                    <button className="dropdown-item" type="button" value="oldest"
-                                            onClick={handleSortChange}>oldest
+                                    <button className="dropdown-item" type="button" value="popular"
+                                            onClick={handleSortChange}><i className="fa fa-heart me-2"
+                                                                          style={{color: "#c01c28"}}> </i> popular
                                     </button>
                                 </li>
                             </ul>
@@ -535,25 +544,27 @@ const Home = () => {
                 </div>
             </div>
 
-                {filteredArray.length > 0 ? (
-            <ul className="articles-row">
-               {slicedArticles.map((articles) => (
-                    articles.length > 0 ? (
-                    <li key={articles[0].URL} className="p-3">
-                        <ArticleCard article={articles[0]} onFilterTextChange={handleFilterTextChange}
-                                     logged={usersession.user.isLogged} uid={usersession.user.uid} favorites={favorites}
-                                     setFavorites={setFavorites} related={articles.length > 0 ? (articles.slice(1)) : []}/>
-                    </li>
-                    ) : <></>
-                ))}
-            </ul>):
-                    <>
-            <h3 style={{ display: 'flex', justifyContent: 'center' , marginTop:"20px" }}>
-                Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
-            </h3>
-                <Quotes/>
+            {filteredArray.length > 0 ? (
+                    <ul className="articles-row">
+                        {slicedArticles.map((articles) => (
+                            articles.length > 0 ? (
+                                <li key={articles[0].URL} className="p-3">
+                                    <ArticleCard article={articles[0]} onFilterTextChange={handleFilterTextChange}
+                                                 logged={usersession.user.isLogged} uid={usersession.user.uid}
+                                                 favorites={favorites}
+                                                 setFavorites={setFavorites}
+                                                 related={articles.length > 0 ? (articles.slice(1)) : []}/>
+                                </li>
+                            ) : <></>
+                        ))}
+                    </ul>) :
+                <>
+                    <h3 style={{display: 'flex', justifyContent: 'center', marginTop: "20px"}}>
+                        Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
+                    </h3>
+                    <Quotes/>
                 </>
-                }
+            }
             {numDisplayedArticles < filteredArray.length && (
                 <div className="col-12 d-flex justify-content-center">
                     <button className="btn btn-outline-primary" onClick={handleLoadMore}>

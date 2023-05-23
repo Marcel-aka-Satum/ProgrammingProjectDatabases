@@ -127,6 +127,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     return (
         <div className="article-card hide-btn-group">
+            {/*<h1 className="article-card-header">*/}
+            {/*    <span className="badge bg-secondary">{article.Clicked}</span>*/}
+            {/*</h1>*/}
             <a
                 href={article.URL}
                 target="_blank"
@@ -178,48 +181,49 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
                         {related.length > 0 ? (
                             <>
-                            <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
-                                data-toggle="tooltip" data-placement="top" title="Similar">
-                            <i className="fas fa-search"></i>
-                            <span className="text-custom-dark">10</span>
-                        </button>
-                        <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true} keyboard={true}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Similar Articles</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{
-                                margin: '20px', padding: '20px', display: 'flex',
-                                flexDirection: 'column', alignItems: 'center',
-                            }}>
-                                <div style={{height: '500px', overflowY: 'scroll'}}>
-                                    {related.map(cluster => {
-                                        return (<div className="card" style={{marginBottom: '10px'}}>
-                                        <img
-                                            src={cluster.Image}
-                                            onError={(e) => (e.target.style.display = 'none')}
-                                            alt=''
-                                            className="card-img-top"
-                                            style={{display: cluster.Image ? 'block' : 'none'}}
-                                        />
-                                        <div className="card-body">
-                                            <p>{<PrintNewspaper url={cluster.URL}/>}</p>
-                                            <a
-                                                href={cluster.URL}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                onClick={() => handleClick(cluster.URL)}
-                                                onAuxClick={() => handleClick(cluster.URL)}
-                                                onTouchEnd={() => handleClick(cluster.URL)}
-                                                className="text-decoration-none text-dark"
-                                            >
-                                                <h5 className="card-title">{formatTitle(cluster.Title)}</h5>
-                                            </a>
+                                <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
+                                        data-toggle="tooltip" data-placement="top" title="Similar">
+                                    <i className="fas fa-search"></i>
+                                    <span className="text-custom-dark ps-2">{related.length}</span>
+                                </button>
+                                <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true}
+                                       keyboard={true}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Similar Articles</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body style={{
+                                        margin: '20px', padding: '20px', display: 'flex',
+                                        flexDirection: 'column', alignItems: 'center',
+                                    }}>
+                                        <div style={{height: '500px', overflowY: 'scroll'}}>
+                                            {related.map(cluster => {
+                                                return (<div className="card" style={{marginBottom: '10px'}}>
+                                                    <img
+                                                        src={cluster.Image}
+                                                        onError={(e) => (e.target.style.display = 'none')}
+                                                        alt=''
+                                                        className="card-img-top"
+                                                        style={{display: cluster.Image ? 'block' : 'none'}}
+                                                    />
+                                                    <div className="card-body">
+                                                        <p>{<PrintNewspaper url={cluster.URL}/>}</p>
+                                                        <a
+                                                            href={cluster.URL}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            onClick={() => handleClick(cluster.URL)}
+                                                            onAuxClick={() => handleClick(cluster.URL)}
+                                                            onTouchEnd={() => handleClick(cluster.URL)}
+                                                            className="text-decoration-none text-dark"
+                                                        >
+                                                            <h5 className="card-title">{formatTitle(cluster.Title)}</h5>
+                                                        </a>
+                                                    </div>
+                                                </div>)
+                                            })}
                                         </div>
-                                    </div>)
-                                    })}
-                                </div>
-                            </Modal.Body>
-                        </Modal>
+                                    </Modal.Body>
+                                </Modal>
                             </>
                         ) : <></>}
 
@@ -414,12 +418,12 @@ function GenreSection({
     console.log(articles)
 
 
-    if(articles.length === 0){
+    if (articles.length === 0) {
         console.log("hello")
         return null;
     }
 
-    const filteredArticles = articles.map((Articles)=>{
+    const filteredArticles = articles.map((Articles) => {
 
         return Articles.filter((article) => {
             const title = article.Title.toLowerCase();
@@ -440,7 +444,7 @@ function GenreSection({
 
     console.log(filteredArray)
     return (
-            <div className="genre-section">
+        <div className="genre-section">
             <h2>
                 {genre} {logged && usersession.user.isAdmin && usersession.user.debug && (
                 `(${filteredArticles.length})`
@@ -455,7 +459,8 @@ function GenreSection({
                 {filteredArray.slice(0, 3).map((articles) => (
                     <li key={articles[0].URL} className="p-3">
                         <ArticleCard article={articles[0]} onFilterTextChange={onFilterTextChange} logged={logged}
-                                     uid={uid} favorites={favorites} setFavorites={setFavorites} related={articles.length > 0 ? (articles.slice(1)) : []}/>
+                                     uid={uid} favorites={favorites} setFavorites={setFavorites}
+                                     related={articles.length > 0 ? (articles.slice(1)) : []}/>
                     </li>
                 ))}
             </ul>
@@ -484,47 +489,54 @@ const Home = () => {
             fetchFavorites();
         }, []);
 
-        function sortNewest(topics){
+        function sortNewest(topics) {
             const sortedTopics = topics.map(clusters => {
-                  const sortedClustersGenre = clusters[1].map(cluster => {
-                      return cluster['Cluster'].sort((a, b) => new Date(b.Published) - new Date(a.Published));
-                    });
-
-              const sorted =  sortedClustersGenre.sort((a, b) => {
-                return new Date(b[0].Published) - new Date(a[0].Published);
+                const sortedClustersGenre = clusters[1].map(cluster => {
+                    return cluster['Cluster'].sort((a, b) => new Date(b.Published) - new Date(a.Published));
                 });
 
-              return [clusters[0], sorted]
-              });
+                const sorted = sortedClustersGenre.sort((a, b) => {
+                    return new Date(b[0].Published) - new Date(a[0].Published);
+                });
+
+                return [clusters[0], sorted]
+            });
             return sortedTopics.sort((a, b) => {
-              return new Date(b[1][0][0].Published) - new Date(a[1][0][0].Published)
+                return new Date(b[1][0][0].Published) - new Date(a[1][0][0].Published)
             })
+        }
+
+        function sortPopular(topics) {
+            const sortedTopics = topics.map(clusters => {
+                const sortedClustersGenre = clusters[1].map(cluster => {
+                    return cluster['Cluster'].sort((a, b) => b.Clicked - a.Clicked);
+                });
+
+                const sorted = sortedClustersGenre.sort((a, b) => b[0].Clicked - a[0].Clicked);
+
+                return [clusters[0], sorted];
+            });
+
+            return sortedTopics.sort((a, b) => b[1][0][0].Clicked - a[1][0][0].Clicked);
         }
 
 
         useEffect(() => {
             const fetchClusters = async () => {
                 await axios.get(`${site_domain}/api/clusters`)
-                .then(response => {
-                    const clusters = sortNewest(response.data.clusters[1])
-                  setClusters(clusters)
-                });
-                };
+                    .then(response => {
+                        if (sortOption === "newest") {
+                            const clusters = sortNewest(response.data.clusters[1])
+                            setClusters(clusters)
+                        }
+                        else if (sortOption === "popular") {
+                            const clusters = sortPopular(response.data.clusters[1])
+                            setClusters(clusters)
+                        }
+                    });
+            };
             fetchClusters();
         }, [sortOption]);
-
-        useEffect(() => {
-            function sortArticlesByDate(articles, sortOption) {
-                if (sortOption === "newest") {
-                    const clusters = sortNewest(clusters)
-                    setClusters(clusters)
-                }
-                else {
-                    return articles;
-                }
-            }
-        }, [clusters, sortOption]);
-
 
         const handleSortChange = (e) => {
             setSortOption(e.target.value);
@@ -535,7 +547,6 @@ const Home = () => {
         };
 
         genreNum = 0;
-
 
         return (
             <div className="container-lg pt-5">
@@ -581,6 +592,12 @@ const Home = () => {
                                         </button>
                                     </a>
                                 </li>
+                                <li>
+                                    <button className="dropdown-item" type="button" value="popular"
+                                            onClick={handleSortChange}>
+                                        <i className="fa fa-heart me-2" style={{color: "#c01c28"}}> </i> Popular
+                                    </button>
+                                </li>
                             </ul>
                         </div>
 
@@ -589,18 +606,20 @@ const Home = () => {
                 <div className="row">
                     {clusters.map((topicClusters) => (
                         topicClusters.length > 0 ? (
-                        <GenreSection key={topicClusters[0]} genre={topicClusters[0]} articles={topicClusters[1]} filterText={filterText}
-                                      onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
-                                      uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
-                                      usersession={usersession}
-                        />) : <></>
+                            <GenreSection key={topicClusters[0]} genre={topicClusters[0]} articles={topicClusters[1]}
+                                          filterText={filterText}
+                                          onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
+                                          uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
+                                          usersession={usersession}
+                            />) : <></>
                     ))}
                     {genreNum === 0 && (
                         <>
-                            <h3 style={{ display: 'flex', justifyContent: 'center', marginTop: "20px" }}>
-                                Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
+                            <h3 style={{display: 'flex', justifyContent: 'center', marginTop: "20px"}}>
+                                Sorry, we don't have what you're looking for... Here is an inspiring quote about news
+                                instead!
                             </h3>
-                            <Quotes />
+                            <Quotes/>
                         </>
                     )}
                 </div>
