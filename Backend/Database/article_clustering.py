@@ -1,4 +1,5 @@
-import numpy as np
+import warnings
+warnings.simplefilter(action='ignore')
 import pandas as pd
 
 import nltk
@@ -15,15 +16,8 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.manifold import TSNE
 
 from bs4 import BeautifulSoup
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
 
 import re
-import psycopg2
-import json
-
-import matplotlib.pyplot as plt
-import plotly.graph_objs as go
 import plotly.express as px
 
 try:
@@ -32,8 +26,6 @@ except ImportError:
     import ui_db
 
 from easynmt import EasyNMT
-
-import time
 
 import pickle
 
@@ -79,12 +71,12 @@ class NewsClusterer:
         else:
             if translate:
                 model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
-                print("Translating text: " + text)
+                #print("Translating text: " + text)
                 try:
                     translation = model.translate(text, target_lang='en')
                 except:
                     translation = text
-                print("Translated text: " + translation)
+                #print("Translated text: " + translation)
 
                 # Append translations to the 'translations.csv' file
                 new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})

@@ -628,10 +628,15 @@ def articlesPerGenre():
 
 def start_scraper():
     while True:
-        data = db.getSettings()[1]
-        scraped_time = int(600)
-        scraper()
-        time.sleep(scraped_time)
+        try:
+            data = db.getSettings()[1]
+            scraped_time = int(600)
+            scraper()
+            time.sleep(scraped_time)
+        except:
+            print("Scraping failed, trying again...")
+            time.sleep(5)
+            pass
 
 
 scraper_thread = threading.Thread(target=start_scraper)
@@ -641,10 +646,15 @@ scraper_thread.start()
 def start_clustering():
     news_clusterer = NewsClusterer()
     while True:
-        print("Starting clustering")
-        news_clusterer.run(visualize=False, translate=False)
-        print("Clustering done")
-        time.sleep(600)
+        try:
+            print("Starting clustering")
+            news_clusterer.run(visualize=False, translate=False)
+            print("Clustering done")
+            time.sleep(600)
+        except:
+            print("Clustering failed, trying again...")
+            time.sleep(5)
+            pass
 
 clustering_thread = threading.Thread(target=start_clustering)
 clustering_thread.start()
@@ -652,8 +662,15 @@ clustering_thread.start()
 def translate():
     news_clusterer = NewsClusterer()
     while True:
-        articles = news_clusterer.load_data()
-        news_clusterer.preprocess_and_vectorize(articles, translate=True)
+        try:
+            print("Starting the translation process")
+            articles = news_clusterer.load_data()
+            news_clusterer.preprocess_and_vectorize(articles, translate=True)
+            print("Translation done")
+        except:
+            print("Translation failed, trying again...")
+            time.sleep(5)
+            pass
 
 translate_thread = threading.Thread(target=translate)
 translate_thread.start()
