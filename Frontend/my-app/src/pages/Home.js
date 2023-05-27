@@ -3,11 +3,9 @@ import {SUCCESS, ERROR} from "../components/Helpers/custom_alert";
 import {
     formatTitle,
     formatDate,
-    getTimeAgo,
     formatSummary,
     handleClipboard,
     PrintNewspaper,
-    handleHideArticle,
     shares,
     extractBaseUrl
 } from "../components/Helpers/general";
@@ -21,15 +19,11 @@ import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
 import {Quotes} from '../Quotes';
 
-
-let genreNum = 0
-
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
     const [showSimilarModal, setShowSimilarModal] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
-    let usersession = useContext(userSession);
 
     const addFavorite = async (URL) => {
         console.log('ADD:', URL)
@@ -414,12 +408,12 @@ function GenreSection({
         return str.replace(/\s+/g, '-');
     }
 
-    console.log(genre)
-    console.log(articles)
+    //console.log(genre)
+    //console.log(articles)
 
 
     if (articles.length === 0) {
-        console.log("hello")
+        //console.log("hello")
         return null;
     }
 
@@ -437,12 +431,10 @@ function GenreSection({
     const filteredArray = filteredArticles.filter((subArray) => subArray.length > 0);
 
     if (filteredArray.length === 0) {
+        //console.log("hello")
         return null; // return null to skip rendering this component
     }
 
-    genreNum = genreNum + 1;
-
-    console.log(filteredArray)
     return (
         <div className="genre-section">
             <h2>
@@ -457,8 +449,8 @@ function GenreSection({
             </h2>
             <ul className="articles-row">
                 {filteredArray.slice(0, 3).map((articles) => (
-                    <li key={articles[0].URL} className="p-3">
-                        <ArticleCard article={articles[0]} onFilterTextChange={onFilterTextChange} logged={logged}
+                    <li className="p-3">
+                        <ArticleCard key={articles[0].URL} article={articles[0]} onFilterTextChange={onFilterTextChange} logged={logged}
                                      uid={uid} favorites={favorites} setFavorites={setFavorites}
                                      related={articles.length > 0 ? (articles.slice(1)) : []}/>
                     </li>
@@ -473,6 +465,7 @@ const Home = () => {
 
         const [filterText, setFilterText] = useState("");
         const [sortOption, setSortOption] = useState("newest");
+        const [allNull, setAllNull] = useState(true)
 
         let usersession = useContext(userSession);
 
@@ -546,7 +539,28 @@ const Home = () => {
             setFilterText(newText);
         };
 
-        genreNum = 0;
+        function checkAllNull(){
+            let allNull = true
+
+                clusters.map((topicClusters) => {
+                    const genreSec = GenreSection({
+                      genre: topicClusters[0],
+                      articles: Array.isArray(topicClusters[1]) ? topicClusters[1] : [], // Ensure articles is an array
+                      filterText: filterText,
+                      onFilterTextChange: handleFilterTextChange,
+                      logged: usersession.user.isLogged,
+                      uid: usersession.user.uid,
+                      favorites: favorites,
+                      setFavorites: setFavorites,
+                      usersession: usersession
+                    })
+                    if (genreSec !== null){
+                        allNull = false
+                    }
+                })
+            console.log(allNull)
+            return allNull
+        }
 
         return (
             <div className="container-lg pt-5">
@@ -604,24 +618,24 @@ const Home = () => {
                     </div>
                 </div>
                 <div className="row">
+                    { checkAllNull() ? (
+                        <>
+                        <h3 style={{ display: 'flex', justifyContent: 'center', marginTop: "20px" }}>
+                            Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
+                        </h3>
+                        <Quotes/>
+                    </>
+                ) : <>
                     {clusters.map((topicClusters) => (
-                        topicClusters.length > 0 ? (
                             <GenreSection key={topicClusters[0]} genre={topicClusters[0]} articles={topicClusters[1]}
                                           filterText={filterText}
                                           onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
                                           uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
                                           usersession={usersession}
-                            />) : <></>
+                            />
                     ))}
-                    {genreNum === 0 && (
-                        <>
-                            <h3 style={{display: 'flex', justifyContent: 'center', marginTop: "20px"}}>
-                                Sorry, we don't have what you're looking for... Here is an inspiring quote about news
-                                instead!
-                            </h3>
-                            <Quotes/>
-                        </>
-                    )}
+                    </>
+                    }
                 </div>
             </div>
 
