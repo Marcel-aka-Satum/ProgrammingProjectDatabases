@@ -521,6 +521,7 @@ const Home = () => {
                         if (sortOption === "newest") {
                             const clusters = sortNewest(response.data.clusters[1])
                             setClusters(clusters)
+                            console.log(clusters)
                         }
                         else if (sortOption === "popular") {
                             const clusters = sortPopular(response.data.clusters[1])

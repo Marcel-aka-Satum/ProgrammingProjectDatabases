@@ -36,6 +36,7 @@ def initialize_db(cur):
                 Image varchar,
                 Topic varchar,
                 RSS_URL varchar REFERENCES newsaggregator.rssfeeds(URL) ON DELETE CASCADE,
+                Language varchar,
                 Clicked int DEFAULT 0);
                 
 
