@@ -68,3 +68,29 @@ https://rss.nytimes.com/services/xml/rss/nyt/Business.xml,nytimes.com,Economics
 https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml,nytimes.com,International
 https://www.theguardian.com/world/rss,theguardian.com,International
 https://www.theguardian.com/uk/sport/rss,theguardian.com,Sport
+https://www.welt.de/feeds/section/politik.rss,welt.de,Politics
+https://www.welt.de/feeds/section/wirtschaft.rss,welt.de,Economics
+https://www.welt.de/feeds/section/kultur.rss,welt.de,Culture
+https://www.welt.de/feeds/section/gesundheit.rss,welt.de,Health
+https://www.welt.de/feeds/section/debatte.rss,welt.de,Opinion
+https://www.lefigaro.fr/rss/figaro_international.xml,lefigaro.fr,International
+https://www.lefigaro.fr/rss/figaro_politique.xml,lefigaro.fr,Politics
+https://www.lefigaro.fr/rss/figaro_sante.xml,lefigaro.fr,Health
+https://www.lefigaro.fr/rss/figaro_sciences.xml,lefigaro.fr,Science And Technology
+https://www.lefigaro.fr/rss/figaro_economie.xml,lefigaro.fr,Economics
+https://www.lefigaro.fr/rss/figaro_bourse.xml,lefigaro.fr,Economics
+https://www.lefigaro.fr/rss/figaro_culture.xml,lefigaro.fr,Culture
+https://www.n-tv.de/wirtschaft/rss,n-tv.de,Economics
+https://www.n-tv.de/politik/rss,n-tv.de,International
+https://www.lemonde.fr/en/international/rss_full.xml,lemonde.fr,International
+https://www.lemonde.fr/en/economy/rss_full.xml,lemonde.fr,Economics
+https://www.lemonde.fr/en/money-investments/rss_full.xml,lemonde.fr,Economics
+https://www.lemonde.fr/en/culture/rss_full.xml,lemonde.fr,Culture
+https://www.lemonde.fr/en/science/rss_full.xml,lemonde.fr,Science And Technology
+https://castellonaldia.elmundo.es/rss/cultura.xml,elmundo.es,Culture
+https://castellonaldia.elmundo.es/rss/economia.xml,elmundo.es,Economics
+https://castellonaldia.elmundo.es/rss/opinion.xml,elmundo.es,Opinion
+https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada,elpais.com,International
+https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/ciencia/portada,elpais.com,Science And Technology
+https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/cultura/portada,elpais.com,Culture
+https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/economia/portada,elpais.com,Economics

@@ -58,10 +58,11 @@ class ArticleRecommender:
 
     def getRecommendedArticles(self, cookie: str):
         recommended_urls = self.compute_recommendations(cookie)
-
+        print(recommended_urls)
         recommended_articles = []
         for url, score in recommended_urls:
             success, article = self.db_connection.getArticle(url)
+            print(article)
             if success:
                 recommended_articles.append(article[1])
 

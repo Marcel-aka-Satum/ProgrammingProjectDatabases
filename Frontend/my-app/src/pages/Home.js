@@ -222,71 +222,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                             </>
                         ) : <></>}
 
-                        {/*button that says 'Similar'
-                        <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
-                                data-toggle="tooltip" data-placement="top" title="Similar">
-                            <i className="fas fa-search"></i>
-                            <span className="text-custom-dark">10</span>
-                        </button>
-                        <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true} keyboard={true}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Similar Articles</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body style={{
-                                margin: '20px', padding: '20px', display: 'flex',
-                                flexDirection: 'column', alignItems: 'center',
-                            }}>
-                                <div style={{height: '500px', overflowY: 'scroll'}}>
-                                    <div className="card" style={{marginBottom: '10px'}}>
-                                        <img
-                                            src={article.Image}
-                                            onError={(e) => (e.target.style.display = 'none')}
-                                            alt=''
-                                            className="card-img-top"
-                                            style={{display: article.Image ? 'block' : 'none'}}
-                                        />
-                                        <div className="card-body">
-                                            <p>{<PrintNewspaper url={article.URL}/>}</p>
-                                            <a
-                                                href={article.URL}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                onClick={() => handleClick(article.URL)}
-                                                onAuxClick={() => handleClick(article.URL)}
-                                                onTouchEnd={() => handleClick(article.URL)}
-                                                className="text-decoration-none text-dark"
-                                            >
-                                                <h5 className="card-title">{formatTitle(article.Title)}</h5>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div className="card" style={{marginBottom: '10px'}}>
-                                        <img
-                                            src={article.Image}
-                                            onError={(e) => (e.target.style.display = 'none')}
-                                            alt=''
-                                            className="card-img-top"
-                                            style={{display: article.Image ? 'block' : 'none'}}
-                                        />
-                                        <div className="card-body">
-                                            <p>{<PrintNewspaper url={article.URL}/>}</p>
-                                            <a
-                                                href={article.URL}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                onClick={() => handleClick(article.URL)}
-                                                onAuxClick={() => handleClick(article.URL)}
-                                                onTouchEnd={() => handleClick(article.URL)}
-                                                className="text-decoration-none text-dark"
-                                            >
-                                                <h5 className="card-title">{formatTitle(article.Title)}</h5>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Modal.Body>
-                        </Modal>*/}
-
                         <Modal
                             show={show}
                             onHide={handleClose}
@@ -348,7 +283,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
                         {(logged) ?
                             <>
-
                                 {favorites.includes(article.URL) ?
                                     <>
                                         <button
@@ -382,12 +316,10 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                             </>
                             : <></>
                         }
-
-
                     </div>
                     <span className="article-card-date float-end pb-2 pt-2">
                             <i>{formatDate(article.Published)}</i>
-                        </span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -470,7 +402,10 @@ const Home = () => {
         const [languageClusters, setLanguageClusters] = useState([]);
         const options = [
           { name: "Nederlands", id: 1 },
-          { name: "English", id: 2 }
+          { name: "English", id: 2 },
+          { name: "Español", id: 3 },
+          { name: "Deutsch", id: 4 },
+          { name: "Français", id: 5 }
         ];
 
         const [selectedOptions, setSelectedOptions] = useState([]);
@@ -641,6 +576,15 @@ const Home = () => {
                         else if(articleLanguage === "en"){
                             articleLanguage = "English"
                         }
+                        else if(articleLanguage === "es"){
+                            articleLanguage = "Español"
+                            }
+                        else if(articleLanguage === "de"){
+                            articleLanguage = "Deutsch"
+                            }
+                        else if(articleLanguage === "fr"){
+                            articleLanguage = "Français"
+                            }
                         languageFilter = languages.some((language) =>
                           language.name.includes(articleLanguage)
                         );
@@ -685,12 +629,12 @@ const Home = () => {
                         />
                         <button
                             type="button"
-                            className={`btn w-auto ms-1 btn-outline-danger ${filterText === '' ? 'd-none' : ''}`}
+                            className={`btn w-auto ms-1 btn-outline-danger heart ${filterText === '' ? 'd-none' : ''}`}
                             onClick={() => setFilterText('')}
                         >
                             X
                         </button>
-                        <div className="filter-bar">
+                        <div className="filter-bar justify-space-between">
                             <div className="dropdown ps-2">
                                 <button className="btn btn-outline-secondary dropdown-toggle" type="button"
                                         id="dropdownMenuButton"
@@ -719,8 +663,7 @@ const Home = () => {
                                     </li>
                                 </ul>
                             </div>
-                        </div>
-                        <div>
+                            <div>
                             <form className="multiSelect">
                                 <Multiselect
                                   options={options}
@@ -736,6 +679,8 @@ const Home = () => {
                                 />
                             </form>
                         </div>
+                        </div>
+
                     </div>
                 </div>
                 <div className="row">

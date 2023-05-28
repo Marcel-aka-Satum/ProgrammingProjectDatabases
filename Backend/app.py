@@ -24,7 +24,7 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 db.connect()
-drop_db = False
+drop_db = True
 if drop_db:
     db.redefine()
     db.populate()
