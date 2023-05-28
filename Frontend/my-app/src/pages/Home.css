@@ -188,6 +188,9 @@ a:hover {
     border-color: #fa6f65;
     color: #fa6f65;
     height: 45px;
+}
+
+.btn-outline-danger.heart{
     position: relative;
     top: -5px;
 }
@@ -360,7 +363,12 @@ p {
     }
 }
 
-@media only screen and (max-width: 767px) {
+.multiSelect{
+    margin-left: 5px;
+}
+
+
+@media only screen and (max-width: 910px) {
     .form-group {
         display: flex;
         flex-direction: column;
@@ -369,8 +377,9 @@ p {
 
     .form-group .filter-bar {
         display: flex;
+        justify-content: center;
         padding-bottom: 15px;
         margin-right: 5px;
-        justify-content: center;
+        margin-top: 10px;
     }
 }

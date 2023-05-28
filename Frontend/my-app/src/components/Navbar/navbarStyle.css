@@ -200,6 +200,10 @@ li .dropdown-menu.articledrop {
         margin-bottom: 0px !important;
     }
 
+    .dropprof li:first-child{
+        margin-top: 0px !important;
+    }
+
     li .dropdown-menu {
         position: relative;
         right: 0;

@@ -236,6 +236,7 @@ class DBConnection:
             "RSS_URL": data[6],
             "Topic": data[5],
             "Clicked": data[7],
+            "Language": data[8]
         }
 
     @func.is_connected

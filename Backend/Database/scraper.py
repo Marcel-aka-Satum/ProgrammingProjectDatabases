@@ -38,16 +38,18 @@ class BaseFeedScraper:
                 for lnk in entry['links']:
                     if lnk['type'] in ['image/jpeg', 'image/png', 'image/jpg']:
                         return lnk['href']
+
+
         except:
             return 'None'
 
-    def get_summary(self, entry):
+    def get_summary(self, entry, language, rss_url):
         return entry['summary']
 
     def scrape_entry(self, entry, rss_url, topic, Image, language):
         link = entry['link']
         title = entry['title']
-        summary = self.get_summary(entry)
+        summary = self.get_summary(entry, language, rss_url)
         publisher = entry['published']
         image = self.get_image(entry)
 
@@ -73,7 +75,12 @@ class BaseFeedScraper:
                 Image = feed.feed.image.url
             elif 'logo' in feed.feed:
                 Image = feed.feed.logo
-            language = feed.feed.language
+
+            language = ''
+            if("elmundo.es" in rss_url):
+                language = "es"
+            else:
+                language = feed.feed.language
             for entry in feed.entries:
                 scraper.scrape_entry(entry, rss_url, topic, Image, language)
         except requests.exceptions.Timeout:

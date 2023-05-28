@@ -394,8 +394,10 @@ const Home = () => {
                     })
                 });
                 const data = await response.json();
+                console.log(data)
                 setDisableSort(true);
                 let listOfArrays = data.articles.map(article => [[article]]);
+                setClustersGenre(listOfArrays);
                 setClustersGenre(listOfArrays);
 
                 console.log(listOfArrays)
@@ -575,45 +577,63 @@ const Home = () => {
                     >
                         X
                     </button>
-                    {!disableSort ? (
-                        <div className="dropdown ps-2">
-                            <button className="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                {sortOption ? sortOption : 'Sort By'}
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li>
-                                    <button className="dropdown-item" type="button" value="newest"
-                                            onClick={handleSortChange}>
-                                        <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> newest
+
+                        {!disableSort ? (
+                            <div className="filter-bar">
+                                <div className="dropdown ps-2">
+                                    <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                        {sortOption ? sortOption : 'Sort By'}
                                     </button>
-                                </li>
-                                <li>
-                                    <button className="dropdown-item" type="button" value="popular"
-                                            onClick={handleSortChange}><i className="fa fa-heart me-2"
-                                                                          style={{color: "#c01c28"}}> </i> popular
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    ) : null}
-                    <div>
-                        <form className="multiSelect">
-                            <Multiselect
-                              options={options}
-                              name="particulars"
-                              onSelect={onSelectOptions}
-                              onRemove={onRemoveOptions}
-                              displayValue="name"
-                              closeIcon="cancel"
-                              placeholder="Choose Languages"
-                              emptyRecordMsg={"No more available"}
-                              selectedValues={selectedOptions}
-                              className="multiSelectContainer"
-                            />
-                        </form>
-                        </div>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <button className="dropdown-item" type="button" value="newest"
+                                                    onClick={handleSortChange}>
+                                                <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> newest
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button className="dropdown-item" type="button" value="popular"
+                                                    onClick={handleSortChange}><i className="fa fa-heart me-2"
+                                                                                  style={{color: "#c01c28"}}> </i> popular
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <form className="multiSelect">
+                                        <Multiselect
+                                          options={options}
+                                          name="particulars"
+                                          onSelect={onSelectOptions}
+                                          onRemove={onRemoveOptions}
+                                          displayValue="name"
+                                          closeIcon="cancel"
+                                          placeholder="Choose Languages"
+                                          emptyRecordMsg={"No more available"}
+                                          selectedValues={selectedOptions}
+                                          className="multiSelectContainer"
+                                        />
+                                    </form>
+                                </div>
+                            </div>
+                        ) : <div className="filter-bar">
+                                <form className="multiSelect">
+                                    <Multiselect
+                                      options={options}
+                                      name="particulars"
+                                      onSelect={onSelectOptions}
+                                      onRemove={onRemoveOptions}
+                                      displayValue="name"
+                                      closeIcon="cancel"
+                                      placeholder="Choose Languages"
+                                      emptyRecordMsg={"No more available"}
+                                      selectedValues={selectedOptions}
+                                      className="multiSelectContainer"
+                                    />
+                                </form>
+                            </div>}
                 </div>
             </div>
 
