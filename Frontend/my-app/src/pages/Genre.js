@@ -20,6 +20,7 @@ import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 import {request_headers, site_domain} from "../globals";
 import Cookies from "js-cookie";
 import {Quotes} from '../Quotes.js';
+import { Multiselect } from "multiselect-react-dropdown";
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
@@ -109,6 +110,31 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         }
     };
 
+    function showImage() {
+        if (article.Image.includes('logo')) {
+            return (
+                <img
+                    src={article.Image}
+                    onError={(e) => e.target.style.display = 'none'}
+                    alt=''
+                    className="rounded-top logo"
+                    onLoad={handleImageLoad}
+                />
+
+            );
+        } else {
+            return (
+                <img
+                    src={article.Image}
+                    onError={(e) => e.target.style.display = 'none'}
+                    alt=''
+                    className="img-fluid rounded-top"
+                    onLoad={handleImageLoad}
+                />
+            );
+        }
+    }
+
     return (
         <div className="article-card hide-btn-group">
             {/*<h1 className="article-card-header">*/}
@@ -126,13 +152,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     {article.Image ? (
                         <>
                             {isLoading && <div className="loading-animation"></div>}
-                            <img
-                                src={article.Image}
-                                onError={(e) => e.target.style.display = 'none'}
-                                alt=''
-                                className="img-fluid rounded-top"
-                                onLoad={handleImageLoad}
-                            />
+                            {showImage()}
                         </>
                     ) : (
                         <div className="no-image"></div>
@@ -180,7 +200,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                                 <button className='btn btn-outline-primary' onClick={handleShowSimilarModal}
                                         data-toggle="tooltip" data-placement="top" title="Similar">
                                     <i className="fas fa-search"></i>
-                                    <span className="text-custom-dark">10</span>
+                                    <span className="text-custom-dark ps-2">{related.length}</span>
                                 </button>
                                 <Modal show={showSimilarModal} onHide={handleCloseSimilarModal} backdrop={true}
                                        keyboard={true}>
@@ -341,6 +361,25 @@ const Home = () => {
     const [filterText, setFilterText] = useState('');
     const [sortOption, setSortOption] = useState("newest");
     const [disableSort, setDisableSort] = useState(false);
+
+    const options = [
+          { name: "Nederlands", id: 1 },
+          { name: "English", id: 2 }
+        ];
+
+        const [selectedOptions, setSelectedOptions] = useState([]);
+        const [removedOptions, setRemovedOptions] = useState([]);
+        const onSelectOptions = (selectedList, selectedItem) => {
+        setSelectedOptions([...selectedOptions, selectedItem]);
+        };
+        const onRemoveOptions = (selectedList, removedItem) => {
+        const updatedSelectedOptions = selectedOptions.filter(
+        (option) => option.id !== removedItem.id
+        );
+        setSelectedOptions(updatedSelectedOptions);
+        setRemovedOptions([...removedOptions, removedItem]);
+        };
+
     let usersession = useContext(userSession);
 
     useEffect(() => {
@@ -369,6 +408,7 @@ const Home = () => {
                     genre: genre,
                     headers: request_headers
                 }).then(response => {
+                    console.log(response.data)
                     const ClustersGenre = response.data['clusters'][1].map(cluster => {
                         return cluster.sort((a, b) => new Date(b[0][0].Published) - new Date(a[0][0].Published));
                     });
@@ -436,7 +476,25 @@ const Home = () => {
             const summary = article.Summary.toLowerCase();
             const url = extractBaseUrl(article.URL);
             const filter = filterText.toLowerCase();
-            return title.includes(filter) || summary.includes(filter) || url.includes(filter);
+
+            let articleLanguage = article.Language.toLowerCase().split('-')[0];
+
+            let languageFilter = true
+            if(selectedOptions.length > 0){
+                if(articleLanguage === "nl"){
+                articleLanguage = "Nederlands"
+            }
+            else if(articleLanguage === "en"){
+                articleLanguage = "English"
+            }
+            languageFilter = selectedOptions.some((language) =>
+              language.name.includes(articleLanguage)
+            );
+            console.log(articleLanguage)
+            console.log(languageFilter)
+            }
+
+            return ((title.includes(filter) || summary.includes(filter) || url.includes(filter)) && languageFilter);
         });
     });
 
@@ -540,7 +598,22 @@ const Home = () => {
                             </ul>
                         </div>
                     ) : null}
-
+                    <div>
+                        <form className="multiSelect">
+                            <Multiselect
+                              options={options}
+                              name="particulars"
+                              onSelect={onSelectOptions}
+                              onRemove={onRemoveOptions}
+                              displayValue="name"
+                              closeIcon="cancel"
+                              placeholder="Choose Languages"
+                              emptyRecordMsg={"No more available"}
+                              selectedValues={selectedOptions}
+                              className="multiSelectContainer"
+                            />
+                        </form>
+                        </div>
                 </div>
             </div>
 

@@ -164,6 +164,10 @@ a:hover {
     object-fit: cover;
 }
 
+.form-control{
+    height: 45px !important;
+}
+
 .form-control:focus {
     border-color: RGBA(0, 0, 0, 0.10);
     box-shadow: 0 0 0 0.2rem #fef7e5;
@@ -182,7 +186,10 @@ a:hover {
 
 .btn-outline-danger {
     border-color: #fa6f65;
-    color: #fa6f65
+    color: #fa6f65;
+    height: 45px;
+    position: relative;
+    top: -5px;
 }
 
 .btn-outline-danger:hover {

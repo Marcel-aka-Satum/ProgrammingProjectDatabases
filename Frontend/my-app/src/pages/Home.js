@@ -18,6 +18,7 @@ import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
 import {Quotes} from '../Quotes';
+import { Multiselect } from "multiselect-react-dropdown";
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
@@ -424,6 +425,7 @@ function GenreSection({
             const summary = article.Summary.toLowerCase();
             const url = extractBaseUrl(article.URL);
             const filter = filterText.toLowerCase();
+
             return title.includes(filter) || summary.includes(filter) || url.includes(filter);
         });
     })
@@ -465,7 +467,28 @@ const Home = () => {
 
         const [filterText, setFilterText] = useState("");
         const [sortOption, setSortOption] = useState("newest");
-        const [allNull, setAllNull] = useState(true)
+        const [languageClusters, setLanguageClusters] = useState([]);
+        const options = [
+          { name: "Nederlands", id: 1 },
+          { name: "English", id: 2 }
+        ];
+
+        const [selectedOptions, setSelectedOptions] = useState([]);
+        const [removedOptions, setRemovedOptions] = useState([]);
+        const onSelectOptions = (selectedList, selectedItem) => {
+        setSelectedOptions([...selectedOptions, selectedItem]);
+        //console.log("hello")
+        filterLanguages(selectedList)
+            //console.log(languageClusters)
+        };
+        const onRemoveOptions = (selectedList, removedItem) => {
+        const updatedSelectedOptions = selectedOptions.filter(
+        (option) => option.id !== removedItem.id
+        );
+        setSelectedOptions(updatedSelectedOptions);
+        setRemovedOptions([...removedOptions, removedItem]);
+        filterLanguages(updatedSelectedOptions)
+        };
 
         let usersession = useContext(userSession);
 
@@ -482,9 +505,11 @@ const Home = () => {
             fetchFavorites();
         }, []);
 
-        function sortNewest(topics) {
+        function sortNewestCluster(topics) {
             const sortedTopics = topics.map(clusters => {
+
                 const sortedClustersGenre = clusters[1].map(cluster => {
+                    //console.log(cluster['Cluster'])
                     return cluster['Cluster'].sort((a, b) => new Date(b.Published) - new Date(a.Published));
                 });
 
@@ -499,7 +524,43 @@ const Home = () => {
             })
         }
 
-        function sortPopular(topics) {
+        function sortNewestLanguage(topics) {
+            console.log(topics)
+            const sortedTopics = topics.map(clusters => {
+
+                const sortedClustersGenre = clusters[1].map(cluster => {
+                    return cluster.sort((a, b) => new Date(b.Published) - new Date(a.Published));
+                });
+
+                const sorted = sortedClustersGenre.sort((a, b) => {
+                    return new Date(b[0].Published) - new Date(a[0].Published);
+                });
+
+                return [clusters[0], sorted]
+            });
+            //console.log(sortedTopics)
+            return sortedTopics.sort((a, b) => {
+                console.log(a)
+                //console.log(a)
+                return new Date(b[1][0][0].Published) - new Date(a[1][0][0].Published)
+            })
+        }
+
+        function sortPopularCluster(topics) {
+            const sortedTopics = topics.map(clusters => {
+                const sortedClustersGenre = clusters[1].map(cluster => {
+                    return cluster['Cluster'].sort((a, b) => b.Clicked - a.Clicked);
+                });
+
+                const sorted = sortedClustersGenre.sort((a, b) => b[0].Clicked - a[0].Clicked);
+
+                return [clusters[0], sorted];
+            });
+
+            return sortedTopics.sort((a, b) => b[1][0][0].Clicked - a[1][0][0].Clicked);
+        }
+
+        function sortPopularLanguage(topics) {
             const sortedTopics = topics.map(clusters => {
                 const sortedClustersGenre = clusters[1].map(cluster => {
                     return cluster['Cluster'].sort((a, b) => b.Clicked - a.Clicked);
@@ -519,18 +580,22 @@ const Home = () => {
                 await axios.get(`${site_domain}/api/clusters`)
                     .then(response => {
                         if (sortOption === "newest") {
-                            const clusters = sortNewest(response.data.clusters[1])
+                            const clusters = sortNewestCluster(response.data.clusters[1])
                             setClusters(clusters)
-                            console.log(clusters)
+                            setLanguageClusters(clusters)
+                                //console.log(clusters)
                         }
                         else if (sortOption === "popular") {
-                            const clusters = sortPopular(response.data.clusters[1])
+                            const clusters = sortPopularCluster(response.data.clusters[1])
                             setClusters(clusters)
+                            setLanguageClusters(clusters)
                         }
                     });
             };
             fetchClusters();
         }, [sortOption]);
+
+        //console.log(languageClusters)
 
         const handleSortChange = (e) => {
             setSortOption(e.target.value);
@@ -543,7 +608,7 @@ const Home = () => {
         function checkAllNull(){
             let allNull = true
 
-                clusters.map((topicClusters) => {
+                languageClusters.map((topicClusters) => {
                     const genreSec = GenreSection({
                       genre: topicClusters[0],
                       articles: Array.isArray(topicClusters[1]) ? topicClusters[1] : [], // Ensure articles is an array
@@ -559,63 +624,118 @@ const Home = () => {
                         allNull = false
                     }
                 })
-            console.log(allNull)
             return allNull
         }
 
+        function filterLanguages(languages){
+            let filteredAll = clusters.map(clusters => {
+                //console.log(clusters)
+                const filteredClustersGenre = clusters[1].map(cluster => {
+                    return cluster.filter((article) => {
+                        let articleLanguage = article.Language.toLowerCase().split('-')[0];
+                        let languageFilter = true
+                        if(languages.length > 0){
+                            if(articleLanguage === "nl"){
+                            articleLanguage = "Nederlands"
+                        }
+                        else if(articleLanguage === "en"){
+                            articleLanguage = "English"
+                        }
+                        languageFilter = languages.some((language) =>
+                          language.name.includes(articleLanguage)
+                        );
+                        }
+                        return languageFilter
+                    })
+            })
+
+                const filteredArray = filteredClustersGenre.filter((subArray) => subArray.length > 0);
+            return [clusters[0], filteredArray]})
+
+            filteredAll = filteredAll.filter((subArray) => subArray[1].length > 0);
+
+                if (sortOption === "newest") {
+                    //console.log(filteredAll)
+                    const clusters = sortNewestLanguage(filteredAll)
+                    setLanguageClusters(clusters)
+                    //console.log(clusters)
+                }
+                else if (sortOption === "popular") {
+                    const clusters = sortPopularLanguage(filteredAll)
+                    setLanguageClusters(clusters)
+            }
+            }
+
+            //console.log(selectedOptions)
+
         return (
             <div className="container-lg pt-5">
-                <div className="form-group w-auto pb-3 d-flex justify-content-between">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="filter"
-                        name="filter"
-                        placeholder="Filter by title, summary or source"
-                        value={filterText}
-                        onChange={(e) => {
-                            setFilterText(e.target.value);
-                        }}
-                    />
-                    <button
-                        type="button"
-                        className={`btn w-auto ms-1 btn-outline-danger ${filterText === '' ? 'd-none' : ''}`}
-                        onClick={() => setFilterText('')}
-                    >
-                        X
-                    </button>
-                    <div className="filter-bar">
-
-
-                        <div className="dropdown ps-2">
-                            <button className="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {sortOption ? sortOption : 'newest'}
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li>
-                                    <button className="dropdown-item" type="button" value="newest"
-                                            onClick={handleSortChange}>
-                                        <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Newest
-                                    </button>
-                                </li>
-                                <li>
-                                    <a href="/genre/recommended">
-                                        <button className="dropdown-item" type="button" value="recommended">
-                                            <i className="fa fa-star me-2" style={{color: "#FFC300FF"}}></i>Recommended
+                <div>
+                    <div className="form-group w-auto pb-3 d-flex justify-content-between">
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="filter"
+                            name="filter"
+                            placeholder="Filter by title, summary or source"
+                            value={filterText}
+                            onChange={(e) => {
+                                setFilterText(e.target.value);
+                            }}
+                        />
+                        <button
+                            type="button"
+                            className={`btn w-auto ms-1 btn-outline-danger ${filterText === '' ? 'd-none' : ''}`}
+                            onClick={() => setFilterText('')}
+                        >
+                            X
+                        </button>
+                        <div className="filter-bar">
+                            <div className="dropdown ps-2">
+                                <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {sortOption ? sortOption : 'newest'}
+                                </button>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <button className="dropdown-item" type="button" value="newest"
+                                                onClick={handleSortChange}>
+                                            <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> Newest
                                         </button>
-                                    </a>
-                                </li>
-                                <li>
-                                    <button className="dropdown-item" type="button" value="popular"
-                                            onClick={handleSortChange}>
-                                        <i className="fa fa-heart me-2" style={{color: "#c01c28"}}> </i> Popular
-                                    </button>
-                                </li>
-                            </ul>
+                                    </li>
+                                    <li>
+                                        <a href="/genre/recommended">
+                                            <button className="dropdown-item" type="button" value="recommended">
+                                                <i className="fa fa-star me-2" style={{color: "#FFC300FF"}}></i>Recommended
+                                            </button>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button className="dropdown-item" type="button" value="popular"
+                                                onClick={handleSortChange}>
+                                            <i className="fa fa-heart me-2" style={{color: "#c01c28"}}> </i> Popular
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-
+                        <div>
+                            <form className="multiSelect">
+                                <Multiselect
+                                  options={options}
+                                  name="particulars"
+                                  onSelect={onSelectOptions}
+                                  onRemove={onRemoveOptions}
+                                  displayValue="name"
+                                  closeIcon="cancel"
+                                  placeholder="Choose Languages"
+                                  emptyRecordMsg={"No more available"}
+                                  selectedValues={selectedOptions}
+                                  className="multiSelectContainer"
+                                />
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div className="row">
@@ -627,12 +747,12 @@ const Home = () => {
                         <Quotes/>
                     </>
                 ) : <>
-                    {clusters.map((topicClusters) => (
+                    {languageClusters.map((topicClusters) => (
                             <GenreSection key={topicClusters[0]} genre={topicClusters[0]} articles={topicClusters[1]}
                                           filterText={filterText}
                                           onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
                                           uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
-                                          usersession={usersession}
+                                          usersession={usersession} languages={selectedOptions}
                             />
                     ))}
                     </>

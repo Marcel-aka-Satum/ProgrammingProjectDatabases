@@ -232,10 +232,11 @@ def get_all_clusters_genre(Topic: str):
                 'Summary', Summary,
                 'Published', Published,
                 'Image', Image,
-                'Clicked', Clicked
+                'Clicked', Clicked,
+                'Language', Language
             )) AS Cluster
             FROM (
-                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked,
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked, n.Language,
                 CASE WHEN r.Cluster_ID = -1 THEN
                     ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
                 END AS rn
