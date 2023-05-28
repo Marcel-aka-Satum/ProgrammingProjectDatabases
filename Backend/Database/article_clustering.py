@@ -290,5 +290,5 @@ class NewsClusterer:
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=False, translate=False)
+    news_clusterer.run(visualize=True, translate=False)
 

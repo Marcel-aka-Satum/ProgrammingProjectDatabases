@@ -407,6 +407,7 @@ def getRecommendedArticles():
     news_clusterer = NewsClusterer()
     article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
+    print("Inside the API:" + str(articles[0]))
     return jsonify({'articles': articles})
 
 
@@ -630,7 +631,7 @@ def start_scraper():
     while True:
         try:
             data = db.getSettings()[1]
-            scraped_time = int(600)
+            scraped_time = int(1000)
             scraper()
             time.sleep(scraped_time)
         except:

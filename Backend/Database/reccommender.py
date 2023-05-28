@@ -65,6 +65,7 @@ class ArticleRecommender:
             if success:
                 recommended_articles.append(article[1])
 
+        print("Inside the script:" + str(recommended_articles[0]))
         return recommended_articles
 
 
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     news_clusterer = article_clustering.NewsClusterer()
 
     article_recommender = ArticleRecommender(db_connection, news_clusterer)
-    cookie = "d02e556c-cd84-4162-9c32-b05ef85f45b2"
+    cookie = "7d809cc5-0c7b-47a7-b5c0-ea179f606082"
     recommendations = article_recommender.compute_recommendations(cookie)
     recommended_articles = article_recommender.getRecommendedArticles(cookie)
 
