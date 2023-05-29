@@ -71,8 +71,10 @@ class NewsClusterer:
             if translate:
                 try:
                     translation = self.translator_model.translate(text, target_lang='en')
+                    self.translations_df.to_csv('translations.csv', index=False) # Save translations to csv after processing all texts
                 except:
                     translation = text
+
                 new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})
                 self.translations_df = self.translations_df.append(new_translation, ignore_index=True)
             else:
@@ -145,7 +147,6 @@ class NewsClusterer:
         df['preprocessed'] = df['Title']+ " " + df['Summary']
         df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=translate)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
-        self.translations_df.to_csv('translations.csv', index=False) # Save translations to csv after processing all texts
         return X_tfidf
 
 
@@ -257,5 +258,5 @@ class NewsClusterer:
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=False, translate=False)
+    news_clusterer.run(visualize=False, translate=True)
 
