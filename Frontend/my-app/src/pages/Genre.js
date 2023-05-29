@@ -135,6 +135,19 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         }
     }
 
+    const stripTags = (html) => {
+        // Create a temporary element
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = html;
+
+        // Get the plain text without HTML tags
+        const plainText = tempElement.textContent || tempElement.innerText;
+
+        return plainText;
+    };
+
+    const plainText = stripTags(text[0]);
+
     return (
         <div className="article-card hide-btn-group">
             {/*<h1 className="article-card-header">*/}
@@ -183,8 +196,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
-                <div className="article-card-content"
-                     dangerouslySetInnerHTML={{__html: text[0]}}/>
+                <div className="article-card-content" dangerouslySetInnerHTML={{__html: plainText}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
                     <div className="container mt-3 btn-group">
@@ -394,13 +406,12 @@ const Home = () => {
                     })
                 });
                 const data = await response.json();
-                console.log(data)
                 setDisableSort(true);
                 let listOfArrays = data.articles.map(article => [[article]]);
                 setClustersGenre(listOfArrays);
                 setClustersGenre(listOfArrays);
 
-                console.log(listOfArrays)
+                console.log('data: ', listOfArrays)
             };
 
             fetchArticles();
@@ -479,8 +490,9 @@ const Home = () => {
             const url = extractBaseUrl(article.URL);
             const filter = filterText.toLowerCase();
 
-            let articleLanguage = article.Language.toLowerCase().split('-')[0];
-
+            console.log('[before]', article)
+            let articleLanguage = article.Lang.toLowerCase().split('-')[0];
+            console.log('[after]', articleLanguage)
             let languageFilter = true
             if(selectedOptions.length > 0){
                 if(articleLanguage === "nl"){

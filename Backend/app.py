@@ -24,7 +24,7 @@ CORS(app, origins=['http://localhost:3000'], resources={r"/*": {"origins": "*"}}
 app.config['CORS_HEADERS'] = 'Content-Type'
 db = DBConnection()
 db.connect()
-drop_db = True
+drop_db = False
 if drop_db:
     db.redefine()
     db.populate()
@@ -407,7 +407,14 @@ def getRecommendedArticles():
     news_clusterer = NewsClusterer()
     article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
-    print("Inside the API:" + str(articles[0]))
+
+    # print the first article, its a dict
+    print("First article: ", articles[0])
+
+    if articles:
+        print(f"Inside the API: {len(articles[0])}")
+    else:
+        print("No articles found")
     return jsonify({'articles': articles})
 
 
@@ -469,13 +476,16 @@ def topics():
     topics_list = db.getTopics()[1]
     return jsonify({'topics': topics_list})
 
+
 ################# CLUSTERS #################
 
 @app.route('/api/clusters', methods=['GET'])
 @cross_origin()
 def get_all_clusters():
     all_clusters = db.getAllClusters()[1]
+    print('all_clusters', len(all_clusters))
     return jsonify({'clusters': all_clusters})
+
 
 @app.route('/api/clustersGenre', methods=['POST'])
 @cross_origin()
@@ -484,9 +494,6 @@ def get_all_clusters_genre():
     genre = data['genre']
     all_clusters = db.getAllClustersGenre(genre)[1]
     return jsonify({'clusters': all_clusters})
-
-
-
 
 
 ################# OTHERS #################
@@ -657,8 +664,10 @@ def start_clustering():
             time.sleep(5)
             pass
 
+
 clustering_thread = threading.Thread(target=start_clustering)
 clustering_thread.start()
+
 
 def translate():
     news_clusterer = NewsClusterer()
@@ -672,6 +681,7 @@ def translate():
             print("Translation failed, trying again...")
             time.sleep(5)
             pass
+
 
 translate_thread = threading.Thread(target=translate)
 translate_thread.start()

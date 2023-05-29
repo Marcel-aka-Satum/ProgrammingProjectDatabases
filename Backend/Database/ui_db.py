@@ -236,7 +236,7 @@ class DBConnection:
             "RSS_URL": data[6],
             "Topic": data[5],
             "Clicked": data[7],
-            "Language": data[8]
+            "Lang": data[8]
         }
 
     @func.is_connected
@@ -422,13 +422,13 @@ class DBConnection:
             return False, f"An unexpected error occurred: {e}"
 
     @func.is_connected
-    def addNewsArticle(self, url, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str, language: str) -> tuple:
+    def addNewsArticle(self, url, title: str, summary: str, publisher: str, image: str, rss_url: str, topic: str, lang: str) -> tuple:
         """
         @brief: add a NewsArticle to the database.
         """
         try:
             cursor = self.connection.cursor()
-            cursor.execute(*query_db.insert_newsarticle([url, title, summary, publisher, image, rss_url, topic, language]))
+            cursor.execute(*query_db.insert_newsarticle([url, title, summary, publisher, image, rss_url, topic, lang]))
             return True, "success"
         except Exception as e:
             return False, str(e)

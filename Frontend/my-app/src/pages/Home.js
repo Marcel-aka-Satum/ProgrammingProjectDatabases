@@ -18,7 +18,7 @@ import {userSession} from '../App'
 import {site_domain, request_headers} from "../globals";
 import Cookies from 'js-cookie';
 import {Quotes} from '../Quotes';
-import { Multiselect } from "multiselect-react-dropdown";
+import {Multiselect} from "multiselect-react-dropdown";
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
@@ -120,6 +120,19 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
         }
     }
 
+    const stripTags = (html) => {
+        // Create a temporary element
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = html;
+
+        // Get the plain text without HTML tags
+        const plainText = tempElement.textContent || tempElement.innerText;
+
+        return plainText;
+    };
+
+    const plainText = stripTags(text[0]);
+
     return (
         <div className="article-card hide-btn-group">
             {/*<h1 className="article-card-header">*/}
@@ -164,7 +177,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
-                <div className="article-card-content" dangerouslySetInnerHTML={{__html: text[0]}}/>
+                <div className="article-card-content" dangerouslySetInnerHTML={{__html: plainText}}/>
 
                 <div className="article-card-footer pb-3 mt-3">
                     <div className="container mt-3 btn-group">
@@ -384,7 +397,8 @@ function GenreSection({
             <ul className="articles-row">
                 {filteredArray.slice(0, 3).map((articles) => (
                     <li className="p-3">
-                        <ArticleCard key={articles[0].URL} article={articles[0]} onFilterTextChange={onFilterTextChange} logged={logged}
+                        <ArticleCard key={articles[0].URL} article={articles[0]} onFilterTextChange={onFilterTextChange}
+                                     logged={logged}
                                      uid={uid} favorites={favorites} setFavorites={setFavorites}
                                      related={articles.length > 0 ? (articles.slice(1)) : []}/>
                     </li>
@@ -401,28 +415,28 @@ const Home = () => {
         const [sortOption, setSortOption] = useState("newest");
         const [languageClusters, setLanguageClusters] = useState([]);
         const options = [
-          { name: "Nederlands", id: 1 },
-          { name: "English", id: 2 },
-          { name: "Español", id: 3 },
-          { name: "Deutsch", id: 4 },
-          { name: "Français", id: 5 }
+            {name: "Nederlands", id: 1},
+            {name: "English", id: 2},
+            {name: "Español", id: 3},
+            {name: "Deutsch", id: 4},
+            {name: "Français", id: 5}
         ];
 
         const [selectedOptions, setSelectedOptions] = useState([]);
         const [removedOptions, setRemovedOptions] = useState([]);
         const onSelectOptions = (selectedList, selectedItem) => {
-        setSelectedOptions([...selectedOptions, selectedItem]);
-        //console.log("hello")
-        filterLanguages(selectedList)
+            setSelectedOptions([...selectedOptions, selectedItem]);
+            //console.log("hello")
+            filterLanguages(selectedList)
             //console.log(languageClusters)
         };
         const onRemoveOptions = (selectedList, removedItem) => {
-        const updatedSelectedOptions = selectedOptions.filter(
-        (option) => option.id !== removedItem.id
-        );
-        setSelectedOptions(updatedSelectedOptions);
-        setRemovedOptions([...removedOptions, removedItem]);
-        filterLanguages(updatedSelectedOptions)
+            const updatedSelectedOptions = selectedOptions.filter(
+                (option) => option.id !== removedItem.id
+            );
+            setSelectedOptions(updatedSelectedOptions);
+            setRemovedOptions([...removedOptions, removedItem]);
+            filterLanguages(updatedSelectedOptions)
         };
 
         let usersession = useContext(userSession);
@@ -518,9 +532,7 @@ const Home = () => {
                             const clusters = sortNewestCluster(response.data.clusters[1])
                             setClusters(clusters)
                             setLanguageClusters(clusters)
-                                //console.log(clusters)
-                        }
-                        else if (sortOption === "popular") {
+                        } else if (sortOption === "popular") {
                             const clusters = sortPopularCluster(response.data.clusters[1])
                             setClusters(clusters)
                             setLanguageClusters(clusters)
@@ -540,77 +552,73 @@ const Home = () => {
             setFilterText(newText);
         };
 
-        function checkAllNull(){
+        function checkAllNull() {
             let allNull = true
 
-                languageClusters.map((topicClusters) => {
-                    const genreSec = GenreSection({
-                      genre: topicClusters[0],
-                      articles: Array.isArray(topicClusters[1]) ? topicClusters[1] : [], // Ensure articles is an array
-                      filterText: filterText,
-                      onFilterTextChange: handleFilterTextChange,
-                      logged: usersession.user.isLogged,
-                      uid: usersession.user.uid,
-                      favorites: favorites,
-                      setFavorites: setFavorites,
-                      usersession: usersession
-                    })
-                    if (genreSec !== null){
-                        allNull = false
-                    }
+            languageClusters.map((topicClusters) => {
+                const genreSec = GenreSection({
+                    genre: topicClusters[0],
+                    articles: Array.isArray(topicClusters[1]) ? topicClusters[1] : [], // Ensure articles is an array
+                    filterText: filterText,
+                    onFilterTextChange: handleFilterTextChange,
+                    logged: usersession.user.isLogged,
+                    uid: usersession.user.uid,
+                    favorites: favorites,
+                    setFavorites: setFavorites,
+                    usersession: usersession
                 })
+                if (genreSec !== null) {
+                    allNull = false
+                }
+            })
             return allNull
         }
 
-        function filterLanguages(languages){
+        function filterLanguages(languages) {
             let filteredAll = clusters.map(clusters => {
                 //console.log(clusters)
                 const filteredClustersGenre = clusters[1].map(cluster => {
                     return cluster.filter((article) => {
-                        let articleLanguage = article.Language.toLowerCase().split('-')[0];
+                        let articleLanguage = article.Lang.toLowerCase().split('-')[0];
                         let languageFilter = true
-                        if(languages.length > 0){
-                            if(articleLanguage === "nl"){
-                            articleLanguage = "Nederlands"
-                        }
-                        else if(articleLanguage === "en"){
-                            articleLanguage = "English"
-                        }
-                        else if(articleLanguage === "es"){
-                            articleLanguage = "Español"
+                        if (languages.length > 0) {
+                            if (articleLanguage === "nl") {
+                                articleLanguage = "Nederlands"
+                            } else if (articleLanguage === "en") {
+                                articleLanguage = "English"
+                            } else if (articleLanguage === "es") {
+                                articleLanguage = "Español"
+                            } else if (articleLanguage === "de") {
+                                articleLanguage = "Deutsch"
+                            } else if (articleLanguage === "fr") {
+                                articleLanguage = "Français"
                             }
-                        else if(articleLanguage === "de"){
-                            articleLanguage = "Deutsch"
-                            }
-                        else if(articleLanguage === "fr"){
-                            articleLanguage = "Français"
-                            }
-                        languageFilter = languages.some((language) =>
-                          language.name.includes(articleLanguage)
-                        );
+                            languageFilter = languages.some((language) =>
+                                language.name.includes(articleLanguage)
+                            );
                         }
                         return languageFilter
                     })
-            })
+                })
 
                 const filteredArray = filteredClustersGenre.filter((subArray) => subArray.length > 0);
-            return [clusters[0], filteredArray]})
+                return [clusters[0], filteredArray]
+            })
 
             filteredAll = filteredAll.filter((subArray) => subArray[1].length > 0);
 
-                if (sortOption === "newest") {
-                    //console.log(filteredAll)
-                    const clusters = sortNewestLanguage(filteredAll)
-                    setLanguageClusters(clusters)
-                    //console.log(clusters)
-                }
-                else if (sortOption === "popular") {
-                    const clusters = sortPopularLanguage(filteredAll)
-                    setLanguageClusters(clusters)
+            if (sortOption === "newest") {
+                //console.log(filteredAll)
+                const clusters = sortNewestLanguage(filteredAll)
+                setLanguageClusters(clusters)
+                //console.log(clusters)
+            } else if (sortOption === "popular") {
+                const clusters = sortPopularLanguage(filteredAll)
+                setLanguageClusters(clusters)
             }
-            }
+        }
 
-            //console.log(selectedOptions)
+        //console.log(selectedOptions)
 
         return (
             <div className="container-lg pt-5">
@@ -664,42 +672,43 @@ const Home = () => {
                                 </ul>
                             </div>
                             <div>
-                            <form className="multiSelect">
-                                <Multiselect
-                                  options={options}
-                                  name="particulars"
-                                  onSelect={onSelectOptions}
-                                  onRemove={onRemoveOptions}
-                                  displayValue="name"
-                                  closeIcon="cancel"
-                                  placeholder="Choose Languages"
-                                  emptyRecordMsg={"No more available"}
-                                  selectedValues={selectedOptions}
-                                  className="multiSelectContainer"
-                                />
-                            </form>
-                        </div>
+                                <form className="multiSelect">
+                                    <Multiselect
+                                        options={options}
+                                        name="particulars"
+                                        onSelect={onSelectOptions}
+                                        onRemove={onRemoveOptions}
+                                        displayValue="name"
+                                        closeIcon="cancel"
+                                        placeholder="Choose Languages"
+                                        emptyRecordMsg={"No more available"}
+                                        selectedValues={selectedOptions}
+                                        className="multiSelectContainer"
+                                    />
+                                </form>
+                            </div>
                         </div>
 
                     </div>
                 </div>
                 <div className="row">
-                    { checkAllNull() ? (
+                    {checkAllNull() ? (
                         <>
-                        <h3 style={{ display: 'flex', justifyContent: 'center', marginTop: "20px" }}>
-                            Sorry, we don't have what you're looking for... Here is an inspiring quote about news instead!
-                        </h3>
-                        <Quotes/>
-                    </>
-                ) : <>
-                    {languageClusters.map((topicClusters) => (
+                            <h3 style={{display: 'flex', justifyContent: 'center', marginTop: "20px"}}>
+                                Sorry, we don't have what you're looking for... Here is an inspiring quote about news
+                                instead!
+                            </h3>
+                            <Quotes/>
+                        </>
+                    ) : <>
+                        {languageClusters.map((topicClusters) => (
                             <GenreSection key={topicClusters[0]} genre={topicClusters[0]} articles={topicClusters[1]}
                                           filterText={filterText}
                                           onFilterTextChange={handleFilterTextChange} logged={usersession.user.isLogged}
                                           uid={usersession.user.uid} favorites={favorites} setFavorites={setFavorites}
                                           usersession={usersession} languages={selectedOptions}
                             />
-                    ))}
+                        ))}
                     </>
                     }
                 </div>

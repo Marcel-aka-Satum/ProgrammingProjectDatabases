@@ -143,6 +143,7 @@ def get_cluster(Cluster_ID: int) -> str:
             WHERE Cluster_ID = {Cluster_ID};
             """
 
+
 def get_all_clusters():
     """
         SELECT Topic, json_agg(json_build_object(
@@ -183,10 +184,10 @@ def get_all_clusters():
                 'Published', Published,
                 'Image', Image,
                 'Clicked', Clicked,
-                'Language', Language
+                'Lang', Lang
             )) AS Cluster
             FROM (
-                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked, n.Language,
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked, n.Lang,
                 CASE WHEN r.Cluster_ID = -1 THEN
                     ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
                 END AS rn
@@ -233,10 +234,10 @@ def get_all_clusters_genre(Topic: str):
                 'Published', Published,
                 'Image', Image,
                 'Clicked', Clicked,
-                'Language', Language
+                'Lang', Lang
             )) AS Cluster
             FROM (
-                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked, n.Language,
+                SELECT r.Cluster_ID, n.URL, n.Title, n.Summary, n.Published, n.Image, n.Topic, n.Clicked, n.Lang,
                 CASE WHEN r.Cluster_ID = -1 THEN
                     ROW_NUMBER() OVER (PARTITION BY r.Cluster_ID ORDER BY n.Published DESC)
                 END AS rn
@@ -247,7 +248,6 @@ def get_all_clusters_genre(Topic: str):
             GROUP BY subquery.Cluster_ID, subquery.Topic, subquery.rn
 
     """
-
 
 
 #################### TABLE GETTERS ####################
@@ -299,12 +299,12 @@ def get_hasclicked(cookie: str) -> str:
             WHERE c.cookie = '{cookie}';
             """
 
+
 def get_all_hasclicked() -> str:
     """
         SELECT * FROM newsaggregator.hasclicked
     """
     return "SELECT * FROM newsaggregator.hasclicked"
-
 
 
 def get_favored() -> str:
@@ -335,10 +335,10 @@ def insert_rssfeed(values: list) -> str:
 
 def insert_newsarticle(values: list) -> str:
     """
-        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic, Language)
+        INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic, Lang)
     """
     query = f"""
-            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic, Language)
+            INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic, Lang)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s);
             """
     return query, (values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7])
@@ -397,6 +397,7 @@ def insert_hasclickedcookie(values: list) -> str:
             WHERE c.cookie = '{values[1]}';
             """
 
+
 def addCountArticle(values: list) -> str:
     """
         INSERT INTO newsaggregator.newsarticles (URL, Title, Summary, Published, Image, RSS_URL, Topic, Count)
@@ -407,6 +408,7 @@ def addCountArticle(values: list) -> str:
             SET Clicked = Clicked + 1
             WHERE URL = '{values[0]}';
             """
+
 
 def insert_favored(values: list) -> str:
     """
@@ -429,6 +431,7 @@ def insert_favorite(values: list) -> str:
                 '{values[1]}'
             );
             """
+
 
 def insert_cluster(URL: str, cluster: int) -> str:
     """

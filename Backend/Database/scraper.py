@@ -43,13 +43,13 @@ class BaseFeedScraper:
         except:
             return 'None'
 
-    def get_summary(self, entry, language, rss_url):
+    def get_summary(self, entry, lang, rss_url):
         return entry['summary']
 
-    def scrape_entry(self, entry, rss_url, topic, Image, language):
+    def scrape_entry(self, entry, rss_url, topic, Image, lang):
         link = entry['link']
         title = entry['title']
-        summary = self.get_summary(entry, language, rss_url)
+        summary = self.get_summary(entry, lang, rss_url)
         publisher = entry['published']
         image = self.get_image(entry)
 
@@ -60,7 +60,7 @@ class BaseFeedScraper:
             # image = self.get_image_none(link)
             image = Image
 
-        status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic, language)
+        status, message = self.DB.addNewsArticle(link, title, summary, publisher, image, rss_url, topic, lang)
         if not message[0]:
             if "duplicate key value" not in message[1]:
                 print('error:', message[1], 'link:', rss_url)
@@ -76,13 +76,13 @@ class BaseFeedScraper:
             elif 'logo' in feed.feed:
                 Image = feed.feed.logo
 
-            language = ''
+            lang = ''
             if("elmundo.es" in rss_url):
-                language = "es"
+                lang = "es"
             else:
-                language = feed.feed.language
+                lang = feed.feed.language
             for entry in feed.entries:
-                scraper.scrape_entry(entry, rss_url, topic, Image, language)
+                scraper.scrape_entry(entry, rss_url, topic, Image, lang)
         except requests.exceptions.Timeout:
             print("Timed out while downloading RSS feed: ", rss_url)
             return
