@@ -25,8 +25,6 @@ try:
 except ImportError:
     import ui_db
 
-from easynmt import EasyNMT
-
 import pickle
 
 class NewsClusterer:
@@ -34,7 +32,7 @@ class NewsClusterer:
     A class to cluster news articles based on their titles and summaries.
     """
 
-    def __init__(self, translate:bool, visualize:bool):
+    def __init__(self, translate:bool, visualize:bool, model):
         """
         Initializes the NewsClusterer with required models and transformers.
         """
@@ -45,7 +43,7 @@ class NewsClusterer:
         self.translate = translate
         self.visualize = visualize
         if translate:
-            self.translator_model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
+            self.translator_model = model
         try:
             self.translations_df = pd.read_csv('translations.csv')
         except FileNotFoundError:

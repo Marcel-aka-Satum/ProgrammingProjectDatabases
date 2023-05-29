@@ -108,7 +108,7 @@ def scraper():
     print('scraping done')
 
     print("Calculating the new tf-idf matrix for new articles")
-    clusterer = NewsClusterer(translate=False, visualize=False)
+    clusterer = NewsClusterer(translate=False, visualize=False, model=None)
     all_articles = clusterer.load_data()
     X_tfidf = clusterer.preprocess_and_vectorize(all_articles)
     with open("tfidf_matrix.pkl", "wb") as f:

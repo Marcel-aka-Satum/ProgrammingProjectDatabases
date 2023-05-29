@@ -17,7 +17,8 @@ import pickle
 class ArticleRecommender:
     def __init__(self, db_connection: ui_db.DBConnection, 
                  news_clusterer: article_clustering.NewsClusterer(translate=False, 
-                                                                  visualize=False)):
+                                                                  visualize=False,
+                                                                  model=None)):
         self.db_connection = db_connection
         self.news_clusterer = news_clusterer
 

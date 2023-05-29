@@ -14,6 +14,7 @@ from Database.scraper import scraper
 from Database.ui_db import DBConnection
 from Database.article_clustering import NewsClusterer
 from Database.reccommender import ArticleRecommender
+from easynmt import EasyNMT
 from Helpers import helpers as h
 from Helpers.ErrorDetectionRoutes import *
 
@@ -404,7 +405,7 @@ def getRecommendedArticles():
 
     if not cookie:
         return jsonify({'articles': []})
-    news_clusterer = NewsClusterer(translate=False, visualize=False)
+    news_clusterer = NewsClusterer(translate=False, visualize=False, model=None)
     article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
 
@@ -653,7 +654,7 @@ scraper_thread.start()
 def start_clustering():
     while True:
         try:
-            news_clusterer = NewsClusterer(translate=False, visualize=False)
+            news_clusterer = NewsClusterer(translate=False, visualize=False, model=None)
             print("Starting clustering")
             news_clusterer.run()
             print("Clustering done")
@@ -669,9 +670,10 @@ clustering_thread.start()
 
 
 def translate():
+    translation_model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
     while True:
         try:
-            news_clusterer = NewsClusterer(translate=True, visualize=False)
+            news_clusterer = NewsClusterer(translate=True, visualize=False, model=translation_model)
             print("Starting the translation process")
             articles = news_clusterer.load_data()
             news_clusterer.preprocess_and_vectorize(articles)
