@@ -14,6 +14,19 @@ function ArticleCard({article, removeFavorite, filterText}) {
         setIsLoading(false);
     };
 
+     const stripTags = (html) => {
+        // Create a temporary element
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = html;
+
+        // Get the plain text without HTML tags
+        const plainText = tempElement.textContent || tempElement.innerText;
+
+        return plainText;
+    };
+
+    const plainText = stripTags(text[0]);
+
     return (
         <div className="article-card hide-btn-group">
             <div className='boxi'>
@@ -50,7 +63,7 @@ function ArticleCard({article, removeFavorite, filterText}) {
                     <h3 className="card-title pt-2 pb-1">{formatTitle(article.Title)}</h3>
                 </a>
 
-                <div className="article-card-content" dangerouslySetInnerHTML={{__html: text[0]}}/>
+                <div className="article-card-content" dangerouslySetInnerHTML={{__html: plainText}}/>
 
                 <i className={'float-end pb-2'}>{formatDate(article.Published)}</i>
                 <button className="btn btn-outline-danger w-100" data-toggle="tooltip"
