@@ -404,7 +404,7 @@ def getRecommendedArticles():
 
     if not cookie:
         return jsonify({'articles': []})
-    news_clusterer = NewsClusterer()
+    news_clusterer = NewsClusterer(translate=False, visualize=False)
     article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
 
@@ -651,11 +651,11 @@ scraper_thread.start()
 
 
 def start_clustering():
-    news_clusterer = NewsClusterer()
     while True:
         try:
+            news_clusterer = NewsClusterer(translate=False, visualize=False)
             print("Starting clustering")
-            news_clusterer.run(visualize=False, translate=False)
+            news_clusterer.run()
             print("Clustering done")
             time.sleep(600)
         except:
@@ -669,12 +669,12 @@ clustering_thread.start()
 
 
 def translate():
-    news_clusterer = NewsClusterer()
     while True:
         try:
+            news_clusterer = NewsClusterer(translate=True, visualize=False)
             print("Starting the translation process")
             articles = news_clusterer.load_data()
-            news_clusterer.preprocess_and_vectorize(articles, translate=True)
+            news_clusterer.preprocess_and_vectorize(articles)
             print("Translation done")
         except:
             print("Translation failed, trying again...")

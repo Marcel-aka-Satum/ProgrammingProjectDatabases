@@ -34,7 +34,7 @@ class NewsClusterer:
     A class to cluster news articles based on their titles and summaries.
     """
 
-    def __init__(self):
+    def __init__(self, translate:bool, visualize:bool):
         """
         Initializes the NewsClusterer with required models and transformers.
         """
@@ -42,7 +42,10 @@ class NewsClusterer:
         self.dbscan = DBSCAN(eps=0.2, min_samples=2, metric='cosine')
         self.tsne_3d = TSNE(n_components=3, random_state=42)
         self.svd = TruncatedSVD(n_components=100)
-        self.translator_model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
+        self.translate = translate
+        self.visualize = visualize
+        if translate:
+            self.translator_model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
         try:
             self.translations_df = pd.read_csv('translations.csv')
         except FileNotFoundError:
@@ -62,13 +65,13 @@ class NewsClusterer:
         return clean_text
     
 
-    def translate_text(self, text, translate:bool):
+    def translate_text(self, text):
         existing_translation = self.translations_df.loc[self.translations_df['Original Text'] == text, 'Translated Text']
 
         if not existing_translation.empty:
             translation = existing_translation.iloc[0]
         else:
-            if translate:
+            if self.translate:
                 try:
                     translation = self.translator_model.translate(text, target_lang='en')
                     self.translations_df.to_csv('translations.csv', index=False) # Save translations to csv after processing all texts
@@ -85,7 +88,7 @@ class NewsClusterer:
     def remove_non_alphanumeric(text):
         return ''.join(char for char in text if char.isalnum() or char.isspace())
 
-    def preprocess_text(self, text, translate:bool):
+    def preprocess_text(self, text):
         """
         Preprocesses the input text by removing HTML tags, translating all articles into english, removing stop words 
         and lemmatizing the tokens.
@@ -95,7 +98,7 @@ class NewsClusterer:
         """
         text = NewsClusterer.remove_html_tags(text)
         text = NewsClusterer.remove_non_alphanumeric(text)
-        text = NewsClusterer.translate_text(self, text, translate=translate)
+        text = NewsClusterer.translate_text(self, text)
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
         tokens = word_tokenize(text)
@@ -143,9 +146,9 @@ class NewsClusterer:
         return df
 
     
-    def preprocess_and_vectorize(self, df, translate:bool):
+    def preprocess_and_vectorize(self, df):
         df['preprocessed'] = df['Title']+ " " + df['Summary']
-        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=translate)
+        df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
         return X_tfidf
 
@@ -239,24 +242,24 @@ class NewsClusterer:
 
         fig_3d.show()
 
-    def run(self, visualize:bool, translate:bool):
+    def run(self):
         """
         Executes the full news clustering pipeline.
 
         :param db_connection: A connected instance of the database connection class.
         """
         df = self.load_data()
-        X_tfidf = self.preprocess_and_vectorize(df, translate=translate)
+        X_tfidf = self.preprocess_and_vectorize(df)
         X_reduced = self.apply_svd(X_tfidf)
         clusters = self.cluster_data(X_reduced)
         df['cluster'] = clusters
         url_cluster_df = self.create_url_cluster_dataframe(df, clusters)
         self.push_clusters_to_database(url_cluster_df)
-        if visualize:
+        if self.visualize:
             self.visualize_clusters(X_reduced, clusters, df)
 
 
 if __name__ == "__main__":
-    news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=False, translate=True)
+    news_clusterer = NewsClusterer(translate=False, visualize=False)
+    news_clusterer.run()
 

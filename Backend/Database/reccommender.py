@@ -15,7 +15,9 @@ import pickle
 
 
 class ArticleRecommender:
-    def __init__(self, db_connection: ui_db.DBConnection, news_clusterer: article_clustering.NewsClusterer):
+    def __init__(self, db_connection: ui_db.DBConnection, 
+                 news_clusterer: article_clustering.NewsClusterer(translate=False, 
+                                                                  visualize=False)):
         self.db_connection = db_connection
         self.news_clusterer = news_clusterer
 
@@ -34,7 +36,7 @@ class ArticleRecommender:
         else:
             print("Calculating tfidf matrix for the reccommender...")
             # Get the tf_idf matrix for all articles
-            X_tfidf = self.news_clusterer.preprocess_and_vectorize(all_articles, translate=False)
+            X_tfidf = self.news_clusterer.preprocess_and_vectorize(all_articles)
 
         # Calculate cosine similarities between all articles
         similarities = cosine_similarity(X_tfidf)
@@ -44,9 +46,17 @@ class ArticleRecommender:
 
         # Iterate over read articles and sum the similarities
         for url in read_article_urls:
-            article_index = all_articles[all_articles["URL"] == url].index[0]
+            all_articles_indices = all_articles[all_articles["URL"] == url].index
+            if len(all_articles_indices) == 0:
+                print(f"No articles found with URL {url}")
+                continue
+            article_index = all_articles_indices[0]
+            if article_index >= len(similarities):
+                print(f"Article index {article_index} out of bounds for similarities array with size {len(similarities)}. Skipping this article.")
+                continue
             for i, similarity in enumerate(similarities[article_index]):
                 similarity_sum[all_articles.iloc[i]["URL"]] += similarity
+
 
         # Remove articles the user has already read
         for url in read_article_urls:
@@ -76,7 +86,7 @@ if __name__ == "__main__":
     db_connection = ui_db.DBConnection()
     db_connection.connect()
 
-    news_clusterer = article_clustering.NewsClusterer()
+    news_clusterer = article_clustering.NewsClusterer(translate=False, visualize=False)
 
     article_recommender = ArticleRecommender(db_connection, news_clusterer)
     cookie = "7d809cc5-0c7b-47a7-b5c0-ea179f606082"
