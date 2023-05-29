@@ -408,8 +408,8 @@ def getRecommendedArticles():
     article_recommender = ArticleRecommender(db_connection=db, news_clusterer=news_clusterer)
     articles = article_recommender.getRecommendedArticles(cookie)
 
-    # print the first article, its a dict
-    print("First article: ", articles[0])
+    # print the first article, it's a dict
+    # print("First article: ", articles[0])
 
     if articles:
         print(f"Inside the API: {len(articles[0])}")

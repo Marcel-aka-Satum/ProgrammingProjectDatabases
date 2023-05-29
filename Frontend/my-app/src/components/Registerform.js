@@ -288,14 +288,11 @@ export default function Registerform() {
                                 <div className="card-body">
                                     <h5 className="card-title">Advantages of Registering</h5>
                                     <ul className="list-group list-group-flush">
-                                        <li className="list-group-item"><i className="fas fa-heart me-2"></i> Access to
+                                        <li className="list-group-item"><i className="fas fa-heart me-2"></i>Access to
                                             favorites
                                         </li>
                                         <li className="list-group-item">
                                             <i className="fas fa-fire me-2"></i>Even more recommended topics & articles
-                                        </li>
-                                        <li className="list-group-item"><i className="fas fa-comments me-2"></i> Leave
-                                            comments
                                         </li>
                                     </ul>
                                 </div>
