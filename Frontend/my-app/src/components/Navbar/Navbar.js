@@ -91,7 +91,7 @@ const Navbar = () => {
                     </li>
                     <li>
                         <NavLink className="nav-link dropdown-toggle" to="#/" id="articlesDropdown" role="button"
-                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Articles</NavLink>
+                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Genres</NavLink>
 
                         <div className="dropdown-menu articledrop fix-top"
                              aria-labelledby="articlesDropdown">
