@@ -110,7 +110,9 @@ def scraper():
     print("Calculating the new tf-idf matrix for new articles")
     clusterer = NewsClusterer()
     all_articles = clusterer.load_data()
-    clusterer.preprocess_and_vectorize(all_articles, translate=False)
+    X_tfidf = clusterer.preprocess_and_vectorize(all_articles, translate=False)
+    with open("tfidf_matrix.pkl", "wb") as f:
+                pickle.dump(X_tfidf, f)
     print("Saved tf-idf matrix")
 
 

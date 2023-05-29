@@ -42,6 +42,10 @@ class NewsClusterer:
         self.dbscan = DBSCAN(eps=0.2, min_samples=2, metric='cosine')
         self.tsne_3d = TSNE(n_components=3, random_state=42)
         self.svd = TruncatedSVD(n_components=100)
+        try:
+            self.translations_df = pd.read_csv('translations.csv')
+        except FileNotFoundError:
+            self.translations_df = pd.DataFrame(columns=['Original Text', 'Translated Text'])
 
     @staticmethod
     def remove_html_tags(text):
@@ -57,34 +61,22 @@ class NewsClusterer:
         return clean_text
     
 
-    def translate_text(text, translate:bool):
-        try:
-            translations_df = pd.read_csv('translations.csv')
-        except FileNotFoundError:
-            translations_df = pd.DataFrame(columns=['Original Text', 'Translated Text'])
-
-        existing_translation = translations_df.loc[translations_df['Original Text'] == text, 'Translated Text']
+    def translate_text(self, text, translate:bool):
+        existing_translation = self.translations_df.loc[self.translations_df['Original Text'] == text, 'Translated Text']
 
         if not existing_translation.empty:
             translation = existing_translation.iloc[0]
-            #print(f"Using precomputed translation for text: {text}")
         else:
             if translate:
                 model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
-                #print("Translating text: " + text)
                 try:
                     translation = model.translate(text, target_lang='en')
                 except:
                     translation = text
-                #print("Translated text: " + translation)
-
-                # Append translations to the 'translations.csv' file
                 new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})
-                translations_df = translations_df.append(new_translation, ignore_index=True)
-                translations_df.to_csv('translations.csv', index=False)
+                self.translations_df = self.translations_df.append(new_translation, ignore_index=True)
             else:
                 translation = text
-
         return translation
 
 
@@ -101,7 +93,7 @@ class NewsClusterer:
         """
         text = NewsClusterer.remove_html_tags(text)
         text = NewsClusterer.remove_non_alphanumeric(text)
-        text = NewsClusterer.translate_text(text, translate=translate)
+        text = NewsClusterer.translate_text(self, text, translate=translate)
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
         tokens = word_tokenize(text)
@@ -150,18 +142,10 @@ class NewsClusterer:
 
     
     def preprocess_and_vectorize(self, df, translate:bool):
-        """
-        Preprocesses the input DataFrame by preprocessing the titles and summaries, 
-        and applying TF-IDF vectorization.
-
-        :param df: The input DataFrame containing news articles.
-        :return: TF-IDF feature matrix.
-        """
         df['preprocessed'] = df['Title']+ " " + df['Summary']
         df['preprocessed'] = df['preprocessed'].apply(self.preprocess_text, translate=translate)
         X_tfidf = self.vectorizer.fit_transform(df['preprocessed'])
-        with open("tfidf_matrix.pkl", "wb") as f:
-                pickle.dump(X_tfidf, f)
+        self.translations_df.to_csv('translations.csv', index=False) # Save translations to csv after processing all texts
         return X_tfidf
 
 
@@ -290,5 +274,5 @@ class NewsClusterer:
 
 if __name__ == "__main__":
     news_clusterer = NewsClusterer()
-    news_clusterer.run(visualize=True, translate=False)
+    news_clusterer.run(visualize=False, translate=False)
 
