@@ -462,7 +462,7 @@ def deleteAllFavored():
         return jsonify({"message": message_db, "status": 401})
 
 
-################# VISITORS/TOPICS #################
+################# VISITORS/TOPICS/CLICKED #################
 @app.route('/api/visitors', methods=['GET'])
 @cross_origin()
 def visitors():
@@ -475,6 +475,17 @@ def visitors():
 def topics():
     topics_list = db.getTopics()[1]
     return jsonify({'topics': topics_list})
+
+@app.route('/api/clicked', methods=['POST'])
+@cross_origin()
+def AddHasClicked():
+    data = request.get_json()
+    URL, Cookie = data['URL'], data['Cookie']
+    result = db.addHasClickedCookie(URL, Cookie)[1]
+    if result[0]:
+        return jsonify({"message": "success", "status": 200})
+
+    return jsonify({"message": result[1], "status": 401})
 
 
 ################# CLUSTERS #################
@@ -522,18 +533,6 @@ def ChangeSetting():
 @cross_origin()
 def GetSettings():
     return jsonify(db.getSettings()[1])
-
-
-@app.route('/api/clicked', methods=['POST'])
-@cross_origin()
-def AddHasClicked():
-    data = request.get_json()
-    URL, Cookie = data['URL'], data['Cookie']
-    result = db.addHasClickedCookie(URL, Cookie)[1]
-    if result[0]:
-        return jsonify({"message": "success", "status": 200})
-
-    return jsonify({"message": result[1], "status": 401})
 
 
 ################# GOOGLE API CALLS #################
