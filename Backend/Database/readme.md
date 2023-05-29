@@ -13,7 +13,7 @@ This table stores information about the different RSS feeds that the system is a
 
 **`newsarticles`**
 
-This table is the heart of the application. It contains all the news articles fetched from the various RSS feeds. Each article has a unique `URL`, `Title`, `Summary`, `Published` date, an `Image` URL and a `Topic`. The `RSS_URL` is a foreign key linking back to the `rssfeeds` table, so we know which feed an article came from. The `ON DELETE CASCADE` clause ensures that if a feed is deleted, all related articles will also be deleted.
+This table is the heart of the application. It contains all the news articles fetched from the various RSS feeds. Each article has a unique `URL`, `Title`, `Summary`, `Published` date, an `Image URL`, a `Topic`, a `Clicked` (how many times an article is clicked) and a `Language` of the article. The `RSS_URL` is a foreign key linking back to the `rssfeeds` table, so we know which feed an article came from. The `ON DELETE CASCADE` clause ensures that if a feed is deleted, all related articles will also be deleted.
 
 **`relatedcluster`**
 
