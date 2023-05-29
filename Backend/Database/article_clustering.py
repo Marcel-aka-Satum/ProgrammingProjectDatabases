@@ -42,6 +42,7 @@ class NewsClusterer:
         self.dbscan = DBSCAN(eps=0.2, min_samples=2, metric='cosine')
         self.tsne_3d = TSNE(n_components=3, random_state=42)
         self.svd = TruncatedSVD(n_components=100)
+        self.translator_model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
         try:
             self.translations_df = pd.read_csv('translations.csv')
         except FileNotFoundError:
@@ -68,9 +69,8 @@ class NewsClusterer:
             translation = existing_translation.iloc[0]
         else:
             if translate:
-                model = EasyNMT('opus-mt', max_loaded_models=10, max_new_tokens=512)
                 try:
-                    translation = model.translate(text, target_lang='en')
+                    translation = self.translator_model.translate(text, target_lang='en')
                 except:
                     translation = text
                 new_translation = pd.DataFrame({'Original Text': [text], 'Translated Text': [translation]})
@@ -184,23 +184,6 @@ class NewsClusterer:
         url_cluster_df = df_with_clusters[['URL', 'cluster']]
         return url_cluster_df
     
-
-    def push_clusters_to_database(self, url_cluster_df):
-        """
-        Pushes the clustered data (URLs and cluster labels) to the database.
-
-        :param url_cluster_df: DataFrame containing article URLs and cluster labels.
-        :param db_connection: A connected instance of the database connection class.
-        """
-        db_connection = ui_db.DBConnection()
-        db_connection.connect()
-        for index, row in url_cluster_df.iterrows():
-            url = row['URL']
-            cluster_id = row['cluster']
-            success, message = db_connection.addArticleCluster(url, cluster_id)
-
-            if not success:
-                print(f"Failed to insert cluster for URL '{url}': {message}")
 
     def push_clusters_to_database(self, url_cluster_df):
         """
