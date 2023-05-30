@@ -34,37 +34,84 @@ One of the main challenges is that multiple news sources often publish very simi
 
 ### Our Application 
 
-On our news aggregator we offer several functionalities. 
-You start at the main page when you will search for the site. There you will find all the genres we/newspapers provide. 
-You will see 3 articles for each genre/topic and the order of the articles will be based on which sorting you choose at 
-the top of the site. We provide time, popularity and recommended. Time is logically based on when the article is published.
-Popularity is based on how many times an article is clicked and recommended is a sorting where you can see all the articles that are 
-specifically recommended for you as a user with your certain search history. Besides, you can also sort on the language you want to 
-read. We offer 5 languages: Dutch, English, German, Spanish and French. If nothing is selected just all the languages will be shown.
-Then you can also search on words. If you enter a word, all articles are shown where the word is in the title or abstract. 
-Beside this filtering on words, you can also filter on newspapers by clicking on the name of the newspaper under the image of an article.
-Furthermore, there are some functionalities related to an article itself. You can share it on several platforms we provide.
-We provide the url to share it everywhere, Facebook, Whatsapp, Twitter, Reddit and Tumblr. We've also calculated clusters of
-articles that handle the same news and are thus related to each other. If you click the related button on an article card,
-you will see all the related articles. The one we show on the main page is again decided by the sorting you chose. These are all 
-features you get when you are just a visitor. However, we also provide the possibility to create an account. If you do this,
-you can also capture your favorite articles you want to hold close by, so you can for example read them later again.
-The only thing left on the home page are the show all buttons beside the genres. If you click these, you will go to a different 
-page where you can see all the news our site has, related to a certain topic/genre. These separate pages per genre have the 
-same features as the home page. 
+Welcome to our comprehensive news aggregator, where a world of information is at your fingertips. 
+Begin your journey on our home page, your gateway to a vast array of news genres that we offer. 
+At a glance, you will be presented with three articles per genre/topic, neatly ordered based on your selected sorting criterion. 
+We offer three intuitive sorting methods: time, popularity, and recommended.
 
-Then we can look at the navbar. There we see certain words: Home, About Us, Topics and login if you're not logged in. 
-Home, About Us, Topics and Profile if you're logged in but aren't an admin and Home, About Us, Topics, Dashboard and Profile 
-if you are an admin. The first 3 words are pretty clear just from the name. Home leads you to our homepage, About Us leads you to 
-information about our group and Topics gives a list of all topics we provide at our site. Then we have the login button to begin with.
-If you click this you will be leaded to the login page logically, where you can also register if you don't have an account yet.
-You can also log in/register with Google. If you're logged in you will see on the place where we previously had login, now there 
-is a dropdown named profile. In this dropdown we have favorites, which will lead you to the page where all your favorite articles can be found.
-These are the ones you've added via the heart button. Beside the favorites, there is also the settings, where you can clear all your favorites
-and change your setting like your password and such. (just not your email). Lastly there is also a logout with which you can log out
-of your account. 
+Time-based sorting displays articles chronologically, according to their publishing date. 
+Popularity sorting is determined by the frequency of article clicks, providing a glimpse into trending news. 
+The recommended sort curates articles based on your search history, tailoring content specifically to your interests.
 
-Then there is only one thing left and that's the dashboard for the admins.
+Moreover, we provide language filtering for a more personalized browsing experience. 
+Choose from five languages - Dutch, English, German, Spanish, and French. 
+If no language is selected, all articles will be available for browsing.
+
+To further refine your search, keyword filters can be applied. 
+Simply enter a keyword and all articles containing that keyword in the title or abstract will appear. 
+Additionally, you can filter by newspapers, clicking on their name beneath the article image.
+
+Each article hosts a wealth of functionalities. 
+Share articles on a multitude of platforms including Facebook, Whatsapp, Twitter, Reddit, and Tumblr via easily accessible URLs. 
+Dive deeper into a topic with our article clusters, which group together related news. 
+Simply click on the 'related' button on an article card to reveal its cluster. 
+The primary article displayed on the home page from each cluster is selected based on your chosen sorting method.
+
+As a guest user, you have unrestricted access to these features. 
+However, we encourage creating an account to unlock additional features such as saving your favorite articles for quick future reference. 
+The 'show all' buttons beside the genres direct you to a dedicated page for each genre, offering an exhaustive view of the news related to that topic. 
+These genre-specific pages retain all the features of the home page.
+
+Navigation is straightforward with our intuitive navbar. 
+'Home', 'About Us', and 'Topics' are self-explanatory, directing you to the homepage, our background information, and a comprehensive list of topics available on our site respectively. 
+The login button opens up a form, where you can also register if you're a new user. 
+For ease of access, we also allow login/registration via Google.
+
+Upon logging in, the profile dropdown menu replaces the login button, granting access to 'favorites', a repository of articles saved via the heart button, and 'settings', where you can modify preferences, change your password (email change is not permitted), or clear your favorites. 
+An easy logout option ensures secure termination of your browsing session.
+
+For admin users, an additional 'Dashboard' option appears, allowing easy access to administrative functions. 
+It is your central command hub for overseeing and managing our news aggregator. 
+Five key functionalities reside within this panel: 'Articles', 'Users', 'RSS', 'Settings', and 'Statistics'.
+
+The 'Articles' section offers a comprehensive list of all the articles currently housed in our database, allowing for swift and easy perusal of all available content.
+
+The 'Users' tab is where you can exercise administrative control over user accounts. 
+From creating, updating, to deleting users, this panel allows for seamless user management. 
+Moreover, you can grant admin permissions, either to a new user or by elevating the status of an existing user. 
+A search functionality is embedded for quick identification of specific users or admins.
+
+The 'RSS' section is designed to manage RSS feeds. 
+Like the 'Users' section, it enables creating, updating, or deleting RSS feeds. 
+Additionally, it allows for quick health checks on specific RSS feeds to ensure their proper functioning. 
+For quick access to feeds related to a specific topic, simply click on the topic of interest, or utilize the search box.
+
+Next is the 'Settings' panel, where you can fine-tune the frequency of content scraping. 
+The current default is set to update articles every two hours. 
+Additionally, a debug mode can be enabled or disabled for your account, providing additional insights on the home and genre pages. 
+It displays the current quantity of filtered articles, adjusting this figure in real-time when a keyword is added in the search box. 
+Moreover, it provides the number of clicks per article.
+With all these features at your disposal, we invite you to explore, engage and enjoy the world of news on our aggregator site.
+
+The final section of the Dashboard, the 'Statistics' panel, offers a bird's-eye view of the site's overall engagement and content diversity.
+
+Here, you'll be able to monitor the 'Total Users', which represents the number of registered users on our platform. 
+This insight aids in understanding the size and growth of the active community.
+
+The 'Total Visitors' counter tracks the number of individual visitors to the site, providing a measure of our reach and popularity.
+
+'Total Articles' quantifies the breadth of content we offer, giving an account of all the articles available for perusal on our platform.
+
+Our 'Total RSS Feeds' metric keeps track of the number of different RSS feeds our site is integrated with. 
+This demonstrates the variety of sources from which we gather our content.
+
+In the 'Total Favorites' field, you'll see the cumulative number of articles favorited by our users. 
+
+Lastly, 'Total Topics' gives an account of the number of distinct topics covered on our site, showcasing the diversity and breadth of news genres we cater to.
+
+Through this 'Statistics' panel, we aim to provide you with a clear understanding of the engagement and expansive content offering on our platform.
+
+With all these features at your disposal, we invite you to explore, engage and enjoy the world of news on our aggregator site.
 
 ### Technologies
 The following technologies are used for the project:
