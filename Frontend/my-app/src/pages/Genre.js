@@ -22,7 +22,7 @@ import Cookies from "js-cookie";
 import {Quotes} from '../Quotes.js';
 import {Multiselect} from "multiselect-react-dropdown";
 
-function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
+function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related, usersession}) {
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
     const text = formatSummary(article.Summary);
@@ -173,6 +173,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         <>
                             {isLoading && <div className="loading-animation"></div>}
                             {showImage()}
+                            {logged && usersession.user.isAdmin && usersession.user.debug && (
+                                <div className="top-left badge rounded-1 bg-dark">{article.Clicked}</div>
+                            )}
                         </>
                     ) : (
                         <div className="no-image"></div>
@@ -670,7 +673,8 @@ const Home = () => {
                                                  logged={usersession.user.isLogged} uid={usersession.user.uid}
                                                  favorites={favorites}
                                                  setFavorites={setFavorites}
-                                                 related={articles.length > 0 ? (articles.slice(1)) : []}/>
+                                                 related={articles.length > 0 ? (articles.slice(1)) : []}
+                                                 usersession={usersession}/>
                                 </li>
                             ) : <></>
                         ))}

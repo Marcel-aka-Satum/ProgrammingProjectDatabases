@@ -20,7 +20,7 @@ import Cookies from 'js-cookie';
 import {Quotes} from '../Quotes';
 import {Multiselect} from "multiselect-react-dropdown";
 
-function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
+function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related, usersession}) {
     const [show, setShow] = useState(false);
     const [showSimilarModal, setShowSimilarModal] = useState(false);
     const [isLoading, setIsLoading] = useState(article.Image !== 'None');
@@ -71,7 +71,6 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
             ERROR(err);
         }
     };
-
 
 
     const handleClick = async (URL) => {
@@ -136,9 +135,9 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
 
     return (
         <div className="article-card hide-btn-group">
-            {/*<h1 className="article-card-header">*/}
-            {/*    <span className="badge bg-secondary">{article.Clicked}</span>*/}
-            {/*</h1>*/}
+            {/*{logged && usersession.user.isAdmin && usersession.user.debug && (*/}
+            {/*    `(${filteredArray.length})`*/}
+            {/*)}*/}
             <a
                 href={article.URL}
                 target="_blank"
@@ -152,11 +151,15 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         <>
                             {isLoading && <div className="loading-animation"></div>}
                             {showImage()}
+                            {logged && usersession.user.isAdmin && usersession.user.debug && (
+                                <div className="top-left badge rounded-1 bg-dark">{article.Clicked}</div>
+                            )}
                         </>
                     ) : (
                         <div className="no-image"></div>
                     )}
                 </div>
+
             </a>
 
             <div className="bottom-0" style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
@@ -389,8 +392,6 @@ function GenreSection({
                 {genre} {logged && usersession.user.isAdmin && usersession.user.debug && (
                 `(${filteredArray.length})`
             )}
-
-
                 <a href={`genre/${addDashes(genre)}`} rel='noreferrer'>
                     <button className="btn btn-outline-secondary ms-3">Show All</button>
                 </a>
@@ -402,7 +403,8 @@ function GenreSection({
                         <ArticleCard key={articles[0].URL} article={articles[0]} onFilterTextChange={onFilterTextChange}
                                      logged={logged}
                                      uid={uid} favorites={favorites} setFavorites={setFavorites}
-                                     related={articles.length > 0 ? (articles.slice(1)) : []}/>
+                                     related={articles.length > 0 ? (articles.slice(1)) : []}
+                                     usersession={usersession}/>
                     </li>
                 ))}
             </ul>

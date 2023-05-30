@@ -11,6 +11,20 @@
     background-color: rgba(116, 116, 116, 0.51);
 }
 
+.top-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    color: white;
+    padding: 5px;
+
+    font-size: 35px;
+    font-weight: 400;
+    font-family: 'Roboto', sans-serif;
+
+}
+
 .comments {
     display: flex;
     flex-direction: column;
@@ -164,7 +178,7 @@ a:hover {
     object-fit: cover;
 }
 
-.form-control{
+.form-control {
     height: 45px !important;
 }
 
@@ -190,7 +204,7 @@ a:hover {
     height: 45px;
 }
 
-.btn-outline-danger.heart{
+.btn-outline-danger.heart {
     position: relative;
     top: -5px;
 }
@@ -363,7 +377,7 @@ p {
     }
 }
 
-.multiSelect{
+.multiSelect {
     margin-left: 5px;
 }
 
