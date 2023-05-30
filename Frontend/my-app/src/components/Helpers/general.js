@@ -39,7 +39,7 @@ function getTimeAgo(dateStr) {
     const diffSec = Math.floor(diffMs / 1000);
 
     if (diffSec < 60) {
-        return `${diffSec} seconds ago`;
+        return `${diffSec} second${diffSec > 1 ? 's' : ''} ago`;
     }
 
     const diffMin = Math.floor(diffSec / 60);
@@ -53,8 +53,23 @@ function getTimeAgo(dateStr) {
     }
 
     const diffDays = Math.floor(diffHr / 24);
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) {
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    }
+
+    const diffWeeks = Math.floor(diffDays / 7);
+    if (diffWeeks < 4) {
+        return `${diffWeeks} week${diffWeeks > 1 ? 's' : ''} ago`;
+    }
+
+    const diffMonths = Math.floor(diffDays / 30);
+    if (diffMonths > 0) {
+        return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`;
+    }
+
+    return "less than a month ago";
 }
+
 
 function formatSummary(text, limit = 200) {
     if (text.length <= limit) {

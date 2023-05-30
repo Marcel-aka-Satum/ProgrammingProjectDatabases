@@ -7,7 +7,7 @@ import {
     handleClipboard,
     PrintNewspaper,
     shares,
-    extractBaseUrl
+    extractBaseUrl, getTimeAgo
 } from "../components/Helpers/general";
 import "./Home.css"
 import axios from 'axios'
@@ -335,7 +335,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
                         }
                     </div>
                     <span className="article-card-date float-end pb-2 pt-2">
-                            <i>{formatDate(article.Published)}</i>
+                            <i>{getTimeAgo(article.Published)}</i>
                     </span>
                 </div>
             </div>
