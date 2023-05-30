@@ -96,6 +96,19 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
  `connect(self) -> bool`
 
 - This method tries to establish a connection with the database and returns a boolean value indicating whether the connection was successful.
+ 
+ `createBackup(self, cwd)`
+
+- This method creates a backup of the database and saves it in the current working directory.
+
+ `loadBackup(self, cwd, file: str)`
+
+- This method loads a backup of the database from the current working directory.
+
+ `generateUID(self) -> int`
+
+- This method generates a unique ID for a user.
+
 
 ### Database Operations
 
@@ -109,21 +122,41 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
 
 ### Articles
 
+ `getArticle(self, url: str) -> tuple`
+
+- This method retrieves an article from the `newsarticles` table and returns it as a tuple.
+
  `getArticles(self, tag: str = "") -> json`
 
 - This method retrieves all rows from the `newsarticles` table and returns them as a JSON object.
 
- `addArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str)`
+ `addNewsArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str)`
 
 - This method adds an article to the database.
 
- `deleteArticle(self, url: str)`
+ `deleteNewsArticle(self, url: str)`
 
 - This method deletes an article from the database.
 
  `updateArticle(self, url: str, title: str, summary: str, published: str, image: str, rss_url: str, topic: str)`
 
 - This method updates an article in the database.
+
+ `getTopics(self) -> list`
+
+- This method retrieves all the topics from the `newsarticles` table and returns them as a list.
+
+ `getNewsArticlesTopic(self, topic: str) -> list`
+
+- This method retrieves all the articles of a particular topic from the `newsarticles` table and returns them as a list.
+
+ `getNewsArticles(self) -> list`
+
+- This method retrieves all the articles from the `newsarticles` table and returns them as a list.
+
+ `getArticlesDict(self) -> list`
+
+- This method retrieves all the articles from the `newsarticles` table and returns them as a list of dictionaries.
 
 ### Users
 
@@ -164,6 +197,117 @@ The DBConnection class is an interface for interacting with a PostgreSQL databas
  `updateRSSFeed(self, url: str, publisher: str, topic: str)`
 
 - This method updates an RSS feed in the database.
+
+ `getRSSFeeds(self) -> list`
+
+- This method retrieves all the RSS feeds from the `rssfeeds` table and returns them as a list.
+
+### Settings
+ `addSetting(self, settingType: str, value: str) -> tuple`
+
+- This method adds a setting to the `settings` table.
+
+ `updateSetting(self, settingType: str, value: str)`
+
+- This method updates a setting in the `settings` table.
+
+ `getSettings(self) -> dict`
+
+- This method retrieves all the settings from the `settings` table and returns them as a dictionary.
+
+### Clusters
+ `addArticleCluster(self, url: str, cluster_id: int) -> tuple`
+
+- This method adds an article cluster to the `relatedcluster` table and returns it as a tuple.
+
+ `getCluster(self, cluster_id: int) -> tuple`
+
+- This method retrieves a cluster from the `relatedcluster` table and returns it as a tuple.
+
+ `getAllClusters(self) -> tuple`
+
+- This method retrieves all the clusters from the `relatedcluster` table and returns them as a tuple.
+
+ `getAllClustersGenre(self, genre: str) -> tuple`
+
+- This method retrieves all the clusters of a particular genre from the `relatedcluster` table and returns them as a tuple.
+
+### Favorites
+ `addFavored(self, UID: str, url: str) -> tuple`
+
+- This method adds a favored article to the `favored` table and returns it as a tuple.
+
+`addFavorite(self, Cookie: str, url: str) -> tuple`
+
+- This method adds a favored article to the `favored` table and returns it as a tuple.
+
+ `getFavorites(self, URL: str) -> list`
+
+- This method retrieves all the favored articles of a user from the `favored` table and returns them as a list.
+
+ `getFavored(self) -> list`
+
+- This method retrieves all the favored articles from the `favored` table and returns them as a list.
+
+ `deleteFavored(self, UID: str, url: str) -> tuple`
+
+- This method deletes a favored article from the `favored` table and returns it as a tuple.
+
+ `deleteAllFavored(self, UID: str) -> tuple`
+
+- This method deletes all favored articles of a user from the `favored` table and returns them as a tuple.
+
+### Visitors
+ `addVisitor(self, UID: str) -> tuple`
+
+- This method adds a visitor to the `visitors` table and returns it as a tuple.
+
+ `deleteVisitor(self, UID: str) -> tuple`
+
+- This method deletes a visitor from the `visitors` table and returns it as a tuple.
+
+ `getVisitors(self) -> list`
+
+- This method retrieves all the visitors from the `visitors` table and returns them as a list.
+
+ `getVisitor(self, UID: str) -> tuple`
+
+- This method retrieves a visitor from the `visitors` table and returns it as a tuple.
+
+### Clicked
+ `addHasClicked(self, UID: str, url: str) -> tuple`
+
+- This method adds a clicked article to the `hasclicked` table and returns it as a tuple.
+
+ `addHasClickedCookie(self, url: str, cookie: str) -> tuple`
+
+- This method adds a clicked article to the `hasclicked` table and returns it as a tuple.
+
+ `getHasClicked(self, cookie: str) -> list`
+
+- This method retrieves all the clicked articles of a user from the `hasclicked` table and returns them as a list.
+
+ `getAllHasClicked(self) -> list`
+
+- This method retrieves all the clicked articles from the `hasclicked` table and returns them as a list.
+
+### Cookies
+ `addCookie(self, cookie: str, UID: str) -> tuple`
+
+- This method adds a cookie to the `cookies` table and returns it as a tuple.
+
+ `deleteCookie(self, UID: str) -> tuple`
+
+- This method deletes a cookie from the `cookies` table and returns it as a tuple.
+
+ `getCookies(self) -> list`
+
+- This method retrieves all the cookies from the `cookies` table and returns them as a list.
+
+ `generateCookie(self) -> str`
+
+- This method generates a unique cookie for a user.
+
 
 
 ## Example usage
@@ -244,6 +388,10 @@ This code is written in Python and uses the psycopg2 and pandas libraries to con
 `populate_db(conn, cur)`
 
 - This function takes in a connection object `conn` and a cursor object `cur` as parameters. The `conn` object is used to commit changes to the database, while the `cur` object is used to execute SQL statements. The function reads data from a CSV file called `RSSFeeds.csv` and inserts it into the `rssfeeds` table.
+
+`create_has(password)`
+
+- This function takes in a password as a parameter and returns a hashed version of it. The hashed password is stored in the database instead of the actual password.
 
 ### Reading data from CSV file
 
@@ -336,6 +484,42 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 
 - This function takes in four parameters representing the username, email, password, and administrative status of a user and returns a tuple with the SQL statement for inserting this information into the `users` table and the parameters for the query.
 
+`insert_visitor(UID: str) -> str`
+
+- This function takes in the UID of a user and returns an SQL statement for inserting this information into the `visitors` table.
+
+`insert_cookie(Cookie: str, UID: str) -> str`
+
+- This function takes in two parameters representing the cookie and UID of a user and returns an SQL statement for inserting this information into the `cookies` table.
+
+`insert_hasclicked(UID: str, URL: str) -> str`
+
+- This function takes in two parameters representing the UID of a user and the URL of a news article and returns an SQL statement for inserting this information into the `hasclicked` table.
+
+`insert_hasclickedcookie(URL: str, Cookie: str) -> str`
+
+- This function takes in two parameters representing the URL of a news article and the cookie of a user and returns an SQL statement for inserting this information into the `hasclickedcookie` table.
+
+`addCountArticle(URL: str) -> str`
+
+- This function takes in the URL of a news article and returns an SQL statement for incrementing the `count` column of the corresponding row in the `newsarticles` table.
+
+`insert_favored(UID: str, URL: str) -> str`
+
+- This function takes in two parameters representing the UID of a user and the URL of a news article and returns an SQL statement for inserting this information into the `favored` table.
+
+`insert_favorite(Cookie: str, URL: str) -> str`
+
+- This function takes in two parameters representing the cookie of a user and the URL of a news article and returns an SQL statement for inserting this information into the `favorite` table.
+
+`insert_cluster(URL: str, Cluster: int) -> str`
+
+- This function takes in two parameters representing the URL of a news article and the cluster number and returns an SQL statement for inserting this information into the `cluster` table.
+
+`insert_setting(SettingType: str, SettingValue: str) -> str`
+
+- This function takes in two parameters representing the type and value of a setting and returns an SQL statement for inserting this information into the `settings` table.
+
 `delete_rssfeed(URL: str) -> str`
 
 - This function takes in the URL of an RSS feed and returns an SQL statement for deleting the corresponding row from the `rssfeeds` table.
@@ -347,6 +531,22 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 `delete_user(Uid: str) -> str`
 
 - This function takes in the UID of a user and returns an SQL statement for deleting the corresponding row from the `users` table.
+
+`delete_visitor(UID: str) -> str`
+
+- This function takes in the UID of a user and returns an SQL statement for deleting the corresponding row from the `visitors` table.
+
+`delete_cookie(Cookie: str) -> str`
+
+- This function takes in the cookie of a user and returns an SQL statement for deleting the corresponding row from the `cookies` table.
+
+`delete_favored(UID: str, URL: str) -> str`
+
+- This function takes in two parameters representing the UID of a user and the URL of a news article and returns an SQL statement for deleting the corresponding row from the `favored` table.
+
+`delete_all_favored(UID: str) -> str`
+
+- This function takes in the UID of a user and returns an SQL statement for deleting all rows from the `favored` table that correspond to that user.
 
 `update_rssfeed(URL: str, Publisher: str, Topic: str) -> str`
 
@@ -360,6 +560,10 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 
 - This function takes in five parameters representing the UID, username, email, password, and administrative status of a user and returns an SQL statement for updating this information in the corresponding row of the `users` table.
 
+`update_setting(SettingType: str, SettingValue: str) -> str`
+
+- This function takes in two parameters representing the type and value of a setting and returns an SQL statement for updating this information in the corresponding row of the `settings` table.
+
 `get_rssfeeds() -> str`
 
 - This function returns an SQL statement for retrieving all rows from the `rssfeeds` table.
@@ -368,13 +572,33 @@ This code is written in Python and uses the psycopg2 library to generate SQL sta
 
 - This function returns an SQL statement for retrieving all rows from the `newsarticles` table.
 
+`get_visitors() -> str`
+
+- This function returns an SQL statement for retrieving all rows from the `visitors` table.
+
 `get_users() -> str`
 
 - This function returns an SQL statement for retrieving all rows from the `users` table.
 
-`get_user(email: str) -> str`
+`get_cookies() -> str`
 
-- This function takes in an email address and returns an SQL statement for retrieving the corresponding row from the `users` table.
+- This function returns an SQL statement for retrieving all rows from the `cookies` table.
+
+`get_hasclicked(cookie: str) -> str`
+
+- This function takes in the cookie of a user and returns an SQL statement for retrieving all rows from the `hasclicked` table that correspond to that user.
+
+`get_all_hasclicked() -> str`
+
+- This function returns an SQL statement for retrieving all rows from the `hasclicked` table.
+
+`get_favored() -> str`
+
+- This function returns an SQL statement for retrieving all rows from the `favored` table.
+
+`get_settings() -> str`
+
+- This function returns an SQL statement for retrieving all rows from the `settings` table.
 
 ### Executing SQL statements
 
