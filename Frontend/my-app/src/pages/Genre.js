@@ -583,7 +583,11 @@ const Home = () => {
 */
     return (
         <div className="row">
-            <h2 className="text-center text-dark mt-5">{formatTitle(genre)}</h2>
+            <h2 className="text-center text-dark mt-5">{formatTitle(genre)}
+                {usersession.user.isLogged && usersession.user.isAdmin && usersession.user.debug && (
+                ` (${filteredArray.length})`
+            )}
+            </h2>
             <div className="col-12 d-flex justify-content-center">
                 <div className="form-group w-auto pb-3 d-flex justify-content-between">
                     <input
