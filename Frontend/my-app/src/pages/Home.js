@@ -73,6 +73,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     };
 
 
+
     const handleClick = async (URL) => {
         console.log('URL clicked:', URL);
         try {
@@ -692,7 +693,7 @@ const Home = () => {
                     </div>
                 </div>
                 <div className="row">
-                    {checkAllNull() ? (
+                    {checkAllNull() && filterText !== "" ? (
                         <>
                             <h3 style={{display: 'flex', justifyContent: 'center', marginTop: "20px"}}>
                                 Sorry, we don't have what you're looking for... Here is an inspiring quote about news

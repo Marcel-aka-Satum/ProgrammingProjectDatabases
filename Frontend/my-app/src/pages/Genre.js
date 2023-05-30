@@ -20,7 +20,7 @@ import {ERROR, SUCCESS} from "../components/Helpers/custom_alert";
 import {request_headers, site_domain} from "../globals";
 import Cookies from "js-cookie";
 import {Quotes} from '../Quotes.js';
-import { Multiselect } from "multiselect-react-dropdown";
+import {Multiselect} from "multiselect-react-dropdown";
 
 function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFavorites, related}) {
     const [show, setShow] = useState(false);
@@ -29,6 +29,7 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     const [showSimilarModal, setShowSimilarModal] = useState(false);
 
     const addFavorite = async (URL) => {
+        console.log('ADD:', URL)
         try {
             const response = await axios.post(`${site_domain}/api/favorites`, {
                 UID: uid,
@@ -50,22 +51,28 @@ function ArticleCard({article, onFilterTextChange, logged, uid, favorites, setFa
     }
 
     const removeFavorite = async (URL) => {
+        console.log('REMOVE:', URL);
         try {
-            const response = await axios.post(`${site_domain}/api/favorites`, {
-                UID: uid,
-                article_url: URL,
-                headers: request_headers
-            })
-            if (response.data.status === 200) {
-                SUCCESS(response.data.message)
-                setFavorites(favorites.filter(favorite => favorite !== URL)) // Update the favorites state immediately
+            const response = await fetch(`${site_domain}/api/favorites`, {
+                method: 'DELETE',
+                headers: request_headers,
+                body: JSON.stringify({
+                    UID: uid,
+                    article_url: URL
+                })
+            });
+            const responseData = await response.json();
+            if (response.ok) {
+                SUCCESS(responseData.message);
+                console.log(responseData);
+                setFavorites(favorites.filter(favorite => favorite !== URL));
             } else {
-                ERROR(response.data.message)
+                ERROR(responseData.message);
             }
         } catch (err) {
-            ERROR(err)
+            ERROR(err);
         }
-    }
+    };
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -375,25 +382,25 @@ const Home = () => {
     const [disableSort, setDisableSort] = useState(false);
 
     const options = [
-          {name: "Nederlands", id: 1},
-            {name: "English", id: 2},
-            {name: "Español", id: 3},
-            {name: "Deutsch", id: 4},
-            {name: "Français", id: 5}
-        ];
+        {name: "Nederlands", id: 1},
+        {name: "English", id: 2},
+        {name: "Español", id: 3},
+        {name: "Deutsch", id: 4},
+        {name: "Français", id: 5}
+    ];
 
-        const [selectedOptions, setSelectedOptions] = useState([]);
-        const [removedOptions, setRemovedOptions] = useState([]);
-        const onSelectOptions = (selectedList, selectedItem) => {
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [removedOptions, setRemovedOptions] = useState([]);
+    const onSelectOptions = (selectedList, selectedItem) => {
         setSelectedOptions([...selectedOptions, selectedItem]);
-        };
-        const onRemoveOptions = (selectedList, removedItem) => {
+    };
+    const onRemoveOptions = (selectedList, removedItem) => {
         const updatedSelectedOptions = selectedOptions.filter(
-        (option) => option.id !== removedItem.id
+            (option) => option.id !== removedItem.id
         );
         setSelectedOptions(updatedSelectedOptions);
         setRemovedOptions([...removedOptions, removedItem]);
-        };
+    };
 
     let usersession = useContext(userSession);
 
@@ -414,7 +421,6 @@ const Home = () => {
                 setClustersGenre(listOfArrays);
                 setClustersGenre(listOfArrays);
 
-                console.log('data: ', listOfArrays)
             };
 
             fetchArticles();
@@ -493,11 +499,9 @@ const Home = () => {
             const url = extractBaseUrl(article.URL);
             const filter = filterText.toLowerCase();
 
-            console.log('[before]', article)
             let articleLanguage = article.Lang.toLowerCase().split('-')[0];
-            console.log('[after]', articleLanguage)
             let languageFilter = true
-            if(selectedOptions.length > 0){
+            if (selectedOptions.length > 0) {
                 if (articleLanguage === "nl") {
                     articleLanguage = "Nederlands"
                 } else if (articleLanguage === "en") {
@@ -509,11 +513,11 @@ const Home = () => {
                 } else if (articleLanguage === "fr") {
                     articleLanguage = "Français"
                 }
-            languageFilter = selectedOptions.some((language) =>
-              language.name.includes(articleLanguage)
-            );
-            console.log(articleLanguage)
-            console.log(languageFilter)
+                languageFilter = selectedOptions.some((language) =>
+                    language.name.includes(articleLanguage)
+                );
+                console.log(articleLanguage)
+                console.log(languageFilter)
             }
 
             return ((title.includes(filter) || summary.includes(filter) || url.includes(filter)) && languageFilter);
@@ -598,62 +602,62 @@ const Home = () => {
                         X
                     </button>
 
-                        {!disableSort ? (
-                            <div className="filter-bar">
-                                <div className="dropdown ps-2">
-                                    <button className="btn btn-outline-secondary dropdown-toggle" type="button"
-                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                        {sortOption ? sortOption : 'Sort By'}
-                                    </button>
-                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <li>
-                                            <button className="dropdown-item" type="button" value="newest"
-                                                    onClick={handleSortChange}>
-                                                <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> newest
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button className="dropdown-item" type="button" value="popular"
-                                                    onClick={handleSortChange}><i className="fa fa-heart me-2"
-                                                                                  style={{color: "#c01c28"}}> </i> popular
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <form className="multiSelect">
-                                        <Multiselect
-                                          options={options}
-                                          name="particulars"
-                                          onSelect={onSelectOptions}
-                                          onRemove={onRemoveOptions}
-                                          displayValue="name"
-                                          closeIcon="cancel"
-                                          placeholder="Choose Languages"
-                                          emptyRecordMsg={"No more available"}
-                                          selectedValues={selectedOptions}
-                                          className="multiSelectContainer"
-                                        />
-                                    </form>
-                                </div>
+                    {!disableSort ? (
+                        <div className="filter-bar">
+                            <div className="dropdown ps-2">
+                                <button className="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                    {sortOption ? sortOption : 'Sort By'}
+                                </button>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <button className="dropdown-item" type="button" value="newest"
+                                                onClick={handleSortChange}>
+                                            <i className="fa fa-fire me-2" style={{color: "#c01c28"}}> </i> newest
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button className="dropdown-item" type="button" value="popular"
+                                                onClick={handleSortChange}><i className="fa fa-heart me-2"
+                                                                              style={{color: "#c01c28"}}> </i> popular
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
-                        ) : <div className="filter-bar">
+                            <div>
                                 <form className="multiSelect">
                                     <Multiselect
-                                      options={options}
-                                      name="particulars"
-                                      onSelect={onSelectOptions}
-                                      onRemove={onRemoveOptions}
-                                      displayValue="name"
-                                      closeIcon="cancel"
-                                      placeholder="Choose Languages"
-                                      emptyRecordMsg={"No more available"}
-                                      selectedValues={selectedOptions}
-                                      className="multiSelectContainer"
+                                        options={options}
+                                        name="particulars"
+                                        onSelect={onSelectOptions}
+                                        onRemove={onRemoveOptions}
+                                        displayValue="name"
+                                        closeIcon="cancel"
+                                        placeholder="Choose Languages"
+                                        emptyRecordMsg={"No more available"}
+                                        selectedValues={selectedOptions}
+                                        className="multiSelectContainer"
                                     />
                                 </form>
-                            </div>}
+                            </div>
+                        </div>
+                    ) : <div className="filter-bar">
+                        <form className="multiSelect">
+                            <Multiselect
+                                options={options}
+                                name="particulars"
+                                onSelect={onSelectOptions}
+                                onRemove={onRemoveOptions}
+                                displayValue="name"
+                                closeIcon="cancel"
+                                placeholder="Choose Languages"
+                                emptyRecordMsg={"No more available"}
+                                selectedValues={selectedOptions}
+                                className="multiSelectContainer"
+                            />
+                        </form>
+                    </div>}
                 </div>
             </div>
 

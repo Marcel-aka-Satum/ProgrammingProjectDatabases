@@ -65,8 +65,9 @@ export class User {
         window.location.href = "/"
     }
 
-    register(iL, t, iA, e, u){
+    register(uid, iL, t, iA, e, u){
         this.isLogged = iL
+        this.uid = uid
         this.token = t
         this.isAdmin = iA
         this.email = e

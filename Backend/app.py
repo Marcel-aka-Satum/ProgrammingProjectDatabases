@@ -113,6 +113,7 @@ def register_user():
 
     logger.info(f"Successful registration: email={email}")
     return jsonify({"message": f"Welcome {username}",
+                    "UID": user_exists[1]['UID'],
                     "token": encoded_jwt}), 200
 
 
