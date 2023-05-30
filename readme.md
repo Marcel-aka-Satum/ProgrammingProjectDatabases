@@ -58,8 +58,9 @@ Simply click on the 'related' button on an article card to reveal its cluster.
 The primary article displayed on the home page from each cluster is selected based on your chosen sorting method.
 
 As a guest user, you have unrestricted access to these features. 
-However, we encourage creating an account to unlock additional features such as saving your favorite articles for quick future reference. 
-The 'show all' buttons beside the genres direct you to a dedicated page for each genre, offering an exhaustive view of the news related to that topic. 
+However, we encourage creating an account to unlock additional features such as saving your favorite articles for quick future reference.
+
+The 'show all' buttons beside the genres direct you to a dedicated page for each genre, offering a view of all the news related to that topic. 
 These genre-specific pages retain all the features of the home page.
 
 Navigation is straightforward with our intuitive navbar. 
@@ -74,7 +75,7 @@ For admin users, an additional 'Dashboard' option appears, allowing easy access 
 It is your central command hub for overseeing and managing our news aggregator. 
 Five key functionalities reside within this panel: 'Articles', 'Users', 'RSS', 'Settings', and 'Statistics'.
 
-The 'Articles' section offers a comprehensive list of all the articles currently housed in our database, allowing for swift and easy perusal of all available content.
+The 'Articles' section offers a comprehensive list of all the articles currently available in our database, allowing for swift and easy perusal of all available content.
 
 The 'Users' tab is where you can exercise administrative control over user accounts. 
 From creating, updating, to deleting users, this panel allows for seamless user management. 
@@ -111,7 +112,7 @@ Lastly, 'Total Topics' gives an account of the number of distinct topics covered
 
 Through this 'Statistics' panel, we aim to provide you with a clear understanding of the engagement and expansive content offering on our platform.
 
-With all these features at your disposal, we invite you to explore, engage and enjoy the world of news on our aggregator site.
+With all these features at your disposal, we invite you to explore, engage and enjoy the world of news on our news aggregator site.
 
 ### Technologies
 The following technologies are used for the project:
