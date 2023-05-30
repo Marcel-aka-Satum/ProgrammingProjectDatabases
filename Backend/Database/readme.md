@@ -70,7 +70,7 @@ This suite of Python code is designed to provide a comprehensive news aggregator
 
 4. [Code Documentation for Scraper.py](#Scraperpy)
 
-5. [Code Documentation for query_db.py](#querydbpy)
+5. [Code Documentation for query_db.py](#query_dbpy)
 
 6. [Code Documentation for article_clustering.py](#newsclusterer-technical-documentation)
 
