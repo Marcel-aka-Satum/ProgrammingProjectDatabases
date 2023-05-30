@@ -71,16 +71,13 @@ class BaseFeedScraper:
             response = requests.get(rss_url, timeout=1)
             feed = feedparser.parse(response.content)
             scraper = self.get_scraper_for_url(rss_url)
-            if 'image' in feed.feed and 'url' in feed.feed.image:
+            if ("elpais" in rss_url):
+                Image = "https://ep00.epimg.net/iconos/v1.x/v1.0/logos/cabecera_portada.png"
+            elif 'image' in feed.feed and 'url' in feed.feed.image:
                 Image = feed.feed.image.url
             elif 'logo' in feed.feed:
                 Image = feed.feed.logo
-
-            lang = ''
-            if("elmundo.es" in rss_url):
-                lang = "es"
-            else:
-                lang = feed.feed.language
+            lang = feed.feed.language
             for entry in feed.entries:
                 scraper.scrape_entry(entry, rss_url, topic, Image, lang)
         except requests.exceptions.Timeout:

@@ -375,8 +375,11 @@ const Home = () => {
     const [disableSort, setDisableSort] = useState(false);
 
     const options = [
-          { name: "Nederlands", id: 1 },
-          { name: "English", id: 2 }
+          {name: "Nederlands", id: 1},
+            {name: "English", id: 2},
+            {name: "Español", id: 3},
+            {name: "Deutsch", id: 4},
+            {name: "Français", id: 5}
         ];
 
         const [selectedOptions, setSelectedOptions] = useState([]);
@@ -495,12 +498,17 @@ const Home = () => {
             console.log('[after]', articleLanguage)
             let languageFilter = true
             if(selectedOptions.length > 0){
-                if(articleLanguage === "nl"){
-                articleLanguage = "Nederlands"
-            }
-            else if(articleLanguage === "en"){
-                articleLanguage = "English"
-            }
+                if (articleLanguage === "nl") {
+                    articleLanguage = "Nederlands"
+                } else if (articleLanguage === "en") {
+                    articleLanguage = "English"
+                } else if (articleLanguage === "es") {
+                    articleLanguage = "Español"
+                } else if (articleLanguage === "de") {
+                    articleLanguage = "Deutsch"
+                } else if (articleLanguage === "fr") {
+                    articleLanguage = "Français"
+                }
             languageFilter = selectedOptions.some((language) =>
               language.name.includes(articleLanguage)
             );

@@ -30,13 +30,15 @@ export function Quotes() {
         [["“The newspaper is a greater treasure to the people than uncounted millions of gold.”"], ["Henry Ward Beecher"]],
         [["“What a newspaper needs in its news, in its headlines, and on its editorial page is terseness, humor, descriptive power, satire, originality, good literary style, clever condensation, and accuracy, accuracy, accuracy!”"], ["Joseph Pulitzer"]],
         [["“We read the weird tales in newspapers to crowd out the even weirder stuff inside us.”"], ["Alain de Botton"]],
-        [["“In America, the president reigns for four years, and journalism governs forever and ever.“"]["Oscar Wilde"]],
+        [["“In America, the president reigns for four years, and journalism governs forever and ever.“"],["Oscar Wilde"]],
         [["“Journalism allows its readers to witness history; fiction gives its readers an opportunity to live it.“"], ["John Hersey"]]
     ]
 
     function getRandomQuote() {
+
         const randomIndex = Math.floor(Math.random() * quotes.length);
         const randomQuote = quotes[randomIndex]
+        console.log(randomIndex)
         return (
             <>
                 <blockquote id="quote-text">{randomQuote[0]}</blockquote>
