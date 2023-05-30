@@ -387,7 +387,7 @@ function GenreSection({
         <div className="genre-section">
             <h2>
                 {genre} {logged && usersession.user.isAdmin && usersession.user.debug && (
-                `(${filteredArticles.length})`
+                `(${filteredArray.length})`
             )}
 
 
@@ -395,6 +395,7 @@ function GenreSection({
                     <button className="btn btn-outline-secondary ms-3">Show All</button>
                 </a>
             </h2>
+
             <ul className="articles-row">
                 {filteredArray.slice(0, 3).map((articles) => (
                     <li className="p-3">
