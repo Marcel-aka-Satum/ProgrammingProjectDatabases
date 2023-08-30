@@ -142,5 +142,8 @@ python run.py
 * Database: Please find the extended documentation within the README at Backend/Database/
 * Frontend: Please find the extended documentation within the README at Frontend 
 
+DEVELOPER NOTE:
+This project is not meant to be 100% bug free please do NOT host this project online as it may contain some critical bugs that we didn't test.
+
 ## Contributing
 Nabil El Ouaamari, Marceli Wilczynski, Pim Van den Bosch, Simon Olivier, Robbe Teughels.
